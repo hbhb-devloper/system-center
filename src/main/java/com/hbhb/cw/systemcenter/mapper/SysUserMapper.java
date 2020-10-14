@@ -2,7 +2,7 @@ package com.hbhb.cw.systemcenter.mapper;
 
 import com.hbhb.cw.systemcenter.model.SysUser;
 
-import org.beetl.sql.core.mapper.BaseMapper;
+import org.beetl.sql.mapper.BaseMapper;
 
 /**
  * @since 2020-10-06

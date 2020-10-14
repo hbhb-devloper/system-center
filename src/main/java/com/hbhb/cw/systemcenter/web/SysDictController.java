@@ -7,7 +7,7 @@ import com.hbhb.cw.systemcenter.model.SysDict;
 import com.hbhb.cw.systemcenter.service.SysDictService;
 import com.hbhb.cw.systemcenter.vo.SysDictResVO;
 import com.hbhb.cw.systemcenter.vo.SysDictVO;
-import com.hbhb.springboot.webflux.view.Page;
+import com.hbhb.springboot.web.view.Page;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -16,14 +16,14 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
-import io.swagger.annotations.Api;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author xiaokang
  * @since 2020-07-15
  */
-@Api(tags = "字典相关")
+@Tag(name = "字典相关")
 @RestController
 @RequestMapping("/dict")
 @Slf4j

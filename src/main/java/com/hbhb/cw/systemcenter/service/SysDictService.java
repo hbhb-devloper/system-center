@@ -3,7 +3,7 @@ package com.hbhb.cw.systemcenter.service;
 import com.hbhb.cw.systemcenter.model.SysDict;
 import com.hbhb.cw.systemcenter.vo.SysDictResVO;
 import com.hbhb.cw.systemcenter.vo.SysDictVO;
-import com.hbhb.springboot.webflux.view.Page;
+import com.hbhb.springboot.web.view.Page;
 
 import java.util.List;
 

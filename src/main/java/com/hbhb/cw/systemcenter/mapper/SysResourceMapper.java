@@ -2,8 +2,7 @@ package com.hbhb.cw.systemcenter.mapper;
 
 import com.hbhb.cw.systemcenter.model.SysResource;
 
-import org.beetl.sql.core.annotatoin.Param;
-import org.beetl.sql.core.mapper.BaseMapper;
+import org.beetl.sql.mapper.BaseMapper;
 
 import java.util.List;
 
@@ -13,5 +12,5 @@ import java.util.List;
  */
 public interface SysResourceMapper extends BaseMapper<SysResource> {
 
-    List<String> selectUserPermsByType(Integer userId, List<String> rsTypes);
+    List<String> selectPermsByUserId(Integer userId);
 }

@@ -3,9 +3,8 @@ package com.hbhb.cw.systemcenter.mapper;
 import com.hbhb.cw.systemcenter.model.SysDict;
 import com.hbhb.cw.systemcenter.vo.SysDictResVO;
 
-import org.beetl.sql.core.annotatoin.Param;
 import org.beetl.sql.core.engine.PageQuery;
-import org.beetl.sql.core.mapper.BaseMapper;
+import org.beetl.sql.mapper.BaseMapper;
 
 import java.util.List;
 

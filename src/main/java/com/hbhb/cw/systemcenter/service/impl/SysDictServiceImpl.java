@@ -5,7 +5,7 @@ import com.hbhb.cw.systemcenter.model.SysDict;
 import com.hbhb.cw.systemcenter.service.SysDictService;
 import com.hbhb.cw.systemcenter.vo.SysDictResVO;
 import com.hbhb.cw.systemcenter.vo.SysDictVO;
-import com.hbhb.springboot.webflux.view.Page;
+import com.hbhb.springboot.web.view.Page;
 
 import org.beetl.sql.core.engine.PageQuery;
 import org.springframework.stereotype.Service;

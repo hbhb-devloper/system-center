@@ -2,8 +2,7 @@ package com.hbhb.cw.systemcenter.mapper;
 
 import com.hbhb.cw.systemcenter.model.SysRole;
 
-import org.beetl.sql.core.annotatoin.Param;
-import org.beetl.sql.core.mapper.BaseMapper;
+import org.beetl.sql.mapper.BaseMapper;
 
 import java.util.List;
 

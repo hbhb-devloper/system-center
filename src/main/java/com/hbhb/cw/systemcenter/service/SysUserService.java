@@ -1,8 +1,7 @@
 package com.hbhb.cw.systemcenter.service;
 
 import com.hbhb.cw.systemcenter.model.SysUser;
-
-import java.util.Set;
+import com.hbhb.cw.systemcenter.vo.SysUserInfo;
 
 /**
  * @author xiaokang
@@ -11,12 +10,13 @@ import java.util.Set;
 public interface SysUserService {
 
     /**
-     * 根据登录名获取用户信息
+     * 根据id获取用户信息
      */
-    SysUser getUserByUsername(String username);
+    SysUserInfo getUserById(Integer userId);
 
     /**
-     * 获取用户的权限集合
+     * 根据登录名获取用户信息
      */
-    Set<String> getUserAllPerms(Integer userId);
+    SysUser getUserByName(String username);
+
 }

@@ -1,17 +1,14 @@
 package com.hbhb.cw.systemcenter.service.impl;
 
-import com.hbhb.common.constant.SecurityConstant;
-import com.hbhb.cw.systemcenter.enums.ResourceType;
-import com.hbhb.cw.systemcenter.mapper.SysResourceMapper;
 import com.hbhb.cw.systemcenter.mapper.SysUserMapper;
 import com.hbhb.cw.systemcenter.model.SysUser;
-import com.hbhb.cw.systemcenter.service.SysRoleService;
+import com.hbhb.cw.systemcenter.service.SysResourceService;
 import com.hbhb.cw.systemcenter.service.SysUserService;
+import com.hbhb.cw.systemcenter.vo.SysUserInfo;
 
 import org.springframework.stereotype.Service;
 
-import java.util.HashSet;
-import java.util.Set;
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -25,28 +22,25 @@ public class SysUserServiceImpl implements SysUserService {
     @Resource
     private SysUserMapper sysUserMapper;
     @Resource
-    private SysResourceMapper sysResourceMapper;
-    @Resource
-    private SysRoleService sysRoleService;
+    private SysResourceService sysResourceService;
 
     @Override
-    public SysUser getUserByUsername(String username) {
+    public SysUserInfo getUserById(Integer userId) {
+        SysUser sysUser = sysUserMapper.single(userId);
+        List<String> perms = sysResourceService.getPermsByUserId(userId);
+        return SysUserInfo.builder()
+                .id(userId)
+                .userName(sysUser.getUserName())
+                .nickName(sysUser.getNickName())
+                .perms(perms)
+                .build();
+    }
+
+    @Override
+    public SysUser getUserByName(String username) {
         return sysUserMapper.createLambdaQuery()
                 .andEq(SysUser::getUserName, username)
                 .single();
     }
 
-    @Override
-    public Set<String> getUserAllPerms(Integer userId) {
-        Set<String> perms = new HashSet<>();
-        // 判断用户角色是否为管理员
-        boolean isAdmin = sysRoleService.isAdminRole(userId);
-        if (isAdmin) {
-            // 管理员拥有系统的全部权限
-            perms.add(SecurityConstant.ALL_PERMISSION.value());
-        } else {
-            perms.addAll(sysResourceMapper.selectUserPermsByType(userId, ResourceType.getAll()));
-        }
-        return perms;
-    }
 }

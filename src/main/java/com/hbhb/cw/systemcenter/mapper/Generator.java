@@ -1,43 +1,41 @@
 package com.hbhb.cw.systemcenter.mapper;
 
-import com.hbhb.beetl.gen.MapperCodeGen;
-
-import org.beetl.sql.core.ClasspathLoader;
-import org.beetl.sql.core.ConnectionSourceHelper;
-import org.beetl.sql.core.Interceptor;
+import org.beetl.core.GroupTemplate;
+import org.beetl.core.resource.ClasspathResourceLoader;
 import org.beetl.sql.core.SQLManager;
-import org.beetl.sql.core.UnderlinedNameConversion;
-import org.beetl.sql.core.db.MySqlStyle;
-import org.beetl.sql.ext.DebugInterceptor;
-import org.beetl.sql.ext.gen.GenConfig;
+import org.beetl.sql.gen.simple.BaseTemplateSourceBuilder;
 
+/**
+ * @author dxk
+ */
 public class Generator {
-    public static void main(String[] args) throws Exception {
-        String driver = "com.mysql.jdbc.Driver";
-        String url = "jdbc:mysql://mariadb.yeexun.com.cn/cw_test";
-        String userName = "zhcw";
-        String password = "zhcw@2020";
+    private static final String DRIVER = "com.mysql.jdbc.Driver";
+    private static final String URL = "jdbc:mysql://mariadb.yeexun.com.cn/cw_sys";
+    private static final String USERNAME = "zhcw";
+    private static final String PASSWORD = "zhcw@2020";
+    /**
+     * 数据库表名
+     */
+    private static final String TABLE_NAME = "sys_file";
 
-        // 生成model对应目录
-        String modelPkg = "com.hbhb.cw.systemcenter.model";
-        // 生成dao对应目录
-        String daoPkg = "com.hbhb.cw.systemcenter.mapper";
-        // 生成sql对应目录
-        String sqlPkg = "/sql";
-        // 数据库表名
-        String tableName = "sys_user";
-
-        SQLManager sqlManager = new SQLManager(new MySqlStyle(),
-                new ClasspathLoader(sqlPkg),
-                ConnectionSourceHelper.getSimple(driver, url, userName, password),
-                new UnderlinedNameConversion(),
-                new Interceptor[]{new DebugInterceptor()});
-        GenConfig config = new GenConfig("/gen/pojo.btl");
-        config.setImplSerializable(true);
-        config.setPropertyOrder(0);
-        MapperCodeGen mapper = new MapperCodeGen(daoPkg);
-        config.codeGens.add(mapper);
-
-        sqlManager.genPojoCode(tableName, modelPkg, config);
+    protected void initGroupTemplate() {
+        GroupTemplate groupTemplate = BaseTemplateSourceBuilder.getGroupTemplate();
+        ClasspathResourceLoader resourceLoader = new ClasspathResourceLoader("gens/");
+        groupTemplate.setResourceLoader(resourceLoader);
     }
+
+    public static void main(String[] args) {
+        SQLManager sqlManager = SQLManager.newBuilder(DRIVER, URL, USERNAME, PASSWORD).build();
+//        List<SourceBuilder> sourceBuilder = new ArrayList<>();
+//        sourceBuilder.add(new EntitySourceBuilder());
+//        sourceBuilder.add(new MapperSourceBuilder());
+//        SourceConfig config = new SourceConfig(sqlManager, sourceBuilder);
+//        //如果有错误，抛出异常而不是继续运行
+//        EntitySourceBuilder.getGroupTemplate().setErrorHandler(new ReThrowConsoleErrorHandler());
+//        ConsoleOnlyProject project = new ConsoleOnlyProject();
+////        SimpleMavenProject project = new SimpleMavenProject();
+//        config.gen(TABLE_NAME, project);
+    }
+
+    String daoPkg = "com.hbhb.cw.systemcenter.mapper";
 }
