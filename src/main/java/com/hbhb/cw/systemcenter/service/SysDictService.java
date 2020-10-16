@@ -3,7 +3,8 @@ package com.hbhb.cw.systemcenter.service;
 import com.hbhb.cw.systemcenter.model.SysDict;
 import com.hbhb.cw.systemcenter.vo.SysDictResVO;
 import com.hbhb.cw.systemcenter.vo.SysDictVO;
-import com.hbhb.springboot.web.view.Page;
+
+import org.beetl.sql.core.page.PageResult;
 
 import java.util.List;
 
@@ -15,8 +16,8 @@ public interface SysDictService {
     /**
      * 分页查询字典列表
      */
-    Page<SysDictResVO> pageDictByCond(long pageNum, long pageSize,
-                                      String dictTypeName, String dictLabel);
+    PageResult<SysDictResVO> pageDictByCond(Long pageNum, Integer pageSize,
+                                            String dictTypeName, String dictLabel);
 
     /**
      * 按条件查询对应的所有字典数据

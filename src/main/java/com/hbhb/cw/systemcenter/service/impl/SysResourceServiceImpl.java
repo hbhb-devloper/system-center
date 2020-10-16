@@ -1,10 +1,10 @@
 package com.hbhb.cw.systemcenter.service.impl;
 
-import com.hbhb.cw.systemcenter.constant.AuthConstant;
+import com.hbhb.core.constants.AuthConstant;
 import com.hbhb.cw.systemcenter.mapper.SysResourceMapper;
 import com.hbhb.cw.systemcenter.model.SysResource;
-import com.hbhb.cw.systemcenter.redis.RedisHelper;
 import com.hbhb.cw.systemcenter.service.SysResourceService;
+import com.hbhb.redis.component.RedisHelper;
 
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;

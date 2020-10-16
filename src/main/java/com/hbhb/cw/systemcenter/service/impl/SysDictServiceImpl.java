@@ -5,9 +5,10 @@ import com.hbhb.cw.systemcenter.model.SysDict;
 import com.hbhb.cw.systemcenter.service.SysDictService;
 import com.hbhb.cw.systemcenter.vo.SysDictResVO;
 import com.hbhb.cw.systemcenter.vo.SysDictVO;
-import com.hbhb.springboot.web.view.Page;
 
-import org.beetl.sql.core.engine.PageQuery;
+import org.beetl.sql.core.page.DefaultPageRequest;
+import org.beetl.sql.core.page.PageRequest;
+import org.beetl.sql.core.page.PageResult;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -25,11 +26,10 @@ public class SysDictServiceImpl implements SysDictService {
     private SysDictMapper sysDictMapper;
 
     @Override
-    public Page<SysDictResVO> pageDictByCond(long pageNum, long pageSize,
-                                             String dictTypeName, String dictLabel) {
-        PageQuery<SysDictResVO> pageQuery = new PageQuery<>(pageNum, pageSize);
-        sysDictMapper.selectPageByCond(pageQuery, dictTypeName, dictLabel);
-        return new Page<>(pageQuery.getList(), pageQuery.getTotalRow());
+    public PageResult<SysDictResVO> pageDictByCond(Long pageNum, Integer pageSize,
+                                                   String dictTypeName, String dictLabel) {
+        PageRequest<SysDictResVO> request = DefaultPageRequest.of(pageNum, pageSize);
+        return sysDictMapper.selectPageByCond(dictTypeName, dictLabel, request);
     }
 
     @Override

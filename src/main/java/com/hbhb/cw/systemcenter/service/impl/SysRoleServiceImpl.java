@@ -1,6 +1,6 @@
 package com.hbhb.cw.systemcenter.service.impl;
 
-import com.hbhb.common.constant.SecurityConstant;
+import com.hbhb.core.constants.AuthConstant;
 import com.hbhb.cw.systemcenter.enums.RoleType;
 import com.hbhb.cw.systemcenter.mapper.SysRoleMapper;
 import com.hbhb.cw.systemcenter.mapper.SysUserRoleMapper;
@@ -46,6 +46,6 @@ public class SysRoleServiceImpl implements SysRoleService {
         // 查询用户的所有RS角色
         List<SysRole> roles = sysRoleMapper.selectUserRolesByType(userId, RoleType.RELATE_RESOURCE.value());
         List<String> roleKeys = roles.stream().map(SysRole::getRoleKey).collect(Collectors.toList());
-        return roleKeys.contains(SecurityConstant.SUPER_ADMIN.value());
+        return roleKeys.contains(AuthConstant.SUPER_ADMIN.value());
     }
 }

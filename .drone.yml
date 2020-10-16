@@ -1,0 +1,76 @@
+kind: pipeline
+type: docker
+name: default
+
+steps:
+  # maven打包
+  - name: build
+    image: maven:3-jdk-8
+    volumes:
+      - name: maven_local_repo
+        path: /root/.m2
+    commands:
+      - mvn -v
+      - mvn clean -Pprd package -DskipTests=true -Dmaven.javadoc.skip=true
+
+  # docker镜像推送
+  - name: docker
+    image: plugins/docker
+    volumes:
+      - name: docker_sock
+        path: /var/run/docker.sock
+    settings:
+      username:
+        from_secret: docker_user
+      password:
+        from_secret: docker_pwd
+      mirror: https://wm9kcxms.mirror.aliyuncs.com
+      repo: registry-vpc.cn-hangzhou.aliyuncs.com/hbhb/system-center
+      registry: registry-vpc.cn-hangzhou.aliyuncs.com
+      tags: latest
+      dockerfile: ./Dockerfile
+
+  # ssh远程执行脚本
+  - name: deploy
+    image: appleboy/drone-ssh
+    settings:
+      host:
+        from_secret: ssh_host
+      port: 22
+      username: root
+      key:
+        from_secret: ssh_key
+      command_timeout: 3m
+      script_stop: false
+      script:
+        - cd ~
+        - docker-compose stop system-center
+        - docker-compose rm -f system-center
+        - docker rmi registry.cn-hangzhou.aliyuncs.com/hbhb/system-center
+        - docker-compose up -d system-center
+
+  # 钉钉通知
+  - name: dingtalk
+    image: lddsb/drone-dingtalk-message
+    settings:
+      token:
+        from_secret: dingtalk_token
+      type: markdown
+      tpl: ./markdown.tpl
+      tips_title: 新的构建已完成，请测试
+      message_color: true
+      success_color: 39D839
+      failure_color: E93939
+      tpl_build_status_success: passed
+      tpl_buaild_status_failure: failed
+      sha_link: true
+    when:
+      status: [failure, success]
+
+volumes:
+  - name: maven_local_repo
+    host:
+      path: /data/maven
+  - name: docker_sock
+    host:
+      path: /var/run/docker.sock
