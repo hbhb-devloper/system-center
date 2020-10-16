@@ -4,8 +4,8 @@ Configuration:
   Properties: # 定义全局变量
     Property:
       - name: log.path
-        value: /Users/dxk/Documents/logs
-      #        value: /app/logs
+        #        value: /Users/dxk/Documents/logs
+        value: /app/logs
       - name: log.level
         value: debug
       - name: log.pattern
