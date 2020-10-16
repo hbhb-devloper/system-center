@@ -57,7 +57,7 @@ spring:
   profiles: default
   cloud:
     consul:
-      #      host: consul.yeexun.com.cn
+#      host: consul.yeexun.com.cn
       host: ${host.docker0-ip}
       discovery:
         prefer-ip-address: true
@@ -72,7 +72,7 @@ spring:
   profiles: dev
   cloud:
     consul:
-      host: consul.yeexun.com.cn
+      host: ${host.proxy-ip}:10004
       discovery:
         instance-id: ${spring.application.name}-${host.dev-port}-${spring.cloud.client.ip-address}
         service-name: ${spring.application.name}
