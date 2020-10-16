@@ -25,7 +25,7 @@ steps:
       password:
         from_secret: docker_pwd
       mirror: https://wm9kcxms.mirror.aliyuncs.com
-      repo: registry-vpc.cn-hangzhou.aliyuncs.com/hbhb/system-center
+      repo: registry-vpc.cn-hangzhou.aliyuncs.com/hbhb/system-center-${DRONE_BRANCH}
       registry: registry-vpc.cn-hangzhou.aliyuncs.com
       tags: latest
       dockerfile: ./Dockerfile
@@ -44,10 +44,10 @@ steps:
       script_stop: false
       script:
         - cd ~
-        - docker-compose stop system-center
-        - docker-compose rm -f system-center
-        - docker rmi registry.cn-hangzhou.aliyuncs.com/hbhb/system-center
-        - docker-compose up -d system-center
+        - docker-compose stop system-center-${DRONE_BRANCH}
+        - docker-compose rm -f system-center-${DRONE_BRANCH}
+        - docker rmi registry.cn-hangzhou.aliyuncs.com/hbhb/system-center-${DRONE_BRANCH}
+        - docker-compose up -d system-center-${DRONE_BRANCH}
 
   # 钉钉通知
   - name: dingtalk
