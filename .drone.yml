@@ -11,7 +11,7 @@ steps:
         path: /root/.m2
     commands:
       - mvn -v
-      - mvn clean -Pprd package -DskipTests=true -Dmaven.javadoc.skip=true
+      - mvn clean -P${DRONE_BRANCH} package -DskipTests=true -Dmaven.javadoc.skip=true
 
   # docker镜像推送
   - name: docker
