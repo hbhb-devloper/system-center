@@ -2,8 +2,8 @@ package com.hbhb.cw.systemcenter.service.impl;
 
 import com.hbhb.core.constants.AuthConstant;
 import com.hbhb.cw.systemcenter.mapper.SysResourceMapper;
-import com.hbhb.cw.systemcenter.model.SysResource;
 import com.hbhb.cw.systemcenter.service.SysResourceService;
+import com.hbhb.cw.systemcenter.vo.SysResourceVO;
 import com.hbhb.redis.component.RedisHelper;
 
 import org.springframework.stereotype.Service;
@@ -36,11 +36,11 @@ public class SysResourceServiceImpl implements SysResourceService {
         // 先删除旧的map
         redisHelper.delete(AuthConstant.RESOURCE_ROLES_KEY.value());
 
-        List<SysResource> resources = sysResourceMapper.all();
+        List<SysResourceVO> resources = sysResourceMapper.selectAll();
         Optional.ofNullable(resources).orElse(new ArrayList<>()).forEach(resource -> {
             // 转换 roleId -> ROLE_{roleId}
-            List<String> roles = Optional.ofNullable(resource.getRoleIds()).orElse(new ArrayList<>())
-                    .stream().map(roleId -> AuthConstant.AUTHORITY_PREFIX.value() + roleId)
+            List<String> roles = Optional.ofNullable(resource.getSrr()).orElse(new ArrayList<>())
+                    .stream().map(srr -> AuthConstant.AUTHORITY_PREFIX.value() + srr.getRoleId())
                     .collect(Collectors.toList());
             if (!CollectionUtils.isEmpty(roles)) {
                 resourceRolesMap.put(resource.getApiPath(), roles);

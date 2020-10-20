@@ -15,10 +15,10 @@ selectPageByCond
     from sys_dict sd
         left join sys_dict_type sdt on sd.dict_type_id = sdt.id
     -- @where(){
-        -- @if(!isEmpty(dictTypeName)){
-            and sdt.dict_name like concat('%', #{dictTypeName}, '%')
+        -- @if(isNotEmpty(cond.dictTypeName)){
+            and sdt.dict_name like concat('%', #{cond.dictTypeName}, '%')
         -- @}
-        -- @if(!isEmpty(dictLabel)){
+        -- @if(isNotEmpty(cond.dictLabel)){
             and sd.dict_label like concat('%', #{dictLabel}, '%')
         -- @}
     -- @}
@@ -43,10 +43,10 @@ selectListByCond
     from sys_dict sd
         left join sys_dict_type sdt on sd.dict_type_id = sdt.id
     -- @where(){
-        -- @if(!isEmpty(dictType)){
+        -- @if(isNotEmpty(dictType)){
             and sdt.dict_type = #{dictType}
         -- @}
-        -- @if(!isEmpty(dictCode)){
+        -- @if(isNotEmpty(dictCode)){
             and sd.dict_code = #{dictCode}
         -- @}
     -- @}

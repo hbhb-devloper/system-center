@@ -47,9 +47,12 @@ host:
   proxy-ip: 47.96.83.55
   # 正式环境服务器ip（使用docker0的ip）
   docker0-ip: 172.17.0.1
-  dev-port: 10012
-  test-port: 10013
-  prd-port: 10017
+
+port:
+  default: 10057
+  dev: 10012
+  test: 10013
+  prd: 10017
 
 ################### 本地环境配置 ###################
 ---
@@ -57,14 +60,13 @@ spring:
   profiles: default
   cloud:
     consul:
-#      host: consul.yeexun.com.cn
-      host: ${host.docker0-ip}
+      host: consul.yeexun.com.cn
       discovery:
         prefer-ip-address: true
         instance-id: ${spring.application.name}-${server.port}-${spring.cloud.client.ip-address}
         service-name: ${spring.application.name}
         # 本地调试使用frp代理ip
-        health-check-url: http://${host.docker0-ip}:10057/actuator/health
+        health-check-url: http://${host.docker0-ip}:${port.default}/actuator/health
 
 ################### 开发环境配置 ###################
 ---
@@ -76,7 +78,7 @@ spring:
       discovery:
         instance-id: ${spring.application.name}-${host.dev-port}-${spring.cloud.client.ip-address}
         service-name: ${spring.application.name}
-        health-check-url: http://${host.proxy-ip}:${host.dev-port}/actuator/health
+        health-check-url: http://${host.proxy-ip}:${port.dev}/actuator/health
         # 开发环境使用代理ip
         hostname: ${host.proxy-ip}
         port: ${host.dev-port}
@@ -91,7 +93,7 @@ spring:
       discovery:
         instance-id: ${spring.application.name}-${host.test-port}-${spring.cloud.client.ip-address}
         service-name: ${spring.application.name}
-        health-check-url: http://${host.proxy-ip}:${host.test-port}/actuator/health
+        health-check-url: http://${host.proxy-ip}:${port.test}/actuator/health
         # 测试环境使用代理ip
         hostname: ${host.proxy-ip}
         port: ${host.test-port}
@@ -106,7 +108,7 @@ spring:
       discovery:
         instance-id: ${spring.application.name}-${host.prd-port}-${spring.cloud.client.ip-address}
         service-name: ${spring.application.name}
-        health-check-url: http://${host.docker0-ip}:${host.prd-port}/actuator/health
+        health-check-url: http://${host.docker0-ip}:${port.prd}/actuator/health
         # 正式环境使用docker0
         hostname: ${host.docker0-ip}
         port: ${host.prd-port}

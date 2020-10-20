@@ -1,8 +1,8 @@
 package com.hbhb.cw.systemcenter.web;
 
+import com.hbhb.cw.systemcenter.api.MailApi;
 import com.hbhb.cw.systemcenter.service.MailService;
 
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,14 +20,14 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "发送邮件")
 @RestController
 @RequestMapping("/mail")
-public class MailController {
+public class MailController implements MailApi {
 
     @Resource
     private MailService mailService;
 
     @Operation(summary = "发送邮件")
-    @PostMapping("/send")
-    public void sendMail(
+    @Override
+    public void postMail(
             @Parameter(description = "接收人", required = true) @RequestParam String receiver,
             @Parameter(description = "标题", required = true) @RequestParam String title,
             @Parameter(description = "内容", required = true) @RequestParam String content) {
