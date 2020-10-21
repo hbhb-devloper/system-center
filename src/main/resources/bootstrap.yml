@@ -76,7 +76,7 @@ spring:
     consul:
       host: consul.yeexun.com.cn
       discovery:
-        instance-id: ${spring.application.name}-${host.dev-port}-${spring.cloud.client.ip-address}
+        instance-id: ${spring.application.name}-${port.dev}-${spring.cloud.client.ip-address}
         service-name: ${spring.application.name}
         health-check-url: http://${host.proxy-ip}:${port.dev}/actuator/health
         # 开发环境使用代理ip
@@ -91,7 +91,7 @@ spring:
     consul:
       host: consul.yeexun.com.cn
       discovery:
-        instance-id: ${spring.application.name}-${host.test-port}-${spring.cloud.client.ip-address}
+        instance-id: ${spring.application.name}-${port.test}-${spring.cloud.client.ip-address}
         service-name: ${spring.application.name}
         health-check-url: http://${host.proxy-ip}:${port.test}/actuator/health
         # 测试环境使用代理ip
@@ -106,7 +106,7 @@ spring:
     consul:
       host: ${host.docker0-ip}
       discovery:
-        instance-id: ${spring.application.name}-${host.prd-port}-${spring.cloud.client.ip-address}
+        instance-id: ${spring.application.name}-${port.prd}-${spring.cloud.client.ip-address}
         service-name: ${spring.application.name}
         health-check-url: http://${host.docker0-ip}:${port.prd}/actuator/health
         # 正式环境使用docker0
