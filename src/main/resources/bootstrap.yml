@@ -81,7 +81,7 @@ spring:
         health-check-url: http://${host.proxy-ip}:${port.dev}/actuator/health
         # 开发环境使用代理ip
         hostname: ${host.proxy-ip}
-        port: ${host.dev-port}
+        port: ${port.dev}
 
 ################### 测试环境配置 ###################
 ---
@@ -96,7 +96,7 @@ spring:
         health-check-url: http://${host.proxy-ip}:${port.test}/actuator/health
         # 测试环境使用代理ip
         hostname: ${host.proxy-ip}
-        port: ${host.test-port}
+        port: ${port.test}
 
 ################### 正式环境配置 ###################
 ---
@@ -111,4 +111,4 @@ spring:
         health-check-url: http://${host.docker0-ip}:${port.prd}/actuator/health
         # 正式环境使用docker0
         hostname: ${host.docker0-ip}
-        port: ${host.prd-port}
+        port: ${port.prd}
