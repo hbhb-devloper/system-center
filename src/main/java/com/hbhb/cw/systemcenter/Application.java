@@ -18,7 +18,7 @@ import io.swagger.v3.oas.annotations.servers.Server;
 @EnableFeignClients
 @SpringCloudApplication
 @ComponentScan("com.hbhb")
-@OpenAPIDefinition(servers = {@Server(url = "https://gateway.yeexun.com.cn")})
+@OpenAPIDefinition(servers = {@Server(url = "${springdoc.server-url}")})
 public class Application {
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
