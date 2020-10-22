@@ -41,9 +41,6 @@ management:
       exposure:
         include: '*'
 
-springdoc:
-  server-url: https://gateway.yeexun.com.cn/@env@/system
-
 # 宿主机相关配置
 host:
   # docker0地址
