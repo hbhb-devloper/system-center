@@ -7,6 +7,9 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
+import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import io.swagger.v3.oas.annotations.servers.Server;
+
 /**
  * @author dxk
  */
@@ -15,6 +18,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableFeignClients
 @SpringCloudApplication
 @ComponentScan("com.hbhb")
+@OpenAPIDefinition(servers = {@Server(url = "https://gateway.yeexun.com.cn")})
 public class Application {
     public static void main(String[] args) {
         SpringApplication.run(Application.class, args);
