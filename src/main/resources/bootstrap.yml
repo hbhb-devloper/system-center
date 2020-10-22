@@ -43,16 +43,16 @@ management:
 
 # 宿主机相关配置
 host:
-  # 开发/测试环境服务器ip
-  proxy-ip: 47.96.83.55
-  # 正式环境服务器ip（使用docker0的ip）
-  docker0-ip: 172.17.0.1
+  # docker0地址
+  docker0: 172.17.0.1
+  # 代理ip（解决docker容器内部无法访问宿主机ip的问题）
+  proxy: 47.96.83.55
 
 port:
   default: 10057
   dev: 10012
   test: 10013
-  prd: 10017
+  prd: 10004
 
 ################### 本地环境配置 ###################
 ---
@@ -66,7 +66,7 @@ spring:
         instance-id: ${spring.application.name}-${server.port}-${spring.cloud.client.ip-address}
         service-name: ${spring.application.name}
         # 本地调试使用frp代理ip
-        health-check-url: http://${host.docker0-ip}:${port.default}/actuator/health
+        health-check-url: http://${host.docker0}:${port.default}/actuator/health
 
 ################### 开发环境配置 ###################
 ---
@@ -78,9 +78,9 @@ spring:
       discovery:
         instance-id: ${spring.application.name}-${port.dev}-${spring.cloud.client.ip-address}
         service-name: ${spring.application.name}
-        health-check-url: http://${host.proxy-ip}:${port.dev}/actuator/health
+        health-check-url: http://${host.proxy}:${port.dev}/actuator/health
         # 开发环境使用代理ip
-        hostname: ${host.proxy-ip}
+        hostname: ${host.proxy}
         port: ${port.dev}
 
 ################### 测试环境配置 ###################
@@ -93,9 +93,9 @@ spring:
       discovery:
         instance-id: ${spring.application.name}-${port.test}-${spring.cloud.client.ip-address}
         service-name: ${spring.application.name}
-        health-check-url: http://${host.proxy-ip}:${port.test}/actuator/health
+        health-check-url: http://${host.proxy}:${port.test}/actuator/health
         # 测试环境使用代理ip
-        hostname: ${host.proxy-ip}
+        hostname: ${host.proxy}
         port: ${port.test}
 
 ################### 正式环境配置 ###################
@@ -104,11 +104,11 @@ spring:
   profiles: prd
   cloud:
     consul:
-      host: ${host.docker0-ip}
+      host: ${host.docker0}
       discovery:
         instance-id: ${spring.application.name}-${port.prd}-${spring.cloud.client.ip-address}
         service-name: ${spring.application.name}
-        health-check-url: http://${host.docker0-ip}:${port.prd}/actuator/health
+        health-check-url: http://${host.docker0}:${port.prd}/actuator/health
         # 正式环境使用docker0
-        hostname: ${host.docker0-ip}
+        hostname: ${host.docker0}
         port: ${port.prd}
