@@ -10,7 +10,6 @@ import com.hbhb.cw.systemcenter.vo.SysDictVO;
 
 import org.beetl.sql.core.page.PageResult;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
@@ -37,11 +36,10 @@ public class SysDictController implements SysDictApi {
 
     @Operation(summary = "分页获取字典列表")
     @Override
-    public PageResult<SysDictResVO> getDictList(
-            @Parameter(description = "页码，默认为1") @RequestParam(required = false) Long pageNum,
-            @Parameter(description = "每页数量，默认为10") @RequestParam(required = false) Integer pageSize,
-            @Parameter(description = "字典类型名称（模糊查询）") @RequestParam(required = false) String dictTypeName,
-            @Parameter(description = "字典标签（模糊查询）") @RequestParam(required = false) String dictLabel) {
+    public PageResult<SysDictResVO> getDictList(@Parameter(description = "页码，默认为1") Long pageNum,
+                                                @Parameter(description = "每页数量，默认为10") Integer pageSize,
+                                                @Parameter(description = "字典类型名称（模糊查询）") String dictTypeName,
+                                                @Parameter(description = "字典标签（模糊查询）") String dictLabel) {
         pageNum = pageNum == null ? 1 : pageNum;
         pageSize = pageSize == null ? 10 : pageSize;
         return sysDictService.pageDictByCond(pageNum, pageSize, dictTypeName, dictLabel);
