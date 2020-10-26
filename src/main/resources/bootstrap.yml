@@ -1,8 +1,5 @@
 server:
   port: 8887
-  # 启用压缩（从终端到该实例）
-  compression:
-    enabled: true
 
 spring:
   profiles:
