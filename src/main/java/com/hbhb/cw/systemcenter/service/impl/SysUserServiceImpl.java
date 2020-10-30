@@ -33,6 +33,7 @@ public class SysUserServiceImpl implements SysUserService {
                 .userName(sysUser.getUserName())
                 .nickName(sysUser.getNickName())
                 .perms(perms)
+                .unitId(sysUser.getUnitId())
                 .build();
     }
 
