@@ -135,7 +135,7 @@ public class FileUtil {
     /**
      * 递归删除指定文件或文件夹
      */
-    private static void deleteFile(File file) {
+    public static void deleteFile(File file) {
         if (file.isDirectory()) {
             File[] files = file.listFiles();
             if (files != null) {

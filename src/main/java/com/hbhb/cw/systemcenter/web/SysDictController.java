@@ -92,4 +92,11 @@ public class SysDictController implements SysDictApi {
     public List<SysDictVO> getProjectVatRate() {
         return sysDictService.listDictByCond(DictType.BUDGET.value(), DictCode.BUDGET_PROJECT_VAT_RATES.value());
     }
+
+    @Operation(summary = "迁改-赔补状态")
+    @Override
+    public List<SysDictVO> getCompensationSate() {
+        return sysDictService.listDictByCond(DictType.RELOCATION.value(), DictCode.RELOCATION_PROJECT_COMPENSATION.value());
+    }
+
 }
