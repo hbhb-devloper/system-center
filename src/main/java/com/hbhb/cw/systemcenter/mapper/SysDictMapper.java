@@ -2,10 +2,9 @@ package com.hbhb.cw.systemcenter.mapper;
 
 import com.hbhb.cw.systemcenter.model.SysDict;
 import com.hbhb.cw.systemcenter.vo.SysDictResVO;
-
+import com.hbhb.web.beetlsql.BaseMapper;
 import org.beetl.sql.core.page.PageRequest;
 import org.beetl.sql.core.page.PageResult;
-import org.beetl.sql.mapper.BaseMapper;
 
 import java.util.List;
 

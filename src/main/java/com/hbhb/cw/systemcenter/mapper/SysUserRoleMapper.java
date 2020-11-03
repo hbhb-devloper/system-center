@@ -1,8 +1,7 @@
 package com.hbhb.cw.systemcenter.mapper;
 
 import com.hbhb.cw.systemcenter.model.SysUserRole;
-
-import org.beetl.sql.mapper.BaseMapper;
+import com.hbhb.web.beetlsql.BaseMapper;
 
 /**
  * @author xiaokang

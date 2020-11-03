@@ -1,6 +1,7 @@
 package com.hbhb.cw.systemcenter.web;
 
 import com.hbhb.cw.systemcenter.api.SysFileApi;
+import com.hbhb.cw.systemcenter.enums.FileType;
 import com.hbhb.cw.systemcenter.service.FileService;
 import com.hbhb.cw.systemcenter.vo.FileDetailVO;
 import com.hbhb.cw.systemcenter.vo.FileResVO;
@@ -27,12 +28,14 @@ public class FileController implements SysFileApi {
     @Override
     @Operation(summary = "多文件上传")
     public List<FileDetailVO> uploadFileList(MultipartFile[] multipartFiles, Integer bizType) {
+        bizType = bizType == null ? FileType.SYSTEM_FILE.value() : bizType;
         return fileService.uploadList(multipartFiles, bizType);
     }
 
     @Override
     public FileDetailVO uploadFile(MultipartFile file, Integer bizType) {
-        return fileService.upload(file,bizType);
+        bizType = bizType == null ? FileType.SYSTEM_FILE.value() : bizType;
+        return fileService.upload(file, bizType);
     }
 
     @Operation(summary = "文件列表")
