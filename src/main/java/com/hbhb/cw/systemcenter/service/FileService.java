@@ -1,8 +1,8 @@
 package com.hbhb.cw.systemcenter.service;
 
+import com.hbhb.cw.systemcenter.model.SysFile;
 import com.hbhb.cw.systemcenter.vo.FileDetailVO;
 import com.hbhb.cw.systemcenter.vo.FileResVO;
-
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
@@ -35,4 +35,10 @@ public interface FileService {
      */
     void remove(File file);
 
+    /**
+     * 跟据文件id批量获取附件信息
+     * @param list 文件id
+     * @return 文件信息
+     */
+    List<SysFile> getFileInfoList(List<Integer> list);
 }

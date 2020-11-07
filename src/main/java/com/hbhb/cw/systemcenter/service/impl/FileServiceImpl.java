@@ -55,20 +55,22 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public FileDetailVO upload(MultipartFile file,Integer bizType) {
-        SysFile files = new SysFile();
+    public FileDetailVO upload(MultipartFile file, Integer bizType) {
         FileDetailVO vo = FileUtil.uploadFile(file, filePath);
+        SysFile files = new SysFile();
         if (vo != null) {
-            SysFile.builder()
+            files = SysFile.builder()
                     .fileName(vo.getFileName())
                     .filePath(fileDomain + File.separator + vo.getFileName())
                     .fileSize(vo.getFileSize())
                     .uploadTime(new Date())
                     .bizType(bizType)
                     .build();
-        }
-        // 保存文件信息
+
+        }   // 保存文件信息
         sysFileMapper.insert(files);
+        assert vo != null;
+        vo.setId(files.getId());
         // 返回前端所需的文件信息
         return vo;
     }
@@ -86,5 +88,11 @@ public class FileServiceImpl implements FileService {
     @Override
     public void remove(File file) {
         FileUtil.deleteFile(file);
+    }
+
+    @Override
+    public List<SysFile> getFileInfoList(List<Integer> list) {
+
+        return sysFileMapper.selectByIds(list);
     }
 }

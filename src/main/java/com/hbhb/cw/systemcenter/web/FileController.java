@@ -2,6 +2,7 @@ package com.hbhb.cw.systemcenter.web;
 
 import com.hbhb.cw.systemcenter.api.SysFileApi;
 import com.hbhb.cw.systemcenter.enums.FileType;
+import com.hbhb.cw.systemcenter.model.SysFile;
 import com.hbhb.cw.systemcenter.service.FileService;
 import com.hbhb.cw.systemcenter.vo.FileDetailVO;
 import com.hbhb.cw.systemcenter.vo.FileResVO;
@@ -54,5 +55,11 @@ public class FileController implements SysFileApi {
     @Override
     public void remove(File file) {
         fileService.remove(file);
+    }
+
+    @Operation(summary = "根据文件id批量查询文件信息")
+    @Override
+    public List<SysFile> getFileList(List<Integer> fileIds) {
+        return fileService.getFileInfoList(fileIds);
     }
 }
