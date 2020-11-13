@@ -9,6 +9,7 @@ import com.hbhb.cw.systemcenter.vo.FileResVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -17,6 +18,9 @@ import javax.annotation.Resource;
 import java.io.File;
 import java.util.List;
 
+/**
+ * @author wangxiaogang
+ */
 @Tag(name = "文件上传")
 @RestController
 @RequestMapping("/file")
@@ -25,6 +29,9 @@ public class FileController implements SysFileApi {
 
     @Resource
     private FileService fileService;
+
+    @Value("${file.upload.template}")
+    private String filePath;
 
     @Override
     @Operation(summary = "多文件上传")
@@ -61,5 +68,10 @@ public class FileController implements SysFileApi {
     @Override
     public List<SysFile> getFileList(List<Integer> fileIds) {
         return fileService.getFileInfoList(fileIds);
+    }
+
+    @Override
+    public String getFileTemplatePath() {
+        return filePath;
     }
 }
