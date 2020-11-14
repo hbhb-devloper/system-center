@@ -5,12 +5,12 @@ import com.hbhb.cw.systemcenter.model.SysUser;
 import com.hbhb.cw.systemcenter.service.SysResourceService;
 import com.hbhb.cw.systemcenter.service.SysUserService;
 import com.hbhb.cw.systemcenter.vo.SysUserInfo;
-
+import com.hbhb.cw.systemcenter.vo.SysUserVO;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * @author xiaokang
@@ -42,6 +42,22 @@ public class SysUserServiceImpl implements SysUserService {
         return sysUserMapper.createLambdaQuery()
                 .andEq(SysUser::getUserName, username)
                 .single();
+    }
+
+    @Override
+    public List<SysUserVO> getUserList(List<Integer> userIds) {
+        List<SysUser> sysUsers = sysUserMapper.selectByIds(userIds);
+        List<SysUserVO> userVOList = new ArrayList<>();
+        for (SysUser item : sysUsers) {
+            SysUserVO userVO = SysUserVO.builder()
+                    .email(item.getEmail())
+                    .nickName(item.getNickName())
+                    .id(item.getId())
+                    .unitId(item.getUnitId())
+                    .build();
+            userVOList.add(userVO);
+        }
+        return userVOList;
     }
 
 }

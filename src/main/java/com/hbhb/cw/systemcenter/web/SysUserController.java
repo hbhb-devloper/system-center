@@ -6,18 +6,16 @@ import com.hbhb.cw.systemcenter.service.SysResourceService;
 import com.hbhb.cw.systemcenter.service.SysRoleService;
 import com.hbhb.cw.systemcenter.service.SysUserService;
 import com.hbhb.cw.systemcenter.vo.SysUserInfo;
-
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
-
-import javax.annotation.Resource;
-
+import com.hbhb.cw.systemcenter.vo.SysUserVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
+import javax.annotation.Resource;
+import java.util.List;
 
 /**
  * @author xiaokang
@@ -58,5 +56,10 @@ public class SysUserController implements SysUserApi {
     @Override
     public List<String> getUserPerms(@Parameter(description = "用户id", required = true) Integer userId) {
         return sysResourceService.getPermsByUserId(userId);
+    }
+
+    @Override
+    public List<SysUserVO> getUserList(List<Integer> userIds) {
+        return sysUserService.getUserList(userIds);
     }
 }
