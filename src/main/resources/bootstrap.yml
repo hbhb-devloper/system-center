@@ -49,7 +49,7 @@ port:
   default: 10069
   dev: 10012
   test: 10013
-  prd: 10004
+  prd: 10017
 
 ################### 本地环境配置 ###################
 ---
@@ -105,9 +105,8 @@ spring:
     consul:
       host: ${host.docker0}
       discovery:
-        prefer-ip-address: true
         instance-id: ${spring.application.name}-${port.prd}-${spring.cloud.client.ip-address}
         service-name: ${spring.application.name}
-        health-check-url: http://${host.proxy}:${port.prd}/actuator/health
-#        hostname: ${host.proxy}
-#        port: ${port.prd}
+        health-check-url: http://${host.docker0}:${port.prd}/actuator/health
+        hostname: ${host.docker0}
+        port: ${port.prd}
