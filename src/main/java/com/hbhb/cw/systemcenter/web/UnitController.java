@@ -4,13 +4,11 @@ import com.hbhb.cw.systemcenter.api.UnitApi;
 import com.hbhb.cw.systemcenter.model.Unit;
 import com.hbhb.cw.systemcenter.service.SysUserService;
 import com.hbhb.cw.systemcenter.service.UnitService;
-import com.hbhb.cw.systemcenter.vo.SelectInputVO;
-import com.hbhb.cw.systemcenter.vo.SysUserInfo;
-import com.hbhb.cw.systemcenter.vo.TreeSelectVO;
-import com.hbhb.cw.systemcenter.vo.TreeSelectWrapVO;
+import com.hbhb.cw.systemcenter.vo.*;
 import com.hbhb.web.annotation.UserId;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,8 +25,15 @@ public class UnitController implements UnitApi {
     @Resource
     private UnitService unitService;
 
+    @Value("${cw.unit-id.hangzhou}")
+    private Integer hangzhou;
+
+    @Value("${cw.unit-id.benbu}")
+    private Integer benbu;
+
     @Resource
     private SysUserService sysUserService;
+
     @Override
     public List<Unit> getAllUnitList() {
         return unitService.getAllUnitList();
@@ -79,5 +84,13 @@ public class UnitController implements UnitApi {
     @Override
     public List<SelectInputVO> getShortName() {
         return null;
+    }
+
+    @Override
+    public ParentVO getParentUnit() {
+        ParentVO parentVO = new ParentVO();
+        parentVO.setHangzhou(hangzhou);
+        parentVO.setBenbu(benbu);
+        return parentVO;
     }
 }
