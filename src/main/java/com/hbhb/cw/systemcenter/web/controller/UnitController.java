@@ -84,7 +84,6 @@ public class UnitController implements UnitApi {
 
     @Override
     public void deleteUnit(Integer integer) {
-
     }
 
     @Override
