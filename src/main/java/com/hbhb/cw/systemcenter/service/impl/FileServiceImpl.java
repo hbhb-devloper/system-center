@@ -1,28 +1,29 @@
 package com.hbhb.cw.systemcenter.service.impl;
 
-import com.hbhb.cw.systemcenter.mapper.SysFileMapper;
-import com.hbhb.cw.systemcenter.model.SysFile;
+import com.hbhb.cw.systemcenter.mapper.FileMapper;
+import com.hbhb.cw.systemcenter.model.File;
 import com.hbhb.cw.systemcenter.service.FileService;
 import com.hbhb.cw.systemcenter.util.FileUtil;
-import com.hbhb.cw.systemcenter.vo.FileDetailVO;
-import com.hbhb.cw.systemcenter.vo.FileResVO;
+import com.hbhb.cw.systemcenter.vo.FileVO;
+import com.hbhb.cw.systemcenter.web.vo.FileResVO;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.annotation.Resource;
+
 @Service
 public class FileServiceImpl implements FileService {
 
     @Resource
-    private SysFileMapper sysFileMapper;
+    private FileMapper fileMapper;
 
     @Value("${file.download.domain}")
     private String fileDomain;
@@ -30,22 +31,22 @@ public class FileServiceImpl implements FileService {
     private String filePath;
 
     @Override
-    public List<FileDetailVO> uploadList(MultipartFile[] multipartFile, Integer bizType) {
+    public List<FileVO> uploadList(MultipartFile[] multipartFile, Integer bizType) {
         Date now = new Date();
-        List<SysFile> files = new ArrayList<>();
-        List<FileDetailVO> voList = FileUtil.uploadFileList(multipartFile, filePath);
-        voList.forEach(vo -> files.add(SysFile.builder()
+        List<File> files = new ArrayList<>();
+        List<FileVO> voList = FileUtil.uploadFileList(multipartFile, filePath);
+        voList.forEach(vo -> files.add(File.builder()
                 .fileName(vo.getFileName())
-                .filePath(fileDomain + File.separator + vo.getFileName())
+                .filePath(fileDomain + java.io.File.separator + vo.getFileName())
                 .fileSize(vo.getFileSize())
                 .uploadTime(now)
                 .bizType(bizType)
                 .build()));
         // 保存文件信息
-        sysFileMapper.insertBatch(files);
+        fileMapper.insertBatch(files);
         // 返回前端所需的文件信息
         Map<String, Long> fileMap = files.stream().collect(
-                Collectors.toMap(SysFile::getFileName, SysFile::getId));
+                Collectors.toMap(File::getFileName, File::getId));
         voList.forEach(vo -> {
             if (fileMap.containsKey(vo.getFileName())) {
                 vo.setId(fileMap.get(vo.getFileName()));
@@ -55,44 +56,36 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public FileDetailVO upload(MultipartFile file, Integer bizType) {
-        FileDetailVO vo = FileUtil.uploadFile(file, filePath);
-        SysFile files = new SysFile();
+    public FileVO upload(MultipartFile file, Integer bizType) {
+        FileVO vo = FileUtil.uploadFile(file, filePath);
         if (vo != null) {
-            files = SysFile.builder()
+            File insertFile = File.builder()
                     .fileName(vo.getFileName())
-                    .filePath(fileDomain + File.separator + vo.getFileName())
+                    .filePath(fileDomain + java.io.File.separator + vo.getFileName())
                     .fileSize(vo.getFileSize())
                     .uploadTime(new Date())
                     .bizType(bizType)
                     .build();
-
-        }   // 保存文件信息
-        sysFileMapper.insert(files);
-        assert vo != null;
-        vo.setId(files.getId());
-        // 返回前端所需的文件信息
+            // 保存文件信息
+            fileMapper.insert(insertFile);
+            // 将主键id返回
+            vo.setId(insertFile.getId());
+        }
         return vo;
     }
 
     @Override
     public List<FileResVO> getFileList(Integer type) {
-        return sysFileMapper.selectListByType(type);
+        return fileMapper.selectListByType(type);
     }
 
     @Override
     public void deleteFile(Long id) {
-        sysFileMapper.deleteById(id);
+        fileMapper.deleteById(id);
     }
 
     @Override
-    public void remove(File file) {
-        FileUtil.deleteFile(file);
-    }
-
-    @Override
-    public List<SysFile> getFileInfoList(List<Integer> list) {
-
-        return sysFileMapper.selectByIds(list);
+    public List<File> getFileInfoBatch(List<Integer> list) {
+        return fileMapper.selectByIds(list);
     }
 }

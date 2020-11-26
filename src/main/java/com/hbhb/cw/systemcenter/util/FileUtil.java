@@ -1,8 +1,8 @@
 package com.hbhb.cw.systemcenter.util;
 
-import com.hbhb.cw.systemcenter.enums.FileErrorCode;
+import com.hbhb.cw.systemcenter.enums.code.FileErrorCode;
 import com.hbhb.cw.systemcenter.exception.FileException;
-import com.hbhb.cw.systemcenter.vo.FileDetailVO;
+import com.hbhb.cw.systemcenter.vo.FileVO;
 
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -32,8 +32,8 @@ public class FileUtil {
     /**
      * 上传多个文件
      */
-    public static List<FileDetailVO> uploadFileList(MultipartFile[] files, String filePath) {
-        List<FileDetailVO> list = new ArrayList<>();
+    public static List<FileVO> uploadFileList(MultipartFile[] files, String filePath) {
+        List<FileVO> list = new ArrayList<>();
         for (MultipartFile file : files) {
             list.add(uploadFile(file, filePath));
         }
@@ -43,7 +43,7 @@ public class FileUtil {
     /**
      * 上传单个文件
      */
-    public static FileDetailVO uploadFile(MultipartFile file, String filePath) {
+    public static FileVO uploadFile(MultipartFile file, String filePath) {
         if (file == null) {
             throw new FileException(FileErrorCode.UPLOAD_FILE_IS_EMPTY);
         }
@@ -80,7 +80,7 @@ public class FileUtil {
         try {
             Files.copy(file.getInputStream(), Paths.get(String.valueOf(destFilePath)));
             // 返回文件参数
-            return FileDetailVO.builder()
+            return FileVO.builder()
                     .fileName(destFileName.toString())
                     .fileSize(new DecimalFormat("#,###").format(
                             Float.parseFloat(String.valueOf(file.getSize() / 1024))) + " KB")

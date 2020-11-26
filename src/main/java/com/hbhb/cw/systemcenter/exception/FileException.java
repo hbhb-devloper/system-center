@@ -1,7 +1,7 @@
 package com.hbhb.cw.systemcenter.exception;
 
 import com.hbhb.core.bean.MessageConvert;
-import com.hbhb.cw.systemcenter.enums.FileErrorCode;
+import com.hbhb.cw.systemcenter.enums.code.FileErrorCode;
 import com.hbhb.web.exception.BusinessException;
 
 import lombok.Getter;

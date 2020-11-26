@@ -1,11 +1,11 @@
 package com.hbhb.cw.systemcenter.service;
 
-import com.hbhb.cw.systemcenter.model.SysFile;
-import com.hbhb.cw.systemcenter.vo.FileDetailVO;
-import com.hbhb.cw.systemcenter.vo.FileResVO;
+import com.hbhb.cw.systemcenter.model.File;
+import com.hbhb.cw.systemcenter.vo.FileVO;
+import com.hbhb.cw.systemcenter.web.vo.FileResVO;
+
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.util.List;
 
 public interface FileService {
@@ -13,12 +13,12 @@ public interface FileService {
     /**
      * 多附件上传
      */
-    List<FileDetailVO> uploadList(MultipartFile[] files,Integer bizType);
+    List<FileVO> uploadList(MultipartFile[] files, Integer bizType);
 
     /**
      * 单文件上传
      */
-    FileDetailVO upload(MultipartFile files,Integer bizType);
+    FileVO upload(MultipartFile files, Integer bizType);
 
     /**
      * 跟据类型获取文件列表
@@ -31,14 +31,7 @@ public interface FileService {
     void deleteFile(Long id);
 
     /**
-     * 移除文件
+     * 按文件id批量获取附件信息
      */
-    void remove(File file);
-
-    /**
-     * 跟据文件id批量获取附件信息
-     * @param list 文件id
-     * @return 文件信息
-     */
-    List<SysFile> getFileInfoList(List<Integer> list);
+    List<File> getFileInfoBatch(List<Integer> list);
 }

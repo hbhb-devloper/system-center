@@ -1,7 +1,7 @@
 package com.hbhb.cw.systemcenter.exception;
 
 import com.hbhb.core.bean.MessageConvert;
-import com.hbhb.cw.systemcenter.enums.UserErrorCode;
+import com.hbhb.cw.systemcenter.enums.code.UserErrorCode;
 import com.hbhb.web.exception.BusinessException;
 
 import lombok.Getter;
