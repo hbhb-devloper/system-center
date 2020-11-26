@@ -44,10 +44,10 @@ selectListByCond
         left join dict_type dt on d.dict_type_id = dt.id
     -- @where(){
         -- @if(isNotEmpty(dictType)){
-            and dt.dict_type = #{dictType}
+            and dt.type_name = #{dictType}
         -- @}
         -- @if(isNotEmpty(dictCode)){
-            and d.dict_code = #{dictCode}
+            and d.type_code = #{dictCode}
         -- @}
     -- @}
     order by d.sort_num
