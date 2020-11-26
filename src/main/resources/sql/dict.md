@@ -47,7 +47,7 @@ selectListByCond
             and dt.type_name = #{dictType}
         -- @}
         -- @if(isNotEmpty(dictCode)){
-            and d.type_code = #{dictCode}
+            and d.dict_code = #{dictCode}
         -- @}
     -- @}
     order by d.sort_num
