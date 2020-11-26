@@ -44,7 +44,7 @@ selectListByCond
         left join dict_type dt on d.dict_type_id = dt.id
     -- @where(){
         -- @if(isNotEmpty(dictType)){
-            and dt.type_name = #{dictType}
+            and dt.type_code = #{dictType}
         -- @}
         -- @if(isNotEmpty(dictCode)){
             and d.dict_code = #{dictCode}
