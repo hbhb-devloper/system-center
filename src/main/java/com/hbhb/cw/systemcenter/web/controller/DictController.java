@@ -1,10 +1,9 @@
 package com.hbhb.cw.systemcenter.web.controller;
 
 import com.hbhb.cw.systemcenter.api.DictApi;
-import com.hbhb.cw.systemcenter.enums.DictCode;
-import com.hbhb.cw.systemcenter.enums.TypeCode;
 import com.hbhb.cw.systemcenter.model.Dict;
 import com.hbhb.cw.systemcenter.service.DictService;
+import com.hbhb.cw.systemcenter.vo.DictIndexVO;
 import com.hbhb.cw.systemcenter.vo.DictVO;
 import com.hbhb.cw.systemcenter.web.vo.DictResVO;
 
@@ -77,34 +76,17 @@ public class DictController implements DictApi {
         dictService.deleteDict(id);
     }
 
-    @Operation(summary = "功能模块字典列表")
+    @Operation(summary = "字典检索")
     @Override
-    public List<DictVO> getModule() {
-        return dictService.listDictByCond(TypeCode.MODULE.value(), null);
+    public List<DictVO> getDict(
+            @Parameter(description = "字典类型") @RequestParam(required = false) String type,
+            @Parameter(description = "字典编号") @RequestParam(required = false) String code) {
+        return dictService.listDictByCond(type, code);
     }
 
-    @Operation(summary = "项目签报-流程状态")
-    @Override
-    public List<DictVO> getProjectStatus() {
-        return dictService.listDictByCond(TypeCode.BUDGET.value(), DictCode.BUDGET_PROJECT_STATUS.value());
+    @Operation(summary = "获取字典索引")
+    @GetMapping("/index")
+    public List<DictIndexVO> getDictIndex() {
+        return dictService.getDictIndex();
     }
-
-    @Operation(summary = "项目签报-项目来源")
-    @Override
-    public List<DictVO> getProjectOrigin() {
-        return dictService.listDictByCond(TypeCode.BUDGET.value(), DictCode.BUDGET_PROJECT_ORIGIN.value());
-    }
-
-    @Operation(summary = "项目签报-增值税率")
-    @Override
-    public List<DictVO> getProjectVatRate() {
-        return dictService.listDictByCond(TypeCode.BUDGET.value(), DictCode.BUDGET_PROJECT_VAT_RATES.value());
-    }
-
-    @Operation(summary = "迁改-赔补状态")
-    @Override
-    public List<DictVO> getCompensationSate() {
-        return dictService.listDictByCond(TypeCode.RELOCATION.value(), DictCode.RELOCATION_PROJECT_COMPENSATION.value());
-    }
-
 }

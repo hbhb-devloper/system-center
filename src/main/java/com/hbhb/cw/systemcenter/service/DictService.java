@@ -1,6 +1,7 @@
 package com.hbhb.cw.systemcenter.service;
 
 import com.hbhb.cw.systemcenter.model.Dict;
+import com.hbhb.cw.systemcenter.vo.DictIndexVO;
 import com.hbhb.cw.systemcenter.vo.DictVO;
 import com.hbhb.cw.systemcenter.web.vo.DictResVO;
 
@@ -38,4 +39,9 @@ public interface DictService {
      * 删除字典
      */
     void deleteDict(Integer id);
+
+    /**
+     * 获取字典索引
+     */
+    List<DictIndexVO> getDictIndex();
 }
