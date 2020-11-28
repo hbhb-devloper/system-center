@@ -6,18 +6,16 @@ import com.hbhb.cw.systemcenter.service.FileService;
 import com.hbhb.cw.systemcenter.util.FileUtil;
 import com.hbhb.cw.systemcenter.vo.FileVO;
 import com.hbhb.cw.systemcenter.web.vo.FileResVO;
-
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import javax.annotation.Resource;
 
 @Service
 public class FileServiceImpl implements FileService {
@@ -87,5 +85,10 @@ public class FileServiceImpl implements FileService {
     @Override
     public List<File> getFileInfoBatch(List<Integer> list) {
         return fileMapper.selectByIds(list);
+    }
+
+    @Override
+    public File getFile(Integer fileId) {
+        return fileMapper.lock(fileId);
     }
 }
