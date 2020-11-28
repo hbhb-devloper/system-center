@@ -16,13 +16,13 @@ selectAll
 selectPermsByUserId
 ===
 ```sql
-    select distinct re.perm
+    select distinct re.perms
     from resource re
         left join role_resource rr on re.id = rr.resource_id
         left join user_role ur on rr.role_id = ur.role_id
         left join role ro on ro.id = ur.role_id
     where ro.state = 1
-      and re.perm != ''
+      and re.perms != ''
       -- @if(isNotEmpty(userId)){
         and ur.user_id = #{userId}
       -- @}
