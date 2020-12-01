@@ -13,8 +13,6 @@ import java.util.List;
  */
 public interface ResourceMapper extends BaseMapper<SysResource> {
 
-    List<SysResource> selectAll();
-
     List<String> selectPermsByUserId(Integer userId, @Param("list") List<String> types);
 
     List<SysResource> selectMenuTreeAll(@Param("list") List<String> types);

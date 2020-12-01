@@ -16,14 +16,6 @@ selectAll
 ```
 -->
 
-selectAll
-===
-```sql
-    select * 
-    from resource
-    order by parent_id, order_num
-```
-
 selectPermsByUserId
 ===
 ```sql

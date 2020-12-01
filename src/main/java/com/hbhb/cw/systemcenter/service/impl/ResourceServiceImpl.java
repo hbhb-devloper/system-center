@@ -60,7 +60,10 @@ public class ResourceServiceImpl implements ResourceService {
     @Override
     public List<TreeSelectVO> getResourceTreeSelect() {
         // 查询所有的资源列表
-        List<SysResource> list = resourceMapper.selectAll();
+        List<SysResource> list = resourceMapper.createLambdaQuery()
+                .asc(SysResource::getParentId)
+                .asc(SysResource::getOrderNum)
+                .select();
         // 转换成树形结构
         List<SysResource> treeList = TreeUtil.build(list);
         if (CollectionUtils.isEmpty(treeList)) {
