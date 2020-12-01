@@ -1,21 +1,25 @@
 package com.hbhb.cw.systemcenter.service.impl;
 
+import com.hbhb.core.bean.BeanConverter;
 import com.hbhb.cw.systemcenter.mapper.FileMapper;
 import com.hbhb.cw.systemcenter.model.File;
 import com.hbhb.cw.systemcenter.service.FileService;
 import com.hbhb.cw.systemcenter.util.FileUtil;
 import com.hbhb.cw.systemcenter.vo.FileVO;
 import com.hbhb.cw.systemcenter.web.vo.FileResVO;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+
+import javax.annotation.Resource;
 
 @Service
 public class FileServiceImpl implements FileService {
@@ -74,7 +78,13 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public List<FileResVO> getFileList(Integer type) {
-        return fileMapper.selectListByType(type);
+        List<File> list = fileMapper.createLambdaQuery()
+                .andEq(File::getBizType, type)
+                .select();
+        if (CollectionUtils.isEmpty(list)) {
+            return new ArrayList<>();
+        }
+        return list.stream().map(file -> BeanConverter.convert(file, FileResVO.class)).collect(Collectors.toList());
     }
 
     @Override
