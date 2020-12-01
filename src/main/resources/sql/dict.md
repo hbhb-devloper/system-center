@@ -3,14 +3,14 @@ selectPageByCond
 ```sql
     select 
     -- @pageTag(){
-    d.id         as id,
-    dt.type_name as dictTypeName,
-    d.dict_label as dictLabel,
-    d.dict_value as dictValue,
-    d.dict_code  as dictCode,
-    d.remark     as remark,
-    d.sort_num   as sortNum,
-    d.state      as state
+        d.id         as id,
+        dt.type_name as dictTypeName,
+        d.dict_label as dictLabel,
+        d.dict_value as dictValue,
+        d.dict_code  as dictCode,
+        d.remark     as remark,
+        d.sort_num   as sortNum,
+        d.state      as state
     -- @}
     from dict d
         left join dict_type dt on d.dict_type_id = dt.id

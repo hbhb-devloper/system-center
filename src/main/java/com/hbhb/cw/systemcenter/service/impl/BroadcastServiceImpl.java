@@ -13,8 +13,11 @@ import org.beetl.sql.core.page.PageResult;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -43,7 +46,13 @@ public class BroadcastServiceImpl implements BroadcastService {
 
     @Override
     public List<String> getPublishList() {
-        return broadcastMapper.selectListByState(BroadcastState.ENABLE.value());
+        List<Broadcast> list = broadcastMapper.createLambdaQuery()
+                .andEq(Broadcast::getState, BroadcastState.ENABLE.value())
+                .select();
+        if (CollectionUtils.isEmpty(list)) {
+            return new ArrayList<>();
+        }
+        return list.stream().map(Broadcast::getContent).collect(Collectors.toList());
     }
 
     @Override

@@ -18,11 +18,3 @@ selectPageByCond
         order by create_time desc
     -- @}
 ```
-
-selectListByState
-===
-```sql
-    select content from broadcast
-    where state = #{state}
-    order by sort_num
-```

@@ -37,7 +37,7 @@ public class MaintainServiceImpl implements MaintainService {
         BeanUtils.copyProperties(vo, maintain);
         // 系统维护信息默认只有一条且id为1
         maintain.setId(1L);
-        // 判断登录用户是否为管理员若为管理员则可修改系统维护信息
+        // 判断登录用户是否为管理员，只有管理员才可修改系统维护信息
         boolean admin = roleService.isAdminRole(userId);
         if (admin) {
             maintainMapper.updateTemplateById(maintain);
