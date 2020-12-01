@@ -47,7 +47,7 @@ host:
 
 port:
   default: 10069
-  dev: 10027
+  dev: 10012
   test: 10026
   prd: 10017
 
