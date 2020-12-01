@@ -41,8 +41,8 @@ public class RoleController {
     @Operation(summary = "通过指定条件查询角色模板列表（分页）")
     @GetMapping("/page")
     public PageResult<RoleVO> pageRoleByCond(
-            @Parameter(description = "页码", required = true) @RequestParam Integer pageNum,
-            @Parameter(description = "每页大小", required = true) @RequestParam Integer pageSize,
+            @Parameter(description = "页码") @RequestParam(required = false) Integer pageNum,
+            @Parameter(description = "每页大小") @RequestParam(required = false) Integer pageSize,
             @Parameter(description = "角色类型（RS-关联资源、UN-关联单位）", required = true) @RequestParam String roleType,
             @Parameter(description = "角色名称") @RequestParam(required = false) String roleName,
             @Parameter(description = "角色状态") @RequestParam(required = false) Byte state) {

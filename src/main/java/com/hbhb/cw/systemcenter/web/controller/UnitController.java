@@ -110,7 +110,7 @@ public class UnitController implements UnitApi {
                 .build();
     }
 
-    @Operation(summary = "获取单位详情")
+    @Operation(summary = "获取所有单位")
     @Override
     public List<Unit> getAllUnit() {
         return unitService.getAllUnitList();
