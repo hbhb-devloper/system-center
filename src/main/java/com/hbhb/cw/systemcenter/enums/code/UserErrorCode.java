@@ -11,6 +11,9 @@ public enum UserErrorCode {
 
     AUTHOR_NOT_ADMINISTRATOR("S0100", "author.not.administrator"),
 
+    ORIGIN_PASSWORD_WRONG("S0102", "origin.password.wrong"),
+    REPEAT_OF_USER_NAME("S0103", "repeat.of.user.name"),
+    REPEAT_OF_NICK_NAME("S0104", "repeat.of.nick.name"),
     ;
 
     private final String code;

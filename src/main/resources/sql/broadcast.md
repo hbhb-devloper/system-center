@@ -22,7 +22,7 @@ selectPageByCond
 selectListByState
 ===
 ```sql
-    select content from sys_broadcast
+    select content from broadcast
     where state = #{state}
     order by sort_num
 ```

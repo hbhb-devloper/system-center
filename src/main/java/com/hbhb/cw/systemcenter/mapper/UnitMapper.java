@@ -6,5 +6,6 @@ import com.hbhb.web.beetlsql.BaseMapper;
 import java.util.List;
 
 public interface UnitMapper  extends BaseMapper<Unit> {
+
     List<Unit> selectByUserId(Integer userId);
 }

@@ -1,5 +1,11 @@
 package com.hbhb.cw.systemcenter.service;
 
+import com.hbhb.cw.systemcenter.model.Role;
+import com.hbhb.cw.systemcenter.vo.TreeSelectVO;
+import com.hbhb.cw.systemcenter.web.vo.RoleVO;
+
+import org.beetl.sql.core.page.PageResult;
+
 import java.util.List;
 
 /**
@@ -7,6 +13,41 @@ import java.util.List;
  * @since 2020-10-06
  */
 public interface RoleService {
+
+    /**
+     * 按条件获取角色列表（分页）
+     */
+    PageResult<RoleVO> getRolePageByCond(Integer pageNum, Integer pageSize, RoleVO vo);
+
+    /**
+     * 按类型获取所有的角色列表
+     */
+    List<TreeSelectVO> getRoleListByType(String roleType);
+
+    /**
+     * 获取用户所对应的角色id
+     */
+    List<Integer> getCheckedRoleByUser(Integer userId, String roleType);
+
+    /**
+     * 获取角色详情
+     */
+    Role getRoleInfo(Integer roleId);
+
+    /**
+     * 新增角色
+     */
+    void addRole(Role role);
+
+    /**
+     * 更新角色
+     */
+    void updateRole(Role role);
+
+    /**
+     * 转换角色状态
+     */
+    void changeState(Integer roleId, Byte state);
 
     /**
      * 获取用户的所有角色id
