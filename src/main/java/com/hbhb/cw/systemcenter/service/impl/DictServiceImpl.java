@@ -12,7 +12,6 @@ import org.beetl.sql.core.page.DefaultPageRequest;
 import org.beetl.sql.core.page.PageRequest;
 import org.beetl.sql.core.page.PageResult;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
@@ -20,6 +19,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -42,15 +43,15 @@ public class DictServiceImpl implements DictService {
 
     @Override
     public List<DictVO> listDictByCond(String dictType, String dictCode) {
-        List<DictVO> result = new ArrayList<>();
         List<Dict> dictList = dictMapper.selectListByCond(dictType, dictCode);
-        if (!CollectionUtils.isEmpty(dictList)) {
-            dictList.forEach(dict -> result.add(DictVO.builder()
-                    .label(dict.getDictLabel())
-                    .value(dict.getDictValue())
-                    .build()));
-        }
-        return result;
+        return Optional.ofNullable(dictList)
+                .orElse(new ArrayList<>())
+                .stream()
+                .map(dict -> DictVO.builder()
+                        .label(dict.getDictLabel())
+                        .value(dict.getDictValue())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     @Override

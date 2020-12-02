@@ -25,6 +25,8 @@ import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -147,17 +149,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserInfo> getUserInfoList(List<Integer> userIds) {
-        List<UserInfo> userList = new ArrayList<>();
         List<User> users = userMapper.selectByIds(userIds);
-        if (!CollectionUtils.isEmpty(users)) {
-            users.forEach(user -> userList.add(UserInfo.builder()
-                    .email(user.getEmail())
-                    .nickName(user.getNickName())
-                    .id(user.getId())
-                    .unitId(user.getUnitId())
-                    .build()));
-        }
-        return userList;
+        return Optional.ofNullable(users)
+                .orElse(new ArrayList<>())
+                .stream()
+                .map(user -> UserInfo.builder()
+                        .email(user.getEmail())
+                        .nickName(user.getNickName())
+                        .id(user.getId())
+                        .unitId(user.getUnitId())
+                        .build())
+                .collect(Collectors.toList());
     }
 
     /**

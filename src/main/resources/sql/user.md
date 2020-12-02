@@ -14,24 +14,20 @@ selectPageByCond
     from user su
     left join unit u on su.unit_id = u.id
     -- @where(){
-        -- @if(isNotEmpty(userName)){
-            and su.user_name like concat('%', #{userName}, '%')
+        -- @if(isNotEmpty(cond.userName)){
+            and su.user_name like concat('%', #{cond.userName}, '%')
         -- @}
-        -- @if(isNotEmpty(nickName)){
+        -- @if(isNotEmpty(cond.nickName)){
             and su.nick_name like concat('%', #{cond.nickName}, '%')
         -- @}
-        -- @if(isNotEmpty(phone)){
-            and su.phone = #{phone}
+        -- @if(isNotEmpty(cond.phone)){
+            and su.phone = #{cond.phone}
         -- @}
-        -- @if(isNotEmpty(state)){
-            and su.state = #{state}
+        -- @if(isNotEmpty(cond.state)){
+            and su.state = #{cond.state}
         -- @}
-        -- @if(isNotEmpty(unitIds)){
-          and u.id in (
-          -- @for(item in unitIds){
-             #{item}
-          -- @}
-          )
-      -- @}
+        -- @if(isNotEmpty(cond.unitIds)){
+            and u.id in (#{join(cond.unitIds)})
+        -- @}
     -- @}
 ```
