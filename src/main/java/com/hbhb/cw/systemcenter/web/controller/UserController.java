@@ -171,16 +171,17 @@ public class UserController implements UserApi {
         return userService.getUserInfoByName(userName);
     }
 
+    @Operation(summary = "按id批量查询用户")
+    @Override
+    public List<UserInfo> getUserInfoBatch(
+            @Parameter(description = "用户id列表", required = true) List<Integer> userIds) {
+        return userService.getUserInfoList(userIds);
+    }
+
     @Operation(summary = "获取用户所有角色")
     @Override
     public List<Integer> getUserRoles(@Parameter(description = "用户id", required = true) Integer userId) {
         return roleService.getRolesByUserId(userId);
-    }
-
-    @Operation(summary = "按id批量查询用户")
-    @Override
-    public List<UserInfo> getUserInfoList(List<Integer> userIds) {
-        return userService.getUserInfoList(userIds);
     }
 
     @Operation(summary = "校验用户是否为管理员")

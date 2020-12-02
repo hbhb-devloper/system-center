@@ -18,7 +18,7 @@ public interface FileService {
     /**
      * 批量文件上传
      */
-    List<FileVO> uploadList(MultipartFile[] files, Integer bizType);
+    List<FileVO> uploadBatch(MultipartFile[] files, Integer bizType);
 
     /**
      * 跟据类型获取文件列表
@@ -26,19 +26,17 @@ public interface FileService {
     List<FileResVO> getFileList(Integer type);
 
     /**
-     * 跟据id删除文件
+     * 根据id查询文件信息
      */
-    void deleteFile(Long id);
+    File getFileInfo(Integer fileId);
 
     /**
-     * 按文件id批量获取附件信息
+     * 根据id批量查询文件信息
      */
     List<File> getFileInfoBatch(List<Integer> list);
 
     /**
-     * 跟据文件id获取文件信息
-     *
-     * @return
+     * 删除文件
      */
-    File getFile(Integer fileId);
+    void deleteFile(Long id);
 }

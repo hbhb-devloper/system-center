@@ -33,7 +33,26 @@ public class FileServiceImpl implements FileService {
     private String filePath;
 
     @Override
-    public List<FileVO> uploadList(MultipartFile[] multipartFile, Integer bizType) {
+    public FileVO upload(MultipartFile file, Integer bizType) {
+        FileVO vo = FileUtil.uploadFile(file, filePath);
+        if (vo != null) {
+            File insertFile = File.builder()
+                    .fileName(vo.getFileName())
+                    .filePath(fileDomain + java.io.File.separator + vo.getFileName())
+                    .fileSize(vo.getFileSize())
+                    .uploadTime(new Date())
+                    .bizType(bizType)
+                    .build();
+            // 保存文件信息
+            fileMapper.insert(insertFile);
+            // 将主键id返回
+            vo.setId(insertFile.getId());
+        }
+        return vo;
+    }
+
+    @Override
+    public List<FileVO> uploadBatch(MultipartFile[] multipartFile, Integer bizType) {
         Date now = new Date();
         List<File> files = new ArrayList<>();
         List<FileVO> voList = FileUtil.uploadFileList(multipartFile, filePath);
@@ -58,25 +77,6 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public FileVO upload(MultipartFile file, Integer bizType) {
-        FileVO vo = FileUtil.uploadFile(file, filePath);
-        if (vo != null) {
-            File insertFile = File.builder()
-                    .fileName(vo.getFileName())
-                    .filePath(fileDomain + java.io.File.separator + vo.getFileName())
-                    .fileSize(vo.getFileSize())
-                    .uploadTime(new Date())
-                    .bizType(bizType)
-                    .build();
-            // 保存文件信息
-            fileMapper.insert(insertFile);
-            // 将主键id返回
-            vo.setId(insertFile.getId());
-        }
-        return vo;
-    }
-
-    @Override
     public List<FileResVO> getFileList(Integer type) {
         List<File> files = fileMapper.createLambdaQuery()
                 .andEq(File::getBizType, type)
@@ -89,8 +89,8 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public void deleteFile(Long id) {
-        fileMapper.deleteById(id);
+    public File getFileInfo(Integer fileId) {
+        return fileMapper.single(fileId);
     }
 
     @Override
@@ -99,7 +99,7 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
-    public File getFile(Integer fileId) {
-        return fileMapper.lock(fileId);
+    public void deleteFile(Long id) {
+        fileMapper.deleteById(id);
     }
 }
