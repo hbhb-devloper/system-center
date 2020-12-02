@@ -56,10 +56,12 @@ public class FileController implements FileApi {
         return fileService.uploadList(files, bizType);
     }
 
-    @Operation(summary = "获取指定类型的文件列表")
+    @Operation(summary = "获取指定类型的文件列表",
+            description = "10-系统文件、20-预算执行-签报类附件、30-客户资金-发票类附件、40-迁改-预警类附件、50-迁改-合同类附件")
     @GetMapping("/list")
-    public List<FileResVO> listByType(
-            @Parameter(description = "业务类型") @RequestParam Integer bizType) {
+    public List<FileResVO> getFileList(
+            @Parameter(description = "业务类型") @RequestParam(required = false) Integer bizType) {
+        bizType = bizType == null ? FileType.SYSTEM_FILE.value() : bizType;
         return fileService.getFileList(bizType);
     }
 

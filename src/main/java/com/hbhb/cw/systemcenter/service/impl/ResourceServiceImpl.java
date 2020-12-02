@@ -49,12 +49,10 @@ public class ResourceServiceImpl implements ResourceService {
     @Override
     public List<ResourceResVO> getAllResourceList() {
         List<SysResource> list = resourceMapper.createLambdaQuery()
-                // todo 测试
                 .asc(SysResource::getParentId)
                 .asc(SysResource::getOrderNum)
                 .select();
-        List<ResourceResVO> result = BeanConverter.copyBeanList(list, ResourceResVO.class);
-        return TreeUtil.build(result);
+        return TreeUtil.build(BeanConverter.copyBeanList(list, ResourceResVO.class));
     }
 
     @Override

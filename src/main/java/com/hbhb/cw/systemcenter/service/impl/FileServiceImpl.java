@@ -10,13 +10,13 @@ import com.hbhb.cw.systemcenter.web.vo.FileResVO;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -78,13 +78,14 @@ public class FileServiceImpl implements FileService {
 
     @Override
     public List<FileResVO> getFileList(Integer type) {
-        List<File> list = fileMapper.createLambdaQuery()
+        List<File> files = fileMapper.createLambdaQuery()
                 .andEq(File::getBizType, type)
                 .select();
-        if (CollectionUtils.isEmpty(list)) {
-            return new ArrayList<>();
-        }
-        return list.stream().map(file -> BeanConverter.convert(file, FileResVO.class)).collect(Collectors.toList());
+        return Optional.ofNullable(files)
+                .orElse(new ArrayList<>())
+                .stream()
+                .map(file -> BeanConverter.convert(file, FileResVO.class))
+                .collect(Collectors.toList());
     }
 
     @Override

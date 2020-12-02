@@ -27,13 +27,7 @@ selectPermsByUserId
     where ro.state = 1
       and re.perms != ''
       and ur.user_id = #{userId}
-      -- @if(isNotEmpty(list)){
-          and re.rs_type in (
-          -- @for(item in list){
-             #{item}
-          -- @}
-          )
-      -- @}
+      and re.rs_type in (#{join(list)})
 ```
 
 selectMenuTreeAll
@@ -41,11 +35,7 @@ selectMenuTreeAll
 ```sql
     select distinct *
     from resource
-    where rs_type in (
-    -- @for(item in list){
-        #{item}
-    -- @}
-    )
+    where rs_type in (#{join(list)})
     order by parent_id, order_num
 ```
 
@@ -60,10 +50,6 @@ selectMenuTreeByUserId
         left join user cu on ur.user_id = cu.id
     where ro.state = 1
       and cu.id = #{userId}
-      and re.rs_type in (
-        -- @for(item in list){
-            #{item}
-        -- @}
-        )
+      and re.rs_type in (#{join(list)})
     order by parent_id, order_num
 ```
