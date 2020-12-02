@@ -26,7 +26,7 @@ import lombok.extern.slf4j.Slf4j;
 /**
  * @author wangxiaogang
  */
-@Tag(name = "文件上传")
+@Tag(name = "文件")
 @RestController
 @RequestMapping("/file")
 @Slf4j

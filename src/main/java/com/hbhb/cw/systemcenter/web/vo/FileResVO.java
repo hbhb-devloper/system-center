@@ -1,6 +1,7 @@
 package com.hbhb.cw.systemcenter.web.vo;
 
 import java.io.Serializable;
+import java.util.Date;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.AllArgsConstructor;
@@ -19,5 +20,5 @@ public class FileResVO implements Serializable {
     @Schema(description = "文件路径")
     private String filePath;
     @Schema(description = "上传时间")
-    private String uploadTime;
+    private Date uploadTime;
 }
