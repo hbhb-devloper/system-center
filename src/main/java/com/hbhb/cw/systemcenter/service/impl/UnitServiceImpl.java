@@ -15,6 +15,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -37,17 +38,7 @@ public class UnitServiceImpl implements UnitService {
                 .asc(Unit::getParentId)
                 .asc(Unit::getSortNum)
                 .select();
-        if (CollectionUtils.isEmpty(units)) {
-            return new ArrayList<>();
-        }
-
-        // 以第一条数据的 parentId 作为 rootId 进行树形构建
-        Integer rootId = units.get(0).getParentId();
-        List<Unit> treeList = TreeUtil.build(units, rootId.toString());
-        if (CollectionUtils.isEmpty(treeList)) {
-            return new ArrayList<>();
-        }
-        return treeList.stream().map(TreeSelectVO::new).collect(Collectors.toList());
+        return CollectionUtils.isEmpty(units) ? new ArrayList<>() : buildTreeSelectVO(units);
     }
 
     @Override
@@ -62,18 +53,24 @@ public class UnitServiceImpl implements UnitService {
     public List<TreeSelectVO> getUnitTreeSelectByUser(Integer userId) {
         // 查询用户的单位列表（按parentId升序）
         List<Unit> units = unitMapper.selectByUserId(userId);
-        if (CollectionUtils.isEmpty(units)) {
-            return new ArrayList<>();
-        }
-        // 转换成树形结构
+        return CollectionUtils.isEmpty(units) ? new ArrayList<>() : buildTreeSelectVO(units);
+    }
+
+    /**
+     * 将单位列表转成树形kv结构
+     */
+    private List<TreeSelectVO> buildTreeSelectVO(List<Unit> units) {
+        // 先转换成树形结构
         // 以第一条数据的 parentId 作为 rootId 进行树形构建
         Integer rootId = units.get(0).getParentId();
         List<Unit> treeList = TreeUtil.build(units, rootId.toString());
-        if (CollectionUtils.isEmpty(treeList)) {
-            return new ArrayList<>();
-        }
-        // 转KV
-        return treeList.stream().map(TreeSelectVO::new).collect(Collectors.toList());
+
+        // 再转k-v结构
+        return Optional.ofNullable(treeList)
+                .orElse(new ArrayList<>())
+                .stream()
+                .map(TreeSelectVO::new)
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -123,20 +120,15 @@ public class UnitServiceImpl implements UnitService {
 
     @Override
     public List<SelectVO> getShortNameList() {
-        List<SelectVO> list = new ArrayList<>();
         List<Unit> units = unitMapper.all();
-        if (CollectionUtils.isEmpty(units)) {
-            return list;
-        }
-        units.forEach(unit -> {
-            if (!StringUtils.isEmpty(unit.getShortName())) {
-                list.add(SelectVO.builder()
+        return Optional.ofNullable(units)
+                .orElse(new ArrayList<>())
+                .stream()
+                .map(unit -> StringUtils.isEmpty(unit.getShortName()) ? null : SelectVO.builder()
                         .id((long) unit.getId())
                         .label(unit.getShortName())
-                        .build());
-            }
-        });
-        return list;
+                        .build())
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -154,9 +146,10 @@ public class UnitServiceImpl implements UnitService {
         List<Unit> subUnits = unitMapper.createLambdaQuery()
                 .andEq(Unit::getParentId, unitId)
                 .select();
-        if (CollectionUtils.isEmpty(subUnits)) {
-            return new ArrayList<>();
-        }
-        return subUnits.stream().map(Unit::getId).collect(Collectors.toList());
+        return Optional.ofNullable(subUnits)
+                .orElse(new ArrayList<>())
+                .stream()
+                .map(Unit::getId)
+                .collect(Collectors.toList());
     }
 }

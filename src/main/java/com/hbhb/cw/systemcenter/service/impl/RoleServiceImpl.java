@@ -56,19 +56,21 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public List<TreeSelectVO> getRoleListByType(String roleType) {
         List<Role> roles = roleMapper.selectUserRolesByType(null, roleType);
-        if (CollectionUtils.isEmpty(roles)) {
-            return new ArrayList<>();
-        }
-        return roles.stream().map(TreeSelectVO::new).collect(Collectors.toList());
+        return Optional.ofNullable(roles)
+                .orElse(new ArrayList<>())
+                .stream()
+                .map(TreeSelectVO::new)
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<Integer> getCheckedRoleByUser(Integer userId, String roleType) {
         List<Role> roles = roleMapper.selectUserRolesByType(userId, roleType);
-        if (CollectionUtils.isEmpty(roles)) {
-            return new ArrayList<>();
-        }
-        return roles.stream().map(Role::getId).collect(Collectors.toList());
+        return Optional.ofNullable(roles)
+                .orElse(new ArrayList<>())
+                .stream()
+                .map(Role::getId)
+                .collect(Collectors.toList());
     }
 
     @Override

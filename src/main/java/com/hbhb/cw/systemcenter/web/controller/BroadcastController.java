@@ -30,7 +30,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
  * @author xiaokang
  * @since 2020-09-09
  */
-@Tag(name = "公告管理")
+@Tag(name = "公告")
 @RestController
 @RequestMapping("/broadcast")
 public class BroadcastController {

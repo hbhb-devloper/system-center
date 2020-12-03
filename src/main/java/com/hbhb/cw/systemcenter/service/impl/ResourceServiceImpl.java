@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -64,22 +65,23 @@ public class ResourceServiceImpl implements ResourceService {
                 .select();
         // 转换成树形结构
         List<SysResource> treeList = TreeUtil.build(list);
-        if (CollectionUtils.isEmpty(treeList)) {
-            return new ArrayList<>();
-        }
-        // 转KV
-        return treeList.stream().map(TreeSelectVO::new).collect(Collectors.toList());
+        return Optional.ofNullable(treeList)
+                .orElse(new ArrayList<>())
+                .stream()
+                .map(TreeSelectVO::new)
+                .collect(Collectors.toList());
     }
 
     @Override
     public List<Integer> getCheckedResourceByRole(Integer roleId) {
-        List<RoleResource> list = roleResourceMapper.createLambdaQuery()
+        List<RoleResource> roleResources = roleResourceMapper.createLambdaQuery()
                 .andEq(RoleResource::getRoleId, roleId)
                 .select();
-        if (CollectionUtils.isEmpty(list)) {
-            return new ArrayList<>();
-        }
-        return list.stream().map(RoleResource::getResourceId).collect(Collectors.toList());
+        return Optional.ofNullable(roleResources)
+                .orElse(new ArrayList<>())
+                .stream()
+                .map(RoleResource::getResourceId)
+                .collect(Collectors.toList());
     }
 
     @Override
