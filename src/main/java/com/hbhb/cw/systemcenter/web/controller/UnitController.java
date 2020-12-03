@@ -26,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -110,10 +111,16 @@ public class UnitController implements UnitApi {
                 .build();
     }
 
-    @Operation(summary = "获取所有单位")
+    @Operation(summary = "获取单位map", description = "单位id-单位名称")
     @Override
-    public List<Unit> getAllUnit() {
-        return unitService.getAllUnitList();
+    public Map<Integer, String> getUnitMapByName() {
+        return unitService.getUnitMapByName();
+    }
+
+    @Operation(summary = "获取单位详情", description = "单位简称-单位id")
+    @Override
+    public Map<String, Integer> getUnitMapByAbbr() {
+        return unitService.getUnitMapByAbbr();
     }
 
     @Operation(summary = "获取单位详情")
@@ -124,7 +131,7 @@ public class UnitController implements UnitApi {
 
     @Operation(summary = "获取某单位的所有下级单位id")
     @Override
-    public List<Integer> getSubUnitId(Integer unitId) {
-        return unitService.getSubUnitId(unitId);
+    public List<Integer> getSubUnit(Integer unitId) {
+        return unitService.getSubUnit(unitId);
     }
 }

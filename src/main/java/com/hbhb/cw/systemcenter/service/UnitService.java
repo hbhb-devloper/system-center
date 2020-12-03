@@ -5,6 +5,7 @@ import com.hbhb.cw.systemcenter.model.Unit;
 import com.hbhb.cw.systemcenter.vo.TreeSelectVO;
 
 import java.util.List;
+import java.util.Map;
 
 public interface UnitService {
 
@@ -34,19 +35,19 @@ public interface UnitService {
     void deleteUnit(Integer unitId);
 
     /**
-     * 获取某单位下的所有子单位id（包含自己）
-     */
-    List<Integer> getUnitSubsByUnitId(Integer unitId);
-
-    /**
      * 查询所有有简称单位列表（KV）
      */
     List<SelectVO> getShortNameList();
 
     /**
-     * 查询所有单位列表（KV）
+     * 查询所有单位map(id-单位名称)
      */
-    List<Unit> getAllUnitList();
+    Map<Integer, String> getUnitMapByName();
+
+    /**
+     * 查询所有单位map(简称-id)
+     */
+    Map<String, Integer> getUnitMapByAbbr();
 
     /**
      * 获取单位详情
@@ -54,7 +55,12 @@ public interface UnitService {
     Unit getUnitInfo(Integer unitId);
 
     /**
-     * 获取某单位的所有下级单位id
+     * 获取指定单位的所有下级单位id
      */
-    List<Integer> getSubUnitId(Integer unitId);
+    List<Integer> getSubUnit(Integer unitId);
+
+    /**
+     * 递归获取指定单位下（包含自己）的所有子单位id
+     */
+    List<Integer> getSubUnitByDeep(Integer unitId);
 }

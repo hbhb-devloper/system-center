@@ -15,6 +15,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -24,6 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
+@SuppressWarnings(value = {"unchecked"})
 public class UnitServiceImpl implements UnitService {
 
     @Resource
@@ -84,7 +86,58 @@ public class UnitServiceImpl implements UnitService {
     }
 
     @Override
-    public List<Integer> getUnitSubsByUnitId(Integer unitId) {
+    public List<SelectVO> getShortNameList() {
+        List<Unit> units = unitMapper.createLambdaQuery()
+                .select(Unit::getId, Unit::getShortName);
+        return Optional.ofNullable(units)
+                .orElse(new ArrayList<>())
+                .stream()
+                .map(unit -> StringUtils.isEmpty(unit.getShortName()) ? null : SelectVO.builder()
+                        .id((long) unit.getId())
+                        .label(unit.getShortName())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Map<Integer, String> getUnitMapByName() {
+        List<Unit> units = unitMapper.createLambdaQuery()
+                .select(Unit::getId, Unit::getUnitName);
+        return Optional.ofNullable(units)
+                .orElse(new ArrayList<>())
+                .stream()
+                .collect(Collectors.toMap(Unit::getId, Unit::getUnitName));
+    }
+
+    @Override
+    public Map<String, Integer> getUnitMapByAbbr() {
+        List<Unit> units = unitMapper.createLambdaQuery()
+                .select(Unit::getAbbr, Unit::getId);
+        return Optional.ofNullable(units)
+                .orElse(new ArrayList<>())
+                .stream()
+                .collect(Collectors.toMap(Unit::getAbbr, Unit::getId));
+    }
+
+    @Override
+    public Unit getUnitInfo(Integer unitId) {
+        return unitMapper.single(unitId);
+    }
+
+    @Override
+    public List<Integer> getSubUnit(Integer unitId) {
+        List<Unit> subUnits = unitMapper.createLambdaQuery()
+                .andEq(Unit::getParentId, unitId)
+                .select();
+        return Optional.ofNullable(subUnits)
+                .orElse(new ArrayList<>())
+                .stream()
+                .map(Unit::getId)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Integer> getSubUnitByDeep(Integer unitId) {
         List<Integer> ids = new ArrayList<>();
         // 包含自己单位id
         ids.add(unitId);
@@ -107,7 +160,7 @@ public class UnitServiceImpl implements UnitService {
     }
 
     /**
-     * 从树形结构中取出id
+     * 递归从树形结构中取出id
      */
     private void getUnitIdsFromTree(List<Integer> ids, List<Unit> units) {
         units.forEach(unit -> {
@@ -116,40 +169,5 @@ public class UnitServiceImpl implements UnitService {
                 getUnitIdsFromTree(ids, unit.getChildren());
             }
         });
-    }
-
-    @Override
-    public List<SelectVO> getShortNameList() {
-        List<Unit> units = unitMapper.all();
-        return Optional.ofNullable(units)
-                .orElse(new ArrayList<>())
-                .stream()
-                .map(unit -> StringUtils.isEmpty(unit.getShortName()) ? null : SelectVO.builder()
-                        .id((long) unit.getId())
-                        .label(unit.getShortName())
-                        .build())
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Unit> getAllUnitList() {
-        return unitMapper.all();
-    }
-
-    @Override
-    public Unit getUnitInfo(Integer unitId) {
-        return unitMapper.single(unitId);
-    }
-
-    @Override
-    public List<Integer> getSubUnitId(Integer unitId) {
-        List<Unit> subUnits = unitMapper.createLambdaQuery()
-                .andEq(Unit::getParentId, unitId)
-                .select();
-        return Optional.ofNullable(subUnits)
-                .orElse(new ArrayList<>())
-                .stream()
-                .map(Unit::getId)
-                .collect(Collectors.toList());
     }
 }

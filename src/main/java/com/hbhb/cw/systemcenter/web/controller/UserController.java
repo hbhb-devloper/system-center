@@ -75,7 +75,7 @@ public class UserController implements UserApi {
         pageNum = pageNum == null ? 1 : pageNum;
         pageSize = pageSize == null ? 10 : pageSize;
         unitId = unitId == null ? hangzhou : unitId;
-        List<Integer> unitIds = unitService.getUnitSubsByUnitId(unitId);
+        List<Integer> unitIds = unitService.getSubUnitByDeep(unitId);
         return userService.getUserPageByCond(
                 pageNum, pageSize, UserReqVO.builder()
                         .unitIds(unitIds)
