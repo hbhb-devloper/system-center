@@ -12,28 +12,18 @@ import com.hbhb.cw.systemcenter.vo.TreeSelectWrapVO;
 import com.hbhb.cw.systemcenter.vo.UnitTopVO;
 import com.hbhb.cw.systemcenter.web.vo.SelectInputVO;
 import com.hbhb.web.annotation.UserId;
-
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.annotation.Resource;
-
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.*;
+
+import javax.annotation.Resource;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 @Tag(name = "单位")
 @RestController
@@ -115,6 +105,11 @@ public class UnitController implements UnitApi {
     @Override
     public Map<Integer, String> getUnitMapByName() {
         return unitService.getUnitMapByName();
+    }
+
+    @Override
+    public Map<String, Integer> getUnitMapById() {
+        return unitService.getUnitMapById();
     }
 
     @Operation(summary = "获取单位详情", description = "单位简称-单位id")

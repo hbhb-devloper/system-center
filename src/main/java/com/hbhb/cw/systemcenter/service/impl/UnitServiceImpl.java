@@ -8,20 +8,17 @@ import com.hbhb.cw.systemcenter.model.RoleUnit;
 import com.hbhb.cw.systemcenter.model.Unit;
 import com.hbhb.cw.systemcenter.service.UnitService;
 import com.hbhb.cw.systemcenter.vo.TreeSelectVO;
-
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import javax.annotation.Resource;
-
-import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
@@ -157,6 +154,16 @@ public class UnitServiceImpl implements UnitService {
         // 取出单位id
         getUnitIdsFromTree(ids, treeList);
         return ids;
+    }
+
+    @Override
+    public Map<String, Integer> getUnitMapById() {
+        List<Unit> units = unitMapper.createLambdaQuery()
+                .select(Unit::getId, Unit::getUnitName);
+        return Optional.ofNullable(units)
+                .orElse(new ArrayList<>())
+                .stream()
+                .collect(Collectors.toMap(Unit::getUnitName, Unit::getId));
     }
 
     /**
