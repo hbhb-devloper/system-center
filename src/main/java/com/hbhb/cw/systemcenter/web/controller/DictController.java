@@ -45,11 +45,12 @@ public class DictController implements DictApi {
     public PageResult<DictResVO> getDictList(
             @Parameter(description = "页码，默认为1") @RequestParam(required = false) Long pageNum,
             @Parameter(description = "每页数量，默认为10") @RequestParam(required = false) Integer pageSize,
+            @Parameter(description = "字典类型id") @RequestParam(required = false) Integer dictTypeId,
             @Parameter(description = "字典类型名称（模糊查询）") @RequestParam(required = false) String dictTypeName,
             @Parameter(description = "字典标签（模糊查询）") @RequestParam(required = false) String dictLabel) {
         pageNum = pageNum == null ? 1 : pageNum;
         pageSize = pageSize == null ? 10 : pageSize;
-        return dictService.pageDictByCond(pageNum, pageSize, dictTypeName, dictLabel);
+        return dictService.pageDictByCond(pageNum, pageSize, dictTypeId, dictTypeName, dictLabel);
     }
 
     @Operation(summary = "获取单条字典详情")

@@ -15,7 +15,8 @@ import java.util.List;
  */
 public interface DictMapper extends BaseMapper<Dict> {
 
-    PageResult<DictResVO> selectPageByCond(String dictTypeName, String dictLabel, PageRequest request);
+    PageResult<DictResVO> selectPageByCond(Integer dictTypeId, String dictTypeName, String dictLabel,
+                                           PageRequest request);
 
     List<Dict> selectListByCond(String dictType, String dictCode);
 }

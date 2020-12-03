@@ -15,6 +15,9 @@ selectPageByCond
     from dict d
         left join dict_type dt on d.dict_type_id = dt.id
     -- @where(){
+        -- @if(isNotEmpty(dictTypeId)){
+            and dt.id = #{dictTypeId}
+        -- @}
         -- @if(isNotEmpty(dictTypeName)){
             and dt.type_name like concat('%', #{dictTypeName}, '%')
         -- @}

@@ -18,7 +18,7 @@ public interface DictService {
      * 分页查询字典列表
      */
     PageResult<DictResVO> pageDictByCond(Long pageNum, Integer pageSize,
-                                         String dictTypeName, String dictLabel);
+                                         Integer dictTypeId, String dictTypeName, String dictLabel);
 
     /**
      * 按条件查询对应的所有字典数据

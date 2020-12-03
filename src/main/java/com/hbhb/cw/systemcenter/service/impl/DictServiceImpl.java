@@ -36,9 +36,9 @@ public class DictServiceImpl implements DictService {
     @Override
     @SuppressWarnings(value = {"rawtypes"})
     public PageResult<DictResVO> pageDictByCond(Long pageNum, Integer pageSize,
-                                                String dictTypeName, String dictLabel) {
+                                                Integer dictTypeId, String dictTypeName, String dictLabel) {
         PageRequest request = DefaultPageRequest.of(pageNum, pageSize);
-        return dictMapper.selectPageByCond(dictTypeName, dictLabel, request);
+        return dictMapper.selectPageByCond(dictTypeId, dictTypeName, dictLabel, request);
     }
 
     @Override
