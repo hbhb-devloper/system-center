@@ -42,7 +42,12 @@ public interface UnitService {
     /**
      * 查询所有单位map(id-单位名称)
      */
-    Map<Integer, String> getUnitMapByName();
+    Map<Integer, String> getUnitMapById();
+
+    /**
+     * 查询所有单位map(单位名称-id)
+     */
+    Map<String, Integer> getUnitMapByName();
 
     /**
      * 查询所有单位map(简称-id)
@@ -63,10 +68,4 @@ public interface UnitService {
      * 递归获取指定单位下（包含自己）的所有子单位id
      */
     List<Integer> getSubUnitByDeep(Integer unitId);
-
-    /**
-     * 查询所有单位map(单位名称-id)
-     */
-    Map<String, Integer> getUnitMapById();
-
 }

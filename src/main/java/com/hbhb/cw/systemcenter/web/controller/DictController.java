@@ -53,9 +53,9 @@ public class DictController implements DictApi {
     }
 
     @Operation(summary = "获取单条字典详情")
-    @GetMapping("/{id}")
-    public Dict getDictInfo(@Parameter(description = "字典id") @PathVariable Integer id) {
-        return dictService.getDictInfo(id);
+    @GetMapping("/{dictId}")
+    public Dict getDictInfo(@Parameter(description = "字典id") @PathVariable Integer dictId) {
+        return dictService.getDictInfo(dictId);
     }
 
     @Operation(summary = "新增字典")

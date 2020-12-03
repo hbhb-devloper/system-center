@@ -1,6 +1,7 @@
 package com.hbhb.cw.systemcenter.web.controller;
 
 import com.hbhb.core.bean.BeanConverter;
+import com.hbhb.core.bean.SelectVO;
 import com.hbhb.cw.systemcenter.model.DictType;
 import com.hbhb.cw.systemcenter.service.DictTypeService;
 import com.hbhb.cw.systemcenter.web.vo.DictTypeVO;
@@ -15,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 import javax.annotation.Resource;
 
@@ -36,14 +39,27 @@ public class DictTypeController {
     @Resource
     private DictTypeService dictTypeService;
 
-    @Operation(summary = "分页获取字典类型列表")
-    @GetMapping("/list")
-    public PageResult<DictType> getDictTypeList(
+    @Operation(summary = "分页获取字典类型列表", description = "管理页面用")
+    @GetMapping("/page")
+    public PageResult<DictType> getDictTypePage(
             @Parameter(description = "页码，默认为1") @RequestParam(required = false) Long pageNum,
             @Parameter(description = "每页数量，默认为10") @RequestParam(required = false) Integer pageSize) {
         pageNum = pageNum == null ? 1 : pageNum;
         pageSize = pageSize == null ? 10 : pageSize;
         return dictTypeService.pageDictTypeByCond(pageNum, pageSize);
+    }
+
+    @Operation(summary = "获取字典类型列表", description = "下拉框用")
+    @GetMapping("/list")
+    public List<SelectVO> getDictTypeList() {
+        return dictTypeService.getAllDictType();
+    }
+
+    @Operation(summary = "获取字典类型详情")
+    @GetMapping("/{dictTypeId}")
+    public DictType getDictTypeInfo(
+            @Parameter(description = "字典类型id") @PathVariable Integer dictTypeId) {
+        return dictTypeService.getDictTypeInfo(dictTypeId);
     }
 
     @Operation(summary = "新增字典类型")

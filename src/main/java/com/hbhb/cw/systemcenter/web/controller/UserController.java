@@ -189,4 +189,10 @@ public class UserController implements UserApi {
     public Boolean isAdmin(@Parameter(description = "用户id", required = true) Integer userId) {
         return roleService.isAdminRole(userId);
     }
+
+    @Operation(summary = "获取用户的权限（按类型）")
+    @Override
+    public Set<String> getUserPermission(Integer userId, List<String> types) {
+        return resourceService.getUserPermission(userId, types);
+    }
 }
