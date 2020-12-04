@@ -25,6 +25,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -160,6 +161,17 @@ public class UserServiceImpl implements UserService {
                         .unitId(user.getUnitId())
                         .build())
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    @SuppressWarnings(value = {"unchecked"})
+    public Map<Integer, String> getUserMapById() {
+        List<User> users = userMapper.createLambdaQuery()
+                .select(User::getId, User::getNickName);
+        return Optional.ofNullable(users)
+                .orElse(new ArrayList<>())
+                .stream()
+                .collect(Collectors.toMap(User::getId, User::getNickName));
     }
 
     /**

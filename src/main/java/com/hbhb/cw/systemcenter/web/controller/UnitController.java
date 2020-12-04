@@ -119,8 +119,14 @@ public class UnitController implements UnitApi {
 
     @Operation(summary = "获取单位map", description = "单位名称-单位id")
     @Override
-    public Map<String, Integer> getUnitMapByName() {
-        return unitService.getUnitMapByName();
+    public Map<String, Integer> getUnitMapByUnitName() {
+        return unitService.getUnitMapByUnitName();
+    }
+
+    @Operation(summary = "获取单位map", description = "单位缩写名-单位id")
+    @Override
+    public Map<String, Integer> getUnitMapByShortName() {
+        return unitService.getUnitMapByShortName();
     }
 
     @Operation(summary = "获取单位map", description = "单位简称-单位id")

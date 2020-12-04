@@ -8,10 +8,17 @@ import com.hbhb.cw.systemcenter.util.FileUtil;
 import com.hbhb.cw.systemcenter.vo.FileVO;
 import com.hbhb.cw.systemcenter.web.vo.FileResVO;
 
+import freemarker.template.Configuration;
+import freemarker.template.Template;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.BufferedWriter;
+import java.io.FileOutputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -20,16 +27,22 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletResponse;
+
+import lombok.extern.slf4j.Slf4j;
 
 @Service
+@Slf4j
 public class FileServiceImpl implements FileService {
 
     @Resource
     private FileMapper fileMapper;
+    @Resource
+    private Configuration configuration;
 
-    @Value("${file.download.domain}")
+    @Value("${cw.file.domain}")
     private String fileDomain;
-    @Value("${file.upload.path}")
+    @Value("${cw.file.path}")
     private String filePath;
 
     @Override
@@ -77,6 +90,26 @@ public class FileServiceImpl implements FileService {
     }
 
     @Override
+    public void download(HttpServletResponse response, String filePath, Boolean deleteFile) {
+        FileUtil.downloadFile(response, filePath, deleteFile);
+    }
+
+    @Override
+    public void fillTemplate(Object data, String templateName, String filePath) {
+        java.io.File file = new java.io.File(filePath);
+        try (FileOutputStream fos = new FileOutputStream(file);
+             OutputStreamWriter osw = new OutputStreamWriter(fos);
+             Writer out = new BufferedWriter(osw)) {
+            configuration.setDirectoryForTemplateLoading(
+                    new java.io.File(this.filePath + "template"));
+            Template t = configuration.getTemplate(templateName);
+            t.process(data, out);
+        } catch (Exception e) {
+            log.error("填充[{}]模板数据失败", templateName, e);
+        }
+    }
+
+    @Override
     public List<FileResVO> getFileList(Integer type) {
         List<File> files = fileMapper.createLambdaQuery()
                 .andEq(File::getBizType, type)
@@ -96,6 +129,11 @@ public class FileServiceImpl implements FileService {
     @Override
     public List<File> getFileInfoBatch(List<Integer> list) {
         return fileMapper.selectByIds(list);
+    }
+
+    @Override
+    public String getFilePath() {
+        return this.filePath;
     }
 
     @Override

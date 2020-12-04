@@ -99,7 +99,6 @@ public class FileUtil {
         File file = new File(filePath);
         try {
             InputStream in = new FileInputStream(file);
-//            response.setContentType("application/msword");
             response.setCharacterEncoding("utf-8");
             response.setHeader("Content-disposition", "attachment;filename=" + getFileName(filePath));
             BufferedOutputStream outputStream = new BufferedOutputStream(response.getOutputStream());

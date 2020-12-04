@@ -8,6 +8,7 @@ import com.hbhb.cw.systemcenter.web.vo.UserResVO;
 import org.beetl.sql.core.page.PageResult;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author xiaokang
@@ -64,4 +65,9 @@ public interface UserService {
      * 根据id批量查询获取用户信息
      */
     List<UserInfo> getUserInfoList(List<Integer> userIds);
+
+    /**
+     * 查询所有用户map(id-用户姓名)
+     */
+    Map<Integer, String> getUserMapById();
 }

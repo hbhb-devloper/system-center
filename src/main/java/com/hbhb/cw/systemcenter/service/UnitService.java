@@ -47,7 +47,12 @@ public interface UnitService {
     /**
      * 查询所有单位map(单位名称-id)
      */
-    Map<String, Integer> getUnitMapByName();
+    Map<String, Integer> getUnitMapByUnitName();
+
+    /**
+     * 查询所有单位map(单位缩写名-id)
+     */
+    Map<String, Integer> getUnitMapByShortName();
 
     /**
      * 查询所有单位map(简称-id)

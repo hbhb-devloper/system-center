@@ -8,6 +8,8 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
 public interface FileService {
 
     /**
@@ -19,6 +21,16 @@ public interface FileService {
      * 批量文件上传
      */
     List<FileVO> uploadBatch(MultipartFile[] files, Integer bizType);
+
+    /**
+     * 下载文件 .
+     */
+    void download(HttpServletResponse response, String filePath, Boolean deleteFile);
+
+    /**
+     * 填充文件模板
+     */
+    void fillTemplate(Object data, String templateName, String filePath);
 
     /**
      * 跟据类型获取文件列表
@@ -34,6 +46,11 @@ public interface FileService {
      * 根据id批量查询文件信息
      */
     List<File> getFileInfoBatch(List<Integer> list);
+
+    /**
+     * 获取文件存放路径
+     */
+    String getFilePath();
 
     /**
      * 删除文件

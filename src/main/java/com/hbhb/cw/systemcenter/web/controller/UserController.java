@@ -31,6 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.annotation.Resource;
@@ -176,6 +177,12 @@ public class UserController implements UserApi {
     public List<UserInfo> getUserInfoBatch(
             @Parameter(description = "用户id列表", required = true) List<Integer> userIds) {
         return userService.getUserInfoList(userIds);
+    }
+
+    @Operation(summary = "获取用户map", description = "用户id-用户姓名")
+    @Override
+    public Map<Integer, String> getUserMapById() {
+        return userService.getUserMapById();
     }
 
     @Operation(summary = "获取用户所有角色")

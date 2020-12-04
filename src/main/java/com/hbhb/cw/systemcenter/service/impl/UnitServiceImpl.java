@@ -111,13 +111,24 @@ public class UnitServiceImpl implements UnitService {
     }
 
     @Override
-    public Map<String, Integer> getUnitMapByName() {
+    public Map<String, Integer> getUnitMapByUnitName() {
         List<Unit> units = unitMapper.createLambdaQuery()
                 .select(Unit::getId, Unit::getUnitName);
         return Optional.ofNullable(units)
                 .orElse(new ArrayList<>())
                 .stream()
                 .collect(Collectors.toMap(Unit::getUnitName, Unit::getId));
+    }
+
+    @Override
+    public Map<String, Integer> getUnitMapByShortName() {
+        List<Unit> units = unitMapper.createLambdaQuery()
+                .select(Unit::getId, Unit::getShortName);
+        return Optional.ofNullable(units)
+                .orElse(new ArrayList<>())
+                .stream()
+                .filter(unit -> !StringUtils.isEmpty(unit.getShortName()))
+                .collect(Collectors.toMap(Unit::getShortName, Unit::getId));
     }
 
     @Override
