@@ -174,11 +174,6 @@ public class UserServiceImpl implements UserService {
                 .collect(Collectors.toMap(User::getId, User::getNickName));
     }
 
-    @Override
-    public List<Integer> getAccessUnit(Integer userId) {
-        return roleMapper.selectUnitRoleByUserId(userId);
-    }
-
     /**
      * 添加用户角色关联表
      */

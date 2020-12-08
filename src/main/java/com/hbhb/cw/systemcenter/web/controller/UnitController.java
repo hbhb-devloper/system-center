@@ -63,7 +63,7 @@ public class UnitController implements UnitApi {
         // 每次需要从数据库拿最新的 defaultUnitId
         User user = userService.getUserById(userId);
         // 用户的单位范围列表
-        List<TreeSelectVO> list = unitService.getUnitTreeSelectByUser(user.getId());
+        List<TreeSelectVO> list = unitService.getUnitTreeSelectByUser(userId);
         return TreeSelectWrapVO.builder()
                 .checked(Collections.singletonList(user.getDefaultUnitId()))
                 .list(list).build();

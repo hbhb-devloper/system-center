@@ -20,7 +20,6 @@ import com.hbhb.cw.systemcenter.web.vo.UserResVO;
 import com.hbhb.web.annotation.UserId;
 
 import org.beetl.sql.core.page.PageResult;
-import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -201,13 +200,5 @@ public class UserController implements UserApi {
             @Parameter(description = "用户id", required = true) Integer userId,
             @Parameter(description = "资源类型", required = true) List<String> types) {
         return resourceService.getUserPermission(userId, types);
-    }
-
-    @Operation(summary = "校验用户单位权限", description = "判断给定单位是否属于当前登录用户的单位权限范围内")
-    @Override
-    public Boolean checkUnitRole(@Parameter(description = "用户id", required = true) Integer userId,
-                                 @Parameter(description = "单位id", required = true) Integer unitId) {
-        List<Integer> accessUnits = userService.getAccessUnit(userId);
-        return !CollectionUtils.isEmpty(accessUnits) && accessUnits.contains(unitId);
     }
 }

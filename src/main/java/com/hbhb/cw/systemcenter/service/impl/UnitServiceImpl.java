@@ -40,7 +40,7 @@ public class UnitServiceImpl implements UnitService {
         List<Unit> units = unitMapper.createLambdaQuery()
                 .asc(Unit::getParentId)
                 .asc(Unit::getSortNum)
-                .select();
+                .select(Unit::getId, Unit::getUnitName, Unit::getParentId);
         return CollectionUtils.isEmpty(units) ? new ArrayList<>() : buildTreeSelectVO(units);
     }
 
@@ -166,34 +166,28 @@ public class UnitServiceImpl implements UnitService {
     @Override
     public List<Integer> getSubUnit(Integer unitId) {
         List<Integer> ids = new ArrayList<>();
-        // 包含自己单位id
         ids.add(unitId);
-
-        // 获取所有单位数据（按parentId升序）
-        List<Unit> units = unitMapper.createLambdaQuery().select(Unit::getId, Unit::getParentId);
-        if (CollectionUtils.isEmpty(units)) {
-            return ids;
+        // 判断是否有下级
+        // 如果没有下级，则直接返回；如果有下级，则先进行树形转换，再取出id。
+        long count = unitMapper.createLambdaQuery().andEq(Unit::getParentId, unitId).count();
+        if (count > 0) {
+            List<Unit> units = unitMapper.createLambdaQuery().select(Unit::getId, Unit::getParentId);
+            // 以 unitId 作为 rootId 构建树形结构（便于递归获取下属单位）
+            List<Unit> treeList = TreeUtil.build(units, unitId.toString());
+            // 取出单位id
+            getIdFromTree(ids, treeList);
         }
-
-        // 以 unitId 作为 rootId 进行树形构建（进行筛选）
-        List<Unit> treeList = TreeUtil.build(units, unitId.toString());
-        if (CollectionUtils.isEmpty(treeList)) {
-            return ids;
-        }
-
-        // 取出单位id
-        getUnitIdsFromTree(ids, treeList);
         return ids;
     }
 
     /**
      * 递归从树形结构中取出id
      */
-    private void getUnitIdsFromTree(List<Integer> ids, List<Unit> units) {
+    private void getIdFromTree(List<Integer> ids, List<Unit> units) {
         units.forEach(unit -> {
             ids.add(unit.getId());
             if (!CollectionUtils.isEmpty(unit.getChildren())) {
-                getUnitIdsFromTree(ids, unit.getChildren());
+                getIdFromTree(ids, unit.getChildren());
             }
         });
     }
