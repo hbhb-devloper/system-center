@@ -170,8 +170,7 @@ public class UnitServiceImpl implements UnitService {
         ids.add(unitId);
 
         // 获取所有单位数据（按parentId升序）
-        List<Unit> units = unitMapper.createLambdaQuery()
-                .select(Unit::getId, Unit::getParentId);
+        List<Unit> units = unitMapper.createLambdaQuery().select(Unit::getId, Unit::getParentId);
         if (CollectionUtils.isEmpty(units)) {
             return ids;
         }

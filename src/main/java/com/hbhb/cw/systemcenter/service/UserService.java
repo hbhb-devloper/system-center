@@ -70,4 +70,9 @@ public interface UserService {
      * 查询所有用户map(id-用户姓名)
      */
     Map<Integer, String> getUserMapById();
+
+    /**
+     * 获取用户的单位权限列表
+     */
+    List<Integer> getAccessUnit(Integer userId);
 }

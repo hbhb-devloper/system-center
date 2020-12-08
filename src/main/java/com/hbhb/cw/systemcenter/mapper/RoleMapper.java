@@ -18,4 +18,6 @@ public interface RoleMapper extends BaseMapper<Role> {
     PageResult<RoleVO> selectPageByCond(RoleVO vo, PageRequest request);
 
     List<Role> selectUserRolesByType(Integer userId, String roleType);
+
+    List<Integer> selectUnitRoleByUserId(Integer userId);
 }

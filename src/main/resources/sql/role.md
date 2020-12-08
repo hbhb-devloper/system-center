@@ -37,3 +37,16 @@ selectUserRolesByType
         and ur.user_id = #{userId}
     -- @}
 ```
+
+selectUnitRoleByUserId
+===
+```sql
+    select ru.unit_id
+    from user u
+        left join user_role ur on u.id = ur.user_id
+        left join role r on ur.role_id = r.id
+        left join role_unit ru on ur.role_id = ru.role_id
+    where r.role_type = 'UN'
+      and ru.is_half = 0
+      and u.id = #{userId}
+```

@@ -133,7 +133,7 @@ public class UnitController implements UnitApi {
 
     @Operation(summary = "获取某单位的所有下级单位id（递归遍历，包含自身）")
     @Override
-    public List<Integer> getSubUnit(Integer unitId) {
+    public List<Integer> getSubUnit(@Parameter(description = "单位id", required = true) Integer unitId) {
         return unitService.getSubUnit(unitId);
     }
 }

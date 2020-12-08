@@ -5,6 +5,7 @@ import com.hbhb.core.utils.AESCryptUtil;
 import com.hbhb.cw.systemcenter.enums.UserConstant;
 import com.hbhb.cw.systemcenter.enums.code.UserErrorCode;
 import com.hbhb.cw.systemcenter.exception.UserException;
+import com.hbhb.cw.systemcenter.mapper.RoleMapper;
 import com.hbhb.cw.systemcenter.mapper.UserMapper;
 import com.hbhb.cw.systemcenter.mapper.UserRoleMapper;
 import com.hbhb.cw.systemcenter.model.User;
@@ -40,6 +41,8 @@ public class UserServiceImpl implements UserService {
 
     @Resource
     private UserMapper userMapper;
+    @Resource
+    private RoleMapper roleMapper;
     @Resource
     private UserRoleMapper userRoleMapper;
 
@@ -169,6 +172,11 @@ public class UserServiceImpl implements UserService {
                 .orElse(new ArrayList<>())
                 .stream()
                 .collect(Collectors.toMap(User::getId, User::getNickName));
+    }
+
+    @Override
+    public List<Integer> getAccessUnit(Integer userId) {
+        return roleMapper.selectUnitRoleByUserId(userId);
     }
 
     /**
