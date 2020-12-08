@@ -63,15 +63,14 @@ public class UnitServiceImpl implements UnitService {
      * 将单位列表转成树形kv结构
      */
     private List<TreeSelectVO> buildTreeSelectVO(List<Unit> units) {
-        // 先转换成树形结构
-        // 以第一条数据的 parentId 作为 rootId 进行树形构建
-        Integer rootId = units.get(0).getParentId();
-        List<Unit> treeList = TreeUtil.build(units, rootId.toString());
-
-        // 再转k-v结构
-        return Optional.ofNullable(treeList)
-                .orElse(new ArrayList<>())
-                .stream()
+        List<Unit> treeList = new ArrayList<>();
+        // 以杭州和本部为根节点，组件树
+        List<Unit> treeList1 = TreeUtil.build(units, UnitEnum.HANGZHOU.value().toString());
+        List<Unit> treeList2 = TreeUtil.build(units, UnitEnum.BENBU.value().toString());
+        treeList.addAll(treeList1);
+        treeList.addAll(treeList2);
+        // 转kv
+        return treeList.stream()
                 .map(TreeSelectVO::new)
                 .collect(Collectors.toList());
     }
