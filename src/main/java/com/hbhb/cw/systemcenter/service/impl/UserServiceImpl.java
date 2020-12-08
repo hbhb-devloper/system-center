@@ -2,6 +2,7 @@ package com.hbhb.cw.systemcenter.service.impl;
 
 import com.hbhb.core.bean.BeanConverter;
 import com.hbhb.core.utils.AESCryptUtil;
+import com.hbhb.cw.systemcenter.enums.UserConstant;
 import com.hbhb.cw.systemcenter.enums.code.UserErrorCode;
 import com.hbhb.cw.systemcenter.exception.UserException;
 import com.hbhb.cw.systemcenter.mapper.UserMapper;
@@ -16,7 +17,6 @@ import com.hbhb.cw.systemcenter.web.vo.UserResVO;
 import org.beetl.sql.core.page.DefaultPageRequest;
 import org.beetl.sql.core.page.PageRequest;
 import org.beetl.sql.core.page.PageResult;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,9 +42,6 @@ public class UserServiceImpl implements UserService {
     private UserMapper userMapper;
     @Resource
     private UserRoleMapper userRoleMapper;
-
-    @Value("${cw.user.default-pwd}")
-    private String defaultPwd;
 
     @Override
     @SuppressWarnings(value = {"rawtypes"})
@@ -77,7 +74,7 @@ public class UserServiceImpl implements UserService {
         String plaintext = AESCryptUtil.decrypt(user.getPwd());
         // 添加时，如果密码明文为空，则使用默认密码
         if (StringUtils.isEmpty(plaintext)) {
-            plaintext = defaultPwd;
+            plaintext = UserConstant.DEFAULT_PASSWORD.value();
         }
         // 进行bCrypt加密处理
         user.setPwd(new BCryptPasswordEncoder().encode(plaintext));

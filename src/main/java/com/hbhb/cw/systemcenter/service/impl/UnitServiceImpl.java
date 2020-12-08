@@ -2,6 +2,7 @@ package com.hbhb.cw.systemcenter.service.impl;
 
 import com.hbhb.core.bean.SelectVO;
 import com.hbhb.core.utils.TreeUtil;
+import com.hbhb.cw.systemcenter.enums.UnitEnum;
 import com.hbhb.cw.systemcenter.mapper.RoleUnitMapper;
 import com.hbhb.cw.systemcenter.mapper.UnitMapper;
 import com.hbhb.cw.systemcenter.model.RoleUnit;
@@ -101,6 +102,22 @@ public class UnitServiceImpl implements UnitService {
     }
 
     @Override
+    public List<Integer> getAllUnitId() {
+        // 获取所有单位数据（按parentId升序）
+        List<Unit> units = unitMapper.createLambdaQuery()
+                .asc(Unit::getParentId)
+                .asc(Unit::getSortNum)
+                .select(Unit::getId);
+        return Optional.ofNullable(units)
+                .orElse(new ArrayList<>())
+                .stream()
+                .map(Unit::getId)
+                // 过滤杭州和本部
+                .filter(unitId -> !UnitEnum.isHangzhou(unitId) && !UnitEnum.isBenbu(unitId))
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public Map<Integer, String> getUnitMapById() {
         List<Unit> units = unitMapper.createLambdaQuery()
                 .select(Unit::getId, Unit::getUnitName);
@@ -148,24 +165,13 @@ public class UnitServiceImpl implements UnitService {
 
     @Override
     public List<Integer> getSubUnit(Integer unitId) {
-        List<Unit> subUnits = unitMapper.createLambdaQuery()
-                .andEq(Unit::getParentId, unitId)
-                .select();
-        return Optional.ofNullable(subUnits)
-                .orElse(new ArrayList<>())
-                .stream()
-                .map(Unit::getId)
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public List<Integer> getSubUnitByDeep(Integer unitId) {
         List<Integer> ids = new ArrayList<>();
         // 包含自己单位id
         ids.add(unitId);
 
         // 获取所有单位数据（按parentId升序）
-        List<Unit> units = unitMapper.all();
+        List<Unit> units = unitMapper.createLambdaQuery()
+                .select(Unit::getId, Unit::getParentId);
         if (CollectionUtils.isEmpty(units)) {
             return ids;
         }

@@ -4,6 +4,7 @@ import com.hbhb.core.bean.BeanConverter;
 import com.hbhb.cw.systemcenter.api.UserApi;
 import com.hbhb.cw.systemcenter.enums.ResourceType;
 import com.hbhb.cw.systemcenter.enums.RoleType;
+import com.hbhb.cw.systemcenter.enums.UnitEnum;
 import com.hbhb.cw.systemcenter.model.User;
 import com.hbhb.cw.systemcenter.service.ResourceService;
 import com.hbhb.cw.systemcenter.service.RoleService;
@@ -19,7 +20,6 @@ import com.hbhb.cw.systemcenter.web.vo.UserResVO;
 import com.hbhb.web.annotation.UserId;
 
 import org.beetl.sql.core.page.PageResult;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -60,9 +60,6 @@ public class UserController implements UserApi {
     @Resource
     private ResourceService resourceService;
 
-    @Value("${cw.unit-id.hangzhou}")
-    private Integer hangzhou;
-
     @Operation(summary = "通过指定条件查询用户列表（分页）")
     @GetMapping("/list")
     public PageResult<UserResVO> pageUserByCond(
@@ -75,8 +72,8 @@ public class UserController implements UserApi {
             @Parameter(description = "状态（0-禁用、1-启用）") @RequestParam(required = false) Byte state) {
         pageNum = pageNum == null ? 1 : pageNum;
         pageSize = pageSize == null ? 10 : pageSize;
-        unitId = unitId == null ? hangzhou : unitId;
-        List<Integer> unitIds = unitService.getSubUnitByDeep(unitId);
+        unitId = unitId == null ? UnitEnum.HANGZHOU.value() : unitId;
+        List<Integer> unitIds = unitService.getSubUnit(unitId);
         return userService.getUserPageByCond(
                 pageNum, pageSize, UserReqVO.builder()
                         .unitIds(unitIds)

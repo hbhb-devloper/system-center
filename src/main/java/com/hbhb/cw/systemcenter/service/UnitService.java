@@ -40,6 +40,11 @@ public interface UnitService {
     List<SelectVO> getShortNameList();
 
     /**
+     * 获取所有单位id（不包含杭州和本部）
+     */
+    List<Integer> getAllUnitId();
+
+    /**
      * 查询所有单位map(id-单位名称)
      */
     Map<Integer, String> getUnitMapById();
@@ -65,12 +70,7 @@ public interface UnitService {
     Unit getUnitInfo(Integer unitId);
 
     /**
-     * 获取指定单位的所有下级单位id
+     * 递归获取指定单位下的所有下属单位id（包含自己）
      */
     List<Integer> getSubUnit(Integer unitId);
-
-    /**
-     * 递归获取指定单位下（包含自己）的所有子单位id
-     */
-    List<Integer> getSubUnitByDeep(Integer unitId);
 }

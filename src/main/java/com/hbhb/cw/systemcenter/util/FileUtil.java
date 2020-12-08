@@ -101,15 +101,15 @@ public class FileUtil {
             InputStream in = new FileInputStream(file);
             response.setCharacterEncoding("utf-8");
             response.setHeader("Content-disposition", "attachment;filename=" + getFileName(filePath));
-            BufferedOutputStream outputStream = new BufferedOutputStream(response.getOutputStream());
+            BufferedOutputStream out = new BufferedOutputStream(response.getOutputStream());
             // 读取文件流
             int len;
             byte[] buffer = new byte[1024 * 10];
             while ((len = in.read(buffer)) != -1) {
-                outputStream.write(buffer, 0, len);
+                out.write(buffer, 0, len);
             }
-            outputStream.flush();
-            outputStream.close();
+            out.flush();
+            out.close();
             in.close();
             // 是否删除文件
             if (deleteFile) {

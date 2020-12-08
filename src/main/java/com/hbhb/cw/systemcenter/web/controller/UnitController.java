@@ -9,11 +9,9 @@ import com.hbhb.cw.systemcenter.service.UnitService;
 import com.hbhb.cw.systemcenter.service.UserService;
 import com.hbhb.cw.systemcenter.vo.TreeSelectVO;
 import com.hbhb.cw.systemcenter.vo.TreeSelectWrapVO;
-import com.hbhb.cw.systemcenter.vo.UnitTopVO;
 import com.hbhb.cw.systemcenter.web.vo.SelectInputVO;
 import com.hbhb.web.annotation.UserId;
 
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -45,11 +43,6 @@ public class UnitController implements UnitApi {
     private UnitService unitService;
     @Resource
     private UserService userService;
-
-    @Value("${cw.unit-id.hangzhou}")
-    private Integer hangzhou;
-    @Value("${cw.unit-id.benbu}")
-    private Integer benbu;
 
     @Operation(summary = "获取所有的单位列表", description = "单位管理时用，树形结构")
     @GetMapping("/list")
@@ -102,13 +95,10 @@ public class UnitController implements UnitApi {
         return BeanConverter.copyBeanList(shortNameList, SelectInputVO.class);
     }
 
-    @Operation(summary = "获取顶级单位id", description = "此系统中的顶级单位为（杭州、本部）")
+    @Operation(summary = "获取所有单位id", description = "不包含杭州和本部")
     @Override
-    public UnitTopVO getTopUnit() {
-        return UnitTopVO.builder()
-                .hangzhou(hangzhou)
-                .benbu(benbu)
-                .build();
+    public List<Integer> getAllUnitId() {
+        return unitService.getAllUnitId();
     }
 
     @Operation(summary = "获取单位map", description = "单位id-单位名称")
@@ -141,15 +131,9 @@ public class UnitController implements UnitApi {
         return unitService.getUnitInfo(unitId);
     }
 
-    @Operation(summary = "获取某单位的所有下级单位id")
+    @Operation(summary = "获取某单位的所有下级单位id（递归遍历，包含自身）")
     @Override
     public List<Integer> getSubUnit(Integer unitId) {
         return unitService.getSubUnit(unitId);
-    }
-
-    @Operation(summary = "获取某单位的所有下级单位id（递归遍历，包含自身）")
-    @Override
-    public List<Integer> getSubUnitByDeep(Integer unitId) {
-        return unitService.getSubUnitByDeep(unitId);
     }
 }
