@@ -1,7 +1,7 @@
 package com.hbhb.cw.systemcenter.mapper;
 
+import com.hbhb.beetlsql.BaseMapper;
 import com.hbhb.cw.systemcenter.model.SysResource;
-import com.hbhb.web.beetlsql.BaseMapper;
 
 import org.beetl.sql.mapper.annotation.Param;
 

@@ -14,7 +14,6 @@ import com.hbhb.cw.systemcenter.vo.MetaVO;
 import com.hbhb.cw.systemcenter.vo.ResourceResVO;
 import com.hbhb.cw.systemcenter.vo.RouterVO;
 import com.hbhb.cw.systemcenter.vo.TreeSelectVO;
-import com.hbhb.redis.component.RedisHelper;
 
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -38,10 +37,10 @@ import javax.annotation.Resource;
 @Service
 public class ResourceServiceImpl implements ResourceService {
 
-    @Resource
-    private RedisHelper redisHelper;
-    @Resource
-    private ResourceMapper resourceMapper;
+//    @Resource
+//    private RedisHelper redisHelper;
+@Resource
+private ResourceMapper resourceMapper;
     @Resource
     private RoleResourceMapper roleResourceMapper;
     @Resource

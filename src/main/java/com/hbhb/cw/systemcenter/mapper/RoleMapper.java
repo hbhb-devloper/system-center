@@ -1,8 +1,8 @@
 package com.hbhb.cw.systemcenter.mapper;
 
+import com.hbhb.beetlsql.BaseMapper;
 import com.hbhb.cw.systemcenter.model.Role;
 import com.hbhb.cw.systemcenter.web.vo.RoleVO;
-import com.hbhb.web.beetlsql.BaseMapper;
 
 import org.beetl.sql.core.page.PageRequest;
 import org.beetl.sql.core.page.PageResult;

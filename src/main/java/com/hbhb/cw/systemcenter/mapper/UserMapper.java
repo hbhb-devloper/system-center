@@ -1,9 +1,9 @@
 package com.hbhb.cw.systemcenter.mapper;
 
+import com.hbhb.beetlsql.BaseMapper;
 import com.hbhb.cw.systemcenter.model.User;
 import com.hbhb.cw.systemcenter.web.vo.UserReqVO;
 import com.hbhb.cw.systemcenter.web.vo.UserResVO;
-import com.hbhb.web.beetlsql.BaseMapper;
 
 import org.beetl.sql.core.page.PageRequest;
 import org.beetl.sql.core.page.PageResult;

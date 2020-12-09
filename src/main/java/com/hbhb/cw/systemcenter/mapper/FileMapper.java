@@ -1,8 +1,8 @@
 package com.hbhb.cw.systemcenter.mapper;
 
+import com.hbhb.beetlsql.BaseMapper;
 import com.hbhb.cw.systemcenter.model.File;
 import com.hbhb.cw.systemcenter.web.vo.FileResVO;
-import com.hbhb.web.beetlsql.BaseMapper;
 
 import java.util.List;
 
