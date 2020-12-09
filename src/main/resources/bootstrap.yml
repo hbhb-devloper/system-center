@@ -88,7 +88,7 @@ spring:
   profiles: test
   cloud:
     consul:
-      host: ${host.docker0}
+      host: consul.yeexun.com.cn
       discovery:
         instance-id: ${spring.application.name}-${port.test}-${spring.cloud.client.ip-address}
         service-name: ${spring.application.name}
