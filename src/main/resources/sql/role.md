@@ -11,14 +11,14 @@ selectPageByCond
     -- @}
     from role 
     -- @where(){
-        -- @if(isNotEmpty(roleType)){
-            and role_type = #{roleType}
+        -- @if(isNotEmpty(cond.roleType)){
+            and role_type = #{cond.roleType}
         -- @}
-        -- @if(isNotEmpty(roleName)){
-            and role_name like concat('%', #{roleName}, '%')
+        -- @if(isNotEmpty(cond.roleName)){
+            and role_name like concat('%', #{cond.roleName}, '%')
         -- @}
-        -- @if(isNotEmpty(state)){
-            and state = #{state}
+        -- @if(isNotEmpty(cond.state)){
+            and state = #{cond.state}
         -- @}
     -- @}
 ```

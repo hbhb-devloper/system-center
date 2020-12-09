@@ -46,7 +46,7 @@ public class UnitController implements UnitApi {
 
     @Operation(summary = "获取所有的单位列表", description = "单位管理时用，树形结构")
     @GetMapping("/list")
-    public List<TreeSelectVO> getUnitList() {
+    public List<TreeSelectVO> getAllUnitList() {
         return unitService.getAllUnitTreeList();
     }
 

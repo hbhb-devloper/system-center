@@ -6,6 +6,7 @@ import com.hbhb.web.beetlsql.BaseMapper;
 
 import org.beetl.sql.core.page.PageRequest;
 import org.beetl.sql.core.page.PageResult;
+import org.beetl.sql.mapper.annotation.Param;
 
 import java.util.List;
 
@@ -15,7 +16,7 @@ import java.util.List;
  */
 public interface RoleMapper extends BaseMapper<Role> {
 
-    PageResult<RoleVO> selectPageByCond(RoleVO vo, PageRequest request);
+    PageResult<RoleVO> selectPageByCond(@Param("cond") RoleVO vo, PageRequest request);
 
     List<Role> selectUserRolesByType(Integer userId, String roleType);
 }

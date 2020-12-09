@@ -36,12 +36,17 @@ public class UnitServiceImpl implements UnitService {
 
     @Override
     public List<TreeSelectVO> getAllUnitTreeList() {
-        // 获取所有单位数据（按parentId升序）
+        // 查询所有单位列表（按parentId、显示顺序升序）
         List<Unit> units = unitMapper.createLambdaQuery()
-                .asc(Unit::getParentId)
-                .asc(Unit::getSortNum)
+                .asc(Unit::getParentId).asc(Unit::getSortNum)
                 .select(Unit::getId, Unit::getUnitName, Unit::getParentId);
-        return CollectionUtils.isEmpty(units) ? new ArrayList<>() : buildTreeSelectVO(units);
+        // 以杭州的parentId=0为根节点，进行树形转换
+        List<Unit> treeList = TreeUtil.build(units, "0");
+        // 转kv
+        return Optional.ofNullable(treeList)
+                .orElse(new ArrayList<>())
+                .stream()
+                .map(TreeSelectVO::new).collect(Collectors.toList());
     }
 
     @Override
@@ -54,25 +59,28 @@ public class UnitServiceImpl implements UnitService {
 
     @Override
     public List<TreeSelectVO> getUnitTreeSelectByUser(Integer userId) {
-        // 查询用户的单位列表（按parentId升序）
+        // 查询用户的单位列表（按parentId、显示顺序升序，并且已去掉半选节点）
         List<Unit> units = unitMapper.selectByUserId(userId);
-        return CollectionUtils.isEmpty(units) ? new ArrayList<>() : buildTreeSelectVO(units);
-    }
+        if (CollectionUtils.isEmpty(units)) {
+            return new ArrayList<>();
+        }
 
-    /**
-     * 将单位列表转成树形kv结构
-     */
-    private List<TreeSelectVO> buildTreeSelectVO(List<Unit> units) {
+        // 将单位列表转成树形kv结构
         List<Unit> treeList = new ArrayList<>();
-        // 以杭州和本部为根节点，组件树
-        List<Unit> treeList1 = TreeUtil.build(units, UnitEnum.HANGZHOU.value().toString());
-        List<Unit> treeList2 = TreeUtil.build(units, UnitEnum.BENBU.value().toString());
-        treeList.addAll(treeList1);
-        treeList.addAll(treeList2);
+        List<Integer> unitIds = units.stream().map(Unit::getId).collect(Collectors.toList());
+
+        if (unitIds.contains(UnitEnum.HANGZHOU.value())) {
+            // 如果包含杭州，则以0为root节点构建树
+            treeList.addAll(TreeUtil.build(units, "0"));
+        } else if (unitIds.contains(UnitEnum.BENBU.value())) {
+            // 如果包含本部，则以杭州id为root节点构建树
+            treeList.addAll(TreeUtil.build(units, UnitEnum.HANGZHOU.value().toString()));
+        } else {
+            // 既不包含杭州，也不包含本部，则直接返回
+            treeList.addAll(units);
+        }
         // 转kv
-        return treeList.stream()
-                .map(TreeSelectVO::new)
-                .collect(Collectors.toList());
+        return treeList.stream().map(TreeSelectVO::new).collect(Collectors.toList());
     }
 
     @Override

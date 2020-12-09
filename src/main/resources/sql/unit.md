@@ -10,6 +10,7 @@ selectByUserId
          left join user_role ur on r.id = ur.role_id
          left join user us on ur.user_id = us.id
     where r.role_type = 'UN'
+      -- 去掉半选节点
       and ru.is_half = 0
       and us.id = #{userId}
     order by un.parent_id, un.sort_num
