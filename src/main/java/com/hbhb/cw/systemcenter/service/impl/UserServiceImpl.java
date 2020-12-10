@@ -165,9 +165,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @SuppressWarnings(value = {"unchecked"})
-    public Map<Integer, String> getUserMapById() {
-        List<User> users = userMapper.createLambdaQuery()
-                .select(User::getId, User::getNickName);
+    public Map<Integer, String> getUserMapById(List<Integer> userIds) {
+        List<User> users;
+        if (CollectionUtils.isEmpty(userIds)) {
+            users = userMapper.createLambdaQuery()
+                    .select(User::getId, User::getNickName);
+        } else {
+            users = userMapper.createLambdaQuery()
+                    .andIn(User::getId, userIds)
+                    .select(User::getId, User::getNickName);
+        }
         return Optional.ofNullable(users)
                 .orElse(new ArrayList<>())
                 .stream()

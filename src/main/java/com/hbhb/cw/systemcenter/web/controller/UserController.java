@@ -176,10 +176,11 @@ public class UserController implements UserApi {
         return userService.getUserInfoList(userIds);
     }
 
-    @Operation(summary = "获取用户map", description = "用户id-用户姓名")
+    @Operation(summary = "获取指定的用户map", description = "用户id-用户姓名")
     @Override
-    public Map<Integer, String> getUserMapById() {
-        return userService.getUserMapById();
+    public Map<Integer, String> getUserMapById(
+            @Parameter(description = "用户id列表（为空时查询全部）") List<Integer> userIds) {
+        return userService.getUserMapById(userIds);
     }
 
     @Operation(summary = "获取用户所有角色")

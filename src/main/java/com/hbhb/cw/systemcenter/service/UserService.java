@@ -67,7 +67,7 @@ public interface UserService {
     List<UserInfo> getUserInfoList(List<Integer> userIds);
 
     /**
-     * 查询所有用户map(id-用户姓名)
+     * 查询用户map(id-用户姓名)
      */
-    Map<Integer, String> getUserMapById();
+    Map<Integer, String> getUserMapById(List<Integer> userIds);
 }
