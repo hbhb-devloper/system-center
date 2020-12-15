@@ -3,7 +3,7 @@ package com.hbhb.cw.systemcenter.web.controller;
 import com.hbhb.cw.systemcenter.enums.code.UserErrorCode;
 import com.hbhb.cw.systemcenter.exception.UserException;
 import com.hbhb.cw.systemcenter.service.MaintainService;
-import com.hbhb.cw.systemcenter.service.RoleService;
+import com.hbhb.cw.systemcenter.service.SysRoleService;
 import com.hbhb.cw.systemcenter.web.vo.MaintainVO;
 import com.hbhb.web.annotation.UserId;
 
@@ -25,13 +25,13 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 public class MaintainController {
 
     @Resource
-    private RoleService roleService;
+    private SysRoleService sysRoleService;
     @Resource
     private MaintainService maintainService;
 
     @Operation(summary = "系统维护信息详情")
     @GetMapping("/info")
-    public MaintainVO getSysMaintain() {
+    public MaintainVO getMaintain() {
         return maintainService.getMaintainInfo();
     }
 
@@ -39,7 +39,7 @@ public class MaintainController {
     @PutMapping("")
     public void updateInfo(@Parameter(hidden = true) @UserId Integer userId,
                            @Parameter(description = "维护信息实体") @RequestBody MaintainVO vo) {
-        boolean admin = roleService.isAdminRole(userId);
+        boolean admin = sysRoleService.isAdminRole(userId);
         if (!admin) {
             throw new UserException(UserErrorCode.AUTHOR_NOT_ADMINISTRATOR);
         }

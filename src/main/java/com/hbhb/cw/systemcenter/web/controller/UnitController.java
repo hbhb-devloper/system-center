@@ -3,10 +3,10 @@ package com.hbhb.cw.systemcenter.web.controller;
 import com.hbhb.core.bean.BeanConverter;
 import com.hbhb.core.bean.SelectVO;
 import com.hbhb.cw.systemcenter.api.UnitApi;
+import com.hbhb.cw.systemcenter.model.SysUser;
 import com.hbhb.cw.systemcenter.model.Unit;
-import com.hbhb.cw.systemcenter.model.User;
+import com.hbhb.cw.systemcenter.service.SysUserService;
 import com.hbhb.cw.systemcenter.service.UnitService;
-import com.hbhb.cw.systemcenter.service.UserService;
 import com.hbhb.cw.systemcenter.vo.TreeSelectVO;
 import com.hbhb.cw.systemcenter.vo.TreeSelectWrapVO;
 import com.hbhb.cw.systemcenter.web.vo.SelectInputVO;
@@ -42,7 +42,7 @@ public class UnitController implements UnitApi {
     @Resource
     private UnitService unitService;
     @Resource
-    private UserService userService;
+    private SysUserService sysUserService;
 
     @Operation(summary = "获取所有的单位列表", description = "单位管理时用，树形结构")
     @GetMapping("/list")
@@ -61,7 +61,7 @@ public class UnitController implements UnitApi {
     @GetMapping("/tree-select")
     public TreeSelectWrapVO getUnitTreeSelect(@Parameter(hidden = true) @UserId Integer userId) {
         // 每次需要从数据库拿最新的 defaultUnitId
-        User user = userService.getUserById(userId);
+        SysUser user = sysUserService.getUserById(userId);
         // 用户的单位范围列表
         List<TreeSelectVO> list = unitService.getUnitTreeSelectByUser(userId);
         return TreeSelectWrapVO.builder()

@@ -7,8 +7,6 @@ import com.hbhb.cw.systemcenter.model.Broadcast;
 import com.hbhb.cw.systemcenter.service.BroadcastService;
 import com.hbhb.cw.systemcenter.service.MqService;
 
-import org.beetl.sql.core.page.DefaultPageRequest;
-import org.beetl.sql.core.page.PageRequest;
 import org.beetl.sql.core.page.PageResult;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -37,11 +35,13 @@ public class BroadcastServiceImpl implements BroadcastService {
     private BroadcastMapper broadcastMapper;
 
     @Override
-    @SuppressWarnings(value = {"rawtypes"})
     public PageResult<Broadcast> pageBroadcast(Integer pageNum, Integer pageSize,
                                                String content, Byte state) {
-        PageRequest request = DefaultPageRequest.of(pageNum, pageSize);
-        return broadcastMapper.selectPageByCond(content, state, request);
+        return broadcastMapper.createLambdaQuery()
+                .andLike(Broadcast::getContent, content)
+                .andEq(Broadcast::getState, state)
+                .desc(Broadcast::getCreateTime)
+                .page(pageNum, pageSize);
     }
 
     @Override

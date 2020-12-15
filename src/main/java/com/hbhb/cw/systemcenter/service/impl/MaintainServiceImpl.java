@@ -3,7 +3,7 @@ package com.hbhb.cw.systemcenter.service.impl;
 import com.hbhb.cw.systemcenter.mapper.MaintainMapper;
 import com.hbhb.cw.systemcenter.model.Maintain;
 import com.hbhb.cw.systemcenter.service.MaintainService;
-import com.hbhb.cw.systemcenter.service.RoleService;
+import com.hbhb.cw.systemcenter.service.SysRoleService;
 import com.hbhb.cw.systemcenter.web.vo.MaintainVO;
 
 import org.springframework.beans.BeanUtils;
@@ -18,7 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 public class MaintainServiceImpl implements MaintainService {
 
     @Resource
-    private RoleService roleService;
+    private SysRoleService sysRoleService;
     @Resource
     private MaintainMapper maintainMapper;
 
@@ -38,7 +38,7 @@ public class MaintainServiceImpl implements MaintainService {
         // 系统维护信息默认只有一条且id为1
         maintain.setId(1L);
         // 判断登录用户是否为管理员，只有管理员才可修改系统维护信息
-        boolean admin = roleService.isAdminRole(userId);
+        boolean admin = sysRoleService.isAdminRole(userId);
         if (admin) {
             maintainMapper.updateTemplateById(maintain);
         }

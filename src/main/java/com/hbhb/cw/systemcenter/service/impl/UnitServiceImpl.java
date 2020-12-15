@@ -3,9 +3,9 @@ package com.hbhb.cw.systemcenter.service.impl;
 import com.hbhb.core.bean.SelectVO;
 import com.hbhb.core.utils.TreeUtil;
 import com.hbhb.cw.systemcenter.enums.UnitEnum;
-import com.hbhb.cw.systemcenter.mapper.RoleUnitMapper;
+import com.hbhb.cw.systemcenter.mapper.SysRoleUnitMapper;
 import com.hbhb.cw.systemcenter.mapper.UnitMapper;
-import com.hbhb.cw.systemcenter.model.RoleUnit;
+import com.hbhb.cw.systemcenter.model.SysRoleUnit;
 import com.hbhb.cw.systemcenter.model.Unit;
 import com.hbhb.cw.systemcenter.service.UnitService;
 import com.hbhb.cw.systemcenter.vo.TreeSelectVO;
@@ -32,7 +32,7 @@ public class UnitServiceImpl implements UnitService {
     @Resource
     private UnitMapper unitMapper;
     @Resource
-    private RoleUnitMapper roleUnitMapper;
+    private SysRoleUnitMapper sysRoleUnitMapper;
 
     @Override
     public List<TreeSelectVO> getAllUnitTreeList() {
@@ -51,10 +51,10 @@ public class UnitServiceImpl implements UnitService {
 
     @Override
     public List<Integer> getCheckedUnitByRole(Integer roleId) {
-        List<RoleUnit> list = roleUnitMapper.createLambdaQuery()
-                .andEq(RoleUnit::getRoleId, roleId)
+        List<SysRoleUnit> list = sysRoleUnitMapper.createLambdaQuery()
+                .andEq(SysRoleUnit::getRoleId, roleId)
                 .select();
-        return list.stream().map(RoleUnit::getUnitId).collect(Collectors.toList());
+        return list.stream().map(SysRoleUnit::getUnitId).collect(Collectors.toList());
     }
 
     @Override

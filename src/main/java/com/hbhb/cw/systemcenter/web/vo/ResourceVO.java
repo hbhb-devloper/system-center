@@ -1,6 +1,6 @@
 package com.hbhb.cw.systemcenter.web.vo;
 
-import com.hbhb.cw.systemcenter.model.RoleResource;
+import com.hbhb.cw.systemcenter.model.SysRoleResource;
 
 import org.beetl.sql.annotation.entity.ResultProvider;
 import org.beetl.sql.core.mapping.join.AutoJsonMapper;
@@ -26,5 +26,5 @@ public class ResourceVO implements Serializable {
     private String apiPath;
     private String desc;
     private Date createTime;
-    private List<RoleResource> srr;
+    private List<SysRoleResource> srr;
 }

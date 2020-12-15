@@ -1,0 +1,228 @@
+package com.hbhb.cw.systemcenter.service.impl;
+
+import com.hbhb.core.bean.BeanConverter;
+import com.hbhb.core.bean.SelectVO;
+import com.hbhb.core.utils.AESCryptUtil;
+import com.hbhb.cw.systemcenter.enums.UserConstant;
+import com.hbhb.cw.systemcenter.enums.code.UserErrorCode;
+import com.hbhb.cw.systemcenter.exception.UserException;
+import com.hbhb.cw.systemcenter.mapper.SysUserMapper;
+import com.hbhb.cw.systemcenter.mapper.SysUserRoleMapper;
+import com.hbhb.cw.systemcenter.model.SysUser;
+import com.hbhb.cw.systemcenter.model.SysUserRole;
+import com.hbhb.cw.systemcenter.service.SysUserService;
+import com.hbhb.cw.systemcenter.service.UnitService;
+import com.hbhb.cw.systemcenter.vo.UserInfo;
+import com.hbhb.cw.systemcenter.vo.UserReqVO;
+import com.hbhb.cw.systemcenter.vo.UserResVO;
+
+import org.beetl.sql.core.page.DefaultPageRequest;
+import org.beetl.sql.core.page.PageRequest;
+import org.beetl.sql.core.page.PageResult;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.CollectionUtils;
+import org.springframework.util.StringUtils;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+import javax.annotation.Resource;
+
+/**
+ * @author xiaokang
+ * @since 2020-10-06
+ */
+@Service
+@SuppressWarnings(value = {"unchecked", "rawtypes"})
+public class SysUserServiceImpl implements SysUserService {
+
+    @Resource
+    private SysUserMapper sysUserMapper;
+    @Resource
+    private SysUserRoleMapper sysUserRoleMapper;
+    @Resource
+    private UnitService unitService;
+
+    @Override
+    public PageResult<UserResVO> getUserPageByCond(Integer pageNum, Integer pageSize, UserReqVO cond) {
+        PageRequest request = DefaultPageRequest.of(pageNum, pageSize);
+        return sysUserMapper.selectPageByCond(cond, request);
+    }
+
+    @Override
+    public List<SelectVO> getAllUserMap() {
+        Map<Integer, String> unitMap = unitService.getUnitMapById();
+        List<SysUser> userList = sysUserMapper.createLambdaQuery()
+                .select(SysUser::getId, SysUser::getNickName, SysUser::getUnitId);
+        return userList.stream().map(user ->
+                SelectVO.builder()
+                        .id(Long.valueOf(user.getId()))
+                        .label(user.getNickName() + "-" + unitMap.get(user.getUnitId()))
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public SysUser getUserById(Integer userId) {
+        return sysUserMapper.single(userId);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void addUser(SysUser user) {
+        long existUserName = sysUserMapper.createLambdaQuery()
+                .andEq(SysUser::getUserName, user.getUserName())
+                .count();
+        if (existUserName > 0) {
+            throw new UserException(UserErrorCode.REPEAT_OF_USER_NAME);
+        }
+        long existNickName = sysUserMapper.createLambdaQuery()
+                .andEq(SysUser::getNickName, user.getNickName())
+                .count();
+        if (existNickName > 0) {
+            throw new UserException(UserErrorCode.REPEAT_OF_NICK_NAME);
+        }
+        // 先用AES解密，再用BCrypt加密
+        String plaintext = AESCryptUtil.decrypt(user.getPwd());
+        // 添加时，如果密码明文为空，则使用默认密码
+        if (StringUtils.isEmpty(plaintext)) {
+            plaintext = UserConstant.DEFAULT_PASSWORD.value();
+        }
+        // 进行bCrypt加密处理
+        user.setPwd(new BCryptPasswordEncoder().encode(plaintext));
+        // 先添加主表
+        sysUserMapper.insertTemplate(user);
+        // 再添加关联数据
+        insertUserRole(user);
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updateUser(SysUser user) {
+        // 先用AES解密，再用BCrypt加密
+        String plaintext = AESCryptUtil.decrypt(user.getPwd());
+        // 修改时，如果密码明文为空，则不做任何处理
+        if (StringUtils.isEmpty(plaintext)) {
+            user.setPwd(null);
+        } else {
+            // 进行bCrypt加密处理
+            user.setPwd(new BCryptPasswordEncoder().encode(plaintext));
+        }
+        // 先更新主表
+        sysUserMapper.updateTemplateById(user);
+        // 再添加关联数据
+        insertUserRole(user);
+    }
+
+    @Override
+    public void updateUserInfo(SysUser user) {
+        sysUserMapper.updateTemplateById(user);
+    }
+
+    @Override
+    public void changeUserState(Integer userId, Byte state) {
+        sysUserMapper.updateTemplateById(SysUser.builder()
+                .id(userId)
+                .state(state)
+                .build());
+    }
+
+    @Override
+    public void updateUserPwd(Integer userId, String oldPwd, String newPwd) {
+        SysUser user = sysUserMapper.single(userId);
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String oldPlaintext = AESCryptUtil.decrypt(oldPwd);
+        String newPlaintext = AESCryptUtil.decrypt(newPwd);
+        if (!encoder.matches(oldPlaintext, user.getPwd())) {
+            throw new UserException(UserErrorCode.ORIGIN_PASSWORD_WRONG);
+        }
+        sysUserMapper.updateTemplateById(SysUser.builder()
+                .id(userId)
+                .pwd(encoder.encode(newPlaintext))
+                .build());
+    }
+
+    @Override
+    public UserInfo getUserInfoById(Integer userId) {
+        SysUser user = sysUserMapper.single(userId);
+        return BeanConverter.convert(user, UserInfo.class);
+    }
+
+    @Override
+    public UserInfo getUserInfoByName(String username) {
+        SysUser user = sysUserMapper.createLambdaQuery()
+                .andEq(SysUser::getUserName, username)
+                .single();
+        return BeanConverter.convert(user, UserInfo.class);
+
+    }
+
+    @Override
+    public List<UserInfo> getUserInfoList(List<Integer> userIds) {
+        List<SysUser> users = sysUserMapper.selectByIds(userIds);
+        return Optional.ofNullable(users)
+                .orElse(new ArrayList<>())
+                .stream()
+                .map(user -> UserInfo.builder()
+                        .email(user.getEmail())
+                        .nickName(user.getNickName())
+                        .id(user.getId())
+                        .unitId(user.getUnitId())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public Map<Integer, String> getUserMapById(List<Integer> userIds) {
+        List<SysUser> users;
+        if (CollectionUtils.isEmpty(userIds)) {
+            users = sysUserMapper.createLambdaQuery()
+                    .select(SysUser::getId, SysUser::getNickName);
+        } else {
+            users = sysUserMapper.createLambdaQuery()
+                    .andIn(SysUser::getId, userIds)
+                    .select(SysUser::getId, SysUser::getNickName);
+        }
+        return Optional.ofNullable(users)
+                .orElse(new ArrayList<>())
+                .stream()
+                .collect(Collectors.toMap(SysUser::getId, SysUser::getNickName));
+    }
+
+    /**
+     * 添加用户角色关联表
+     */
+    private void insertUserRole(SysUser user) {
+        // 先删除
+        sysUserRoleMapper.createLambdaQuery()
+                .andEq(SysUserRole::getUserId, user.getId())
+                .delete();
+
+        // 再添加
+        List<Integer> rsRoleIds = user.getCheckedRsRoleIds();
+        List<Integer> unRoleIds = user.getCheckedUnRoleIds();
+        if (rsRoleIds != null && unRoleIds != null) {
+            List<Integer> roleIds = new ArrayList<>();
+            roleIds.addAll(rsRoleIds);
+            roleIds.addAll(unRoleIds);
+            if (StringUtils.isEmpty(roleIds)) {
+                return;
+            }
+            List<SysUserRole> list = new ArrayList<>();
+            for (Integer roleId : roleIds) {
+                list.add(SysUserRole.builder()
+                        .userId(user.getId())
+                        .roleId(roleId)
+                        .build());
+            }
+            if (!CollectionUtils.isEmpty(list)) {
+                sysUserRoleMapper.insertBatch(list);
+            }
+        }
+    }
+}
