@@ -1,6 +1,6 @@
 package com.hbhb.cw.systemcenter.service;
 
-import com.hbhb.cw.systemcenter.model.Broadcast;
+import com.hbhb.cw.systemcenter.model.SysBroadcast;
 
 import org.beetl.sql.core.page.PageResult;
 
@@ -10,13 +10,13 @@ import java.util.List;
  * @author xiaokang
  * @since 2020-09-09
  */
-public interface BroadcastService {
+public interface SysBroadcastService {
 
     /**
      * 分页查询公告列表
      */
-    PageResult<Broadcast> pageBroadcast(Integer pageNum, Integer pageSize,
-                                        String content, Byte state);
+    PageResult<SysBroadcast> pageBroadcast(Integer pageNum, Integer pageSize,
+                                           String content, Byte state);
 
     /**
      * 查询已发布的公告
@@ -26,7 +26,7 @@ public interface BroadcastService {
     /**
      * 新增/更新公告
      */
-    void upsertBroadcast(Broadcast broadcast);
+    void upsertBroadcast(SysBroadcast broadcast);
 
     /**
      * 删除公告

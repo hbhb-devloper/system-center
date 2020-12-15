@@ -1,8 +1,8 @@
 package com.hbhb.cw.systemcenter.web.controller;
 
 import com.hbhb.core.bean.BeanConverter;
-import com.hbhb.cw.systemcenter.model.Broadcast;
-import com.hbhb.cw.systemcenter.service.BroadcastService;
+import com.hbhb.cw.systemcenter.model.SysBroadcast;
+import com.hbhb.cw.systemcenter.service.SysBroadcastService;
 import com.hbhb.cw.systemcenter.web.vo.BroadcastVO;
 import com.hbhb.web.annotation.UserId;
 
@@ -33,51 +33,51 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 @Tag(name = "公告")
 @RestController
 @RequestMapping("/broadcast")
-public class BroadcastController {
+public class SysBroadcastController {
 
     @Resource
-    private BroadcastService broadcastService;
+    private SysBroadcastService sysBroadcastService;
 
     @Operation(summary = "分页获取公告列表")
     @GetMapping("/list")
-    public PageResult<Broadcast> getBroadcastListByPage(
+    public PageResult<SysBroadcast> getBroadcastListByPage(
             @Parameter(description = "页码，默认为1") @RequestParam(required = false) Integer pageNum,
             @Parameter(description = "每页数量，默认为10") @RequestParam(required = false) Integer pageSize,
             @Parameter(description = "公告内容（模糊查询）") @RequestParam(required = false) String content,
             @Parameter(description = "公告状态（0-停用、1-启用）") @RequestParam(required = false) Byte state) {
         pageNum = pageNum == null ? 1 : pageNum;
         pageSize = pageSize == null ? 10 : pageSize;
-        return broadcastService.pageBroadcast(pageNum, pageSize, content, state);
+        return sysBroadcastService.pageBroadcast(pageNum, pageSize, content, state);
     }
 
     @Operation(summary = "获取已发布的公告列表")
     @GetMapping("/publish")
     public List<String> getBroadcastList() {
-        return broadcastService.getPublishList();
+        return sysBroadcastService.getPublishList();
     }
 
     @Operation(summary = "新增公告")
     @PostMapping("")
     public void addBroadcast(@Parameter(hidden = true) @UserId Integer userId,
                              @Parameter(description = "公告实体") @RequestBody BroadcastVO vo) {
-        Broadcast broadcast = new Broadcast();
+        SysBroadcast broadcast = new SysBroadcast();
         BeanConverter.copyProp(vo, broadcast);
         broadcast.setCreateBy(userId);
         broadcast.setCreateTime(new Date());
-        broadcastService.upsertBroadcast(broadcast);
+        sysBroadcastService.upsertBroadcast(broadcast);
     }
 
     @Operation(summary = "修改公告")
     @PutMapping("")
     public void updateBroadcast(@Parameter(description = "公告实体") @RequestBody BroadcastVO vo) {
-        Broadcast broadcast = new Broadcast();
+        SysBroadcast broadcast = new SysBroadcast();
         BeanConverter.copyProp(vo, broadcast);
-        broadcastService.upsertBroadcast(broadcast);
+        sysBroadcastService.upsertBroadcast(broadcast);
     }
 
     @Operation(summary = "删除公告")
     @DeleteMapping("/{broadcastId}")
     public void deleteBroadcast(@Parameter(description = "公告id") @PathVariable Long broadcastId) {
-        broadcastService.deleteBroadcast(broadcastId);
+        sysBroadcastService.deleteBroadcast(broadcastId);
     }
 }

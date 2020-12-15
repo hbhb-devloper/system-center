@@ -2,7 +2,7 @@ package com.hbhb.cw.systemcenter.service;
 
 import com.hbhb.cw.systemcenter.web.vo.MaintainVO;
 
-public interface MaintainService {
+public interface SysMaintainService {
 
     /**
      * 查询系统维护信息详情
