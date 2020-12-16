@@ -8,6 +8,7 @@ import com.hbhb.cw.systemcenter.service.MqService;
 import com.hbhb.cw.systemcenter.service.SysBroadcastService;
 
 import org.beetl.sql.core.page.PageResult;
+import org.beetl.sql.core.query.Query;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,8 +39,8 @@ public class SysBroadcastServiceImpl implements SysBroadcastService {
     public PageResult<SysBroadcast> pageBroadcast(Integer pageNum, Integer pageSize,
                                                   String content, Byte state) {
         return broadcastMapper.createLambdaQuery()
-                .andLike(SysBroadcast::getContent, content)
-                .andEq(SysBroadcast::getState, state)
+                .andLike(SysBroadcast::getContent, Query.filterEmpty(content))
+                .andEq(SysBroadcast::getState, Query.filterEmpty(state))
                 .desc(SysBroadcast::getCreateTime)
                 .page(pageNum, pageSize);
     }
