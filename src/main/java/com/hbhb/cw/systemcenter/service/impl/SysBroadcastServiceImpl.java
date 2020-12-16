@@ -1,5 +1,6 @@
 package com.hbhb.cw.systemcenter.service.impl;
 
+import com.hbhb.beetlsql.core.QueryExt;
 import com.hbhb.core.utils.JsonUtil;
 import com.hbhb.cw.systemcenter.enums.BroadcastState;
 import com.hbhb.cw.systemcenter.mapper.BroadcastMapper;
@@ -39,7 +40,7 @@ public class SysBroadcastServiceImpl implements SysBroadcastService {
     public PageResult<SysBroadcast> pageBroadcast(Integer pageNum, Integer pageSize,
                                                   String content, Byte state) {
         return broadcastMapper.createLambdaQuery()
-                .andLike(SysBroadcast::getContent, Query.filterEmpty(content))
+                .andLike(SysBroadcast::getContent, QueryExt.filterLikeEmpty(content))
                 .andEq(SysBroadcast::getState, Query.filterEmpty(state))
                 .desc(SysBroadcast::getCreateTime)
                 .page(pageNum, pageSize);
