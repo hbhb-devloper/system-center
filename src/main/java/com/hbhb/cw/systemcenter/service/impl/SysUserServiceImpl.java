@@ -208,8 +208,9 @@ public class SysUserServiceImpl implements SysUserService {
      * 校验默认数据单位是否在设定的单位权限范围内
      */
     private boolean checkDefaultUnit(SysUser user) {
+        Integer defaultUnitId = user.getDefaultUnitId();
         List<Integer> unitIds = user.getCheckedUnRoleIds();
-        return !CollectionUtils.isEmpty(unitIds) && unitIds.contains(user.getDefaultUnitId());
+        return defaultUnitId != null && !CollectionUtils.isEmpty(unitIds) && unitIds.contains(defaultUnitId);
     }
 
     /**
