@@ -1,5 +1,6 @@
 package com.hbhb.cw.systemcenter.util;
 
+import com.hbhb.core.utils.NumberUtil;
 import com.hbhb.cw.systemcenter.enums.code.FileErrorCode;
 import com.hbhb.cw.systemcenter.exception.FileException;
 import com.hbhb.cw.systemcenter.vo.FileVO;
@@ -15,7 +16,6 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -82,8 +82,7 @@ public class FileUtil {
             // 返回文件参数
             return FileVO.builder()
                     .fileName(destFileName.toString())
-                    .fileSize(new DecimalFormat("#,###").format(
-                            Float.parseFloat(String.valueOf(file.getSize() / 1024))) + " KB")
+                    .fileSize(getLength(file.getSize()))
                     .build();
         } catch (IOException e) {
             log.error(e.getMessage(), e);
@@ -164,5 +163,18 @@ public class FileUtil {
             }
         }
         return number;
+    }
+
+    public static String getLength(long filesize) {
+        int byteLen = 1024;
+        if (filesize < byteLen) {
+            return filesize + "B";
+        } else if (filesize < byteLen * byteLen) {
+            return NumberUtil.format(((double) filesize) / byteLen) + "KB";
+        } else if (filesize < byteLen * byteLen * byteLen) {
+            return NumberUtil.format(((double) filesize) / (byteLen * byteLen)) + "MB";
+        } else {
+            return NumberUtil.format(((double) filesize) / (byteLen * byteLen * byteLen)) + "GB";
+        }
     }
 }
