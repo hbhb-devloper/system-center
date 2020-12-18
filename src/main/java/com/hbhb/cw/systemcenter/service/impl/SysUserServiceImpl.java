@@ -75,6 +75,11 @@ public class SysUserServiceImpl implements SysUserService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void addUser(SysUser user) {
+        // 默认数据单位必须在单位权限范围内
+        if (!checkDefaultUnit(user)) {
+            throw new UserException(UserErrorCode.DEFAULT_UNIT_SET_ERROR);
+        }
+
         long existUserName = sysUserMapper.createLambdaQuery()
                 .andEq(SysUser::getUserName, user.getUserName())
                 .count();
@@ -104,6 +109,11 @@ public class SysUserServiceImpl implements SysUserService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateUser(SysUser user) {
+        // 默认数据单位必须在单位权限范围内
+        if (!checkDefaultUnit(user)) {
+            throw new UserException(UserErrorCode.DEFAULT_UNIT_SET_ERROR);
+        }
+
         // 先用AES解密，再用BCrypt加密
         String plaintext = AESCryptUtil.decrypt(user.getPwd());
         // 修改时，如果密码明文为空，则不做任何处理
@@ -192,6 +202,14 @@ public class SysUserServiceImpl implements SysUserService {
                 .orElse(new ArrayList<>())
                 .stream()
                 .collect(Collectors.toMap(SysUser::getId, SysUser::getNickName));
+    }
+
+    /**
+     * 校验默认数据单位是否在设定的单位权限范围内
+     */
+    private boolean checkDefaultUnit(SysUser user) {
+        List<Integer> unitIds = user.getCheckedUnRoleIds();
+        return !CollectionUtils.isEmpty(unitIds) && unitIds.contains(user.getDefaultUnitId());
     }
 
     /**

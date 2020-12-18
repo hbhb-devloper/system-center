@@ -14,6 +14,7 @@ public enum UserErrorCode {
     ORIGIN_PASSWORD_WRONG("S0102", "origin.password.wrong"),
     REPEAT_OF_USER_NAME("S0103", "repeat.of.user.name"),
     REPEAT_OF_NICK_NAME("S0104", "repeat.of.nick.name"),
+    DEFAULT_UNIT_SET_ERROR("S0105", "default.unit.set.error"),
     ;
 
     private final String code;

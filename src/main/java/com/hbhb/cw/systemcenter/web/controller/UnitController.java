@@ -21,7 +21,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -64,9 +63,7 @@ public class UnitController implements UnitApi {
         SysUser user = sysUserService.getUserById(userId);
         // 用户的单位范围列表
         List<TreeSelectVO> list = unitService.getUnitTreeSelectByUser(userId);
-        return TreeSelectWrapVO.builder()
-                .checked(Collections.singletonList(user.getDefaultUnitId()))
-                .list(list).build();
+        return TreeSelectWrapVO.builder().checked(user.getDefaultUnitId()).list(list).build();
     }
 
     @Operation(summary = "添加单位")
