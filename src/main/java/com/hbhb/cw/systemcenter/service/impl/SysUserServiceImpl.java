@@ -6,8 +6,10 @@ import com.hbhb.core.utils.AESCryptUtil;
 import com.hbhb.cw.systemcenter.enums.UserConstant;
 import com.hbhb.cw.systemcenter.enums.code.UserErrorCode;
 import com.hbhb.cw.systemcenter.exception.UserException;
+import com.hbhb.cw.systemcenter.mapper.SysRoleUnitMapper;
 import com.hbhb.cw.systemcenter.mapper.SysUserMapper;
 import com.hbhb.cw.systemcenter.mapper.SysUserRoleMapper;
+import com.hbhb.cw.systemcenter.model.SysRoleUnit;
 import com.hbhb.cw.systemcenter.model.SysUser;
 import com.hbhb.cw.systemcenter.model.SysUserRole;
 import com.hbhb.cw.systemcenter.service.SysUserService;
@@ -45,6 +47,8 @@ public class SysUserServiceImpl implements SysUserService {
     private SysUserMapper sysUserMapper;
     @Resource
     private SysUserRoleMapper sysUserRoleMapper;
+    @Resource
+    private SysRoleUnitMapper sysRoleUnitMapper;
     @Resource
     private UnitService unitService;
 
@@ -208,9 +212,19 @@ public class SysUserServiceImpl implements SysUserService {
      * 校验默认数据单位是否在设定的单位权限范围内
      */
     private boolean checkDefaultUnit(SysUser user) {
+        // 用户的默认单位
         Integer defaultUnitId = user.getDefaultUnitId();
-        List<Integer> unitIds = user.getCheckedUnRoleIds();
-        return defaultUnitId != null && !CollectionUtils.isEmpty(unitIds) && unitIds.contains(defaultUnitId);
+        // 勾选的单位权限
+        List<Integer> roleIds = user.getCheckedUnRoleIds();
+        if (defaultUnitId == null || CollectionUtils.isEmpty(roleIds)) {
+            return false;
+        }
+        List<SysRoleUnit> list = sysRoleUnitMapper.createLambdaQuery()
+                .andIn(SysRoleUnit::getRoleId, roleIds)
+                .select();
+        // 单位权限中包含的单位id
+        List<Integer> unitIds = list.stream().map(SysRoleUnit::getUnitId).collect(Collectors.toList());
+        return unitIds.contains(defaultUnitId);
     }
 
     /**
