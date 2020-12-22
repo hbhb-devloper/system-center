@@ -1,6 +1,6 @@
 package com.hbhb.cw.systemcenter.service.impl;
 
-import com.hbhb.core.bean.SelectVO;
+import com.hbhb.api.core.bean.SelectVO;
 import com.hbhb.cw.systemcenter.mapper.SysDictTypeMapper;
 import com.hbhb.cw.systemcenter.model.SysDictType;
 import com.hbhb.cw.systemcenter.service.SysDictTypeService;

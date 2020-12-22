@@ -1,7 +1,7 @@
 package com.hbhb.cw.systemcenter.web.controller;
 
+import com.hbhb.api.core.bean.SelectVO;
 import com.hbhb.core.bean.BeanConverter;
-import com.hbhb.core.bean.SelectVO;
 import com.hbhb.cw.systemcenter.api.UserApi;
 import com.hbhb.cw.systemcenter.enums.ResourceType;
 import com.hbhb.cw.systemcenter.enums.RoleType;

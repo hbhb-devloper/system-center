@@ -1,6 +1,6 @@
 package com.hbhb.cw.systemcenter.service;
 
-import com.hbhb.core.bean.SelectVO;
+import com.hbhb.api.core.bean.SelectVO;
 import com.hbhb.cw.systemcenter.model.Unit;
 import com.hbhb.cw.systemcenter.vo.TreeSelectVO;
 

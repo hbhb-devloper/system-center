@@ -1,6 +1,6 @@
 package com.hbhb.cw.systemcenter.service.impl;
 
-import com.hbhb.core.bean.SelectVO;
+import com.hbhb.api.core.bean.SelectVO;
 import com.hbhb.core.utils.TreeUtil;
 import com.hbhb.cw.systemcenter.enums.UnitEnum;
 import com.hbhb.cw.systemcenter.mapper.SysRoleUnitMapper;
