@@ -19,5 +19,5 @@ public class HomeModuleVO {
     @Schema(description = "模块名称")
     private String moduleName;
     @Schema(description = "统计值")
-    private Integer count;
+    private Long count;
 }

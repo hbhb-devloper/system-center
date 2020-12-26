@@ -33,5 +33,25 @@
             <artifactId>system-center-api</artifactId>
             <version>1.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.hbhb</groupId>
+            <artifactId>flow-center-api</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.hbhb</groupId>
+            <artifactId>fund-center-api</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.hbhb</groupId>
+            <artifactId>relocation-manage-api</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.hbhb</groupId>
+            <artifactId>budget-service-api</artifactId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
 </project>

@@ -53,6 +53,18 @@ port:
   test-proxy: 10004
   prd: 10004
 
+# 指定服务提供方实例地址（为空则不指定）
+feign-url:
+#feign-url: 192.168.28.58:8887
+
+# 服务提供方实例名称
+provider:
+  system-center: system-center-@env@
+  flow-center: flow-center-@env@
+  fund-center: fund-center-@env@
+  budget-service: budget-service-@env@
+  relocation-manage: relocation-manage-@env@
+
 ################### 本地环境配置 ###################
 ---
 spring:

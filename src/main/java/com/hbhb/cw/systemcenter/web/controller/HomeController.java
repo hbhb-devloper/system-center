@@ -20,7 +20,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
  * @author wxg
  * @since 2020-09-30
  */
-@Tag(name = "首页", description = "新版本 /work -> /home")
+@Tag(name = "首页")
 @RestController
 @RequestMapping("/home")
 public class HomeController {
