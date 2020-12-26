@@ -6,7 +6,6 @@ import com.hbhb.cw.systemcenter.service.HomeService;
 import com.hbhb.cw.systemcenter.service.SysDictService;
 import com.hbhb.cw.systemcenter.vo.DictVO;
 import com.hbhb.cw.systemcenter.web.vo.HomeModuleVO;
-import com.hbhb.cw.systemcenter.web.vo.HomeTodoVO;
 
 import org.springframework.stereotype.Service;
 
@@ -68,19 +67,5 @@ public class HomeServiceImpl implements HomeService {
 //            workList.add(work2);
 //        }
         return workList;
-    }
-
-    @Override
-    public List<HomeTodoVO> getTodoList(Integer module, Integer userId) {
-        // 预算模块代办提醒
-//        BudgetProjectNoticeVO bpNoticeVo = new BudgetProjectNoticeVO();
-//        bpNoticeVo.setUserId(user.getId());
-//        if (module.equals(Module.MODULE_BUDGET.getValue())) {
-//            return budgetNoticeService.getBudgetNoticeList(user);
-//            // 客户资金模块代办提醒
-//        } else if (module.equals(Module.MODULE_INVOICE.getValue())) {
-//            return fundNoticeService.getInvoiceNotice(user);
-//        }
-        return null;
     }
 }
