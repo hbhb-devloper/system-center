@@ -26,7 +26,7 @@ selectPageByCond
         -- @}
     -- @}
     -- @pageIgnoreTag(){
-        order by d.create_time desc
+        order by d.dict_code
     -- @}
 ```
 
