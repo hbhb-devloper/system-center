@@ -101,8 +101,7 @@ public class SysFileServiceImpl implements SysFileService {
         try (FileOutputStream fos = new FileOutputStream(file);
              OutputStreamWriter osw = new OutputStreamWriter(fos);
              Writer out = new BufferedWriter(osw)) {
-            configuration.setDirectoryForTemplateLoading(
-                    new File(this.filePath + "template"));
+            configuration.setDirectoryForTemplateLoading(new File(this.getFileTemplatePath()));
             Template t = configuration.getTemplate(templateName);
             t.process(data, out);
         } catch (Exception e) {
@@ -140,6 +139,11 @@ public class SysFileServiceImpl implements SysFileService {
     @Override
     public String getFilePath() {
         return this.filePath;
+    }
+
+    @Override
+    public String getFileTemplatePath() {
+        return this.filePath + "template";
     }
 
     @Override

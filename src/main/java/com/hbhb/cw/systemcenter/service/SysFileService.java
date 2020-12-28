@@ -58,6 +58,11 @@ public interface SysFileService {
     String getFilePath();
 
     /**
+     * 获取文件模板存放路径
+     */
+    String getFileTemplatePath();
+
+    /**
      * 删除文件
      */
     void deleteFile(Long id);

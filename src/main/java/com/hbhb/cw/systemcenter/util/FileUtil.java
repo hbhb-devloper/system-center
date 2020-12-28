@@ -5,6 +5,7 @@ import com.hbhb.cw.systemcenter.enums.code.FileErrorCode;
 import com.hbhb.cw.systemcenter.exception.FileException;
 import com.hbhb.cw.systemcenter.vo.FileVO;
 
+import org.springframework.http.MediaType;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -13,6 +14,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -98,7 +100,8 @@ public class FileUtil {
         File file = new File(filePath);
         try {
             InputStream in = new FileInputStream(file);
-            response.setCharacterEncoding("utf-8");
+            response.setCharacterEncoding(StandardCharsets.UTF_8.name());
+            response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
             response.setHeader("Content-disposition", "attachment;filename=" + getFileName(filePath));
             BufferedOutputStream out = new BufferedOutputStream(response.getOutputStream());
             // 读取文件流

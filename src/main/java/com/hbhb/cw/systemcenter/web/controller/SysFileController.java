@@ -101,7 +101,7 @@ public class SysFileController implements FileApi {
     @Operation(summary = "获取文件模板存放路径")
     @Override
     public String getTemplatePath() {
-        return sysFileService.getFilePath() + "template";
+        return sysFileService.getFileTemplatePath();
     }
 
     @Operation(summary = "删除文件")
