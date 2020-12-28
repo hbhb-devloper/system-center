@@ -172,7 +172,7 @@ public class SysUserServiceImpl implements SysUserService {
         SysUser user = sysUserMapper.createLambdaQuery()
                 .andEq(SysUser::getUserName, username)
                 .single();
-        return BeanConverter.convert(user, UserInfo.class);
+        return user == null ? null : BeanConverter.convert(user, UserInfo.class);
 
     }
 
