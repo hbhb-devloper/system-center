@@ -48,6 +48,11 @@ public interface SysFileService {
     List<SysFile> getFileInfoBatch(List<Integer> list);
 
     /**
+     * 获取文件访问域名
+     */
+    String getFileDomain();
+
+    /**
      * 获取文件存放路径
      */
     String getFilePath();

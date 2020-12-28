@@ -86,6 +86,12 @@ public class SysFileController implements FileApi {
         return sysFileService.getFileInfoBatch(fileIds);
     }
 
+    @Operation(summary = "获取文件访问域名")
+    @Override
+    public String getDomain() {
+        return sysFileService.getFileDomain();
+    }
+
     @Operation(summary = "获取文件存放路径")
     @Override
     public String getPath() {

@@ -133,6 +133,11 @@ public class SysFileServiceImpl implements SysFileService {
     }
 
     @Override
+    public String getFileDomain() {
+        return this.fileDomain;
+    }
+
+    @Override
     public String getFilePath() {
         return this.filePath;
     }
