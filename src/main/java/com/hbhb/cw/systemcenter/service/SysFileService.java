@@ -1,7 +1,7 @@
 package com.hbhb.cw.systemcenter.service;
 
+import com.hbhb.api.core.bean.FileVO;
 import com.hbhb.cw.systemcenter.model.SysFile;
-import com.hbhb.cw.systemcenter.vo.FileVO;
 import com.hbhb.cw.systemcenter.web.vo.FileResVO;
 
 import org.springframework.web.multipart.MultipartFile;

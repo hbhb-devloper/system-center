@@ -1,10 +1,10 @@
 package com.hbhb.cw.systemcenter.web.controller;
 
+import com.hbhb.api.core.bean.FileVO;
 import com.hbhb.cw.systemcenter.api.FileApi;
 import com.hbhb.cw.systemcenter.enums.FileType;
 import com.hbhb.cw.systemcenter.model.SysFile;
 import com.hbhb.cw.systemcenter.service.SysFileService;
-import com.hbhb.cw.systemcenter.vo.FileVO;
 import com.hbhb.cw.systemcenter.web.vo.FileResVO;
 
 import org.springframework.web.bind.annotation.GetMapping;
@@ -50,7 +50,7 @@ public class SysFileController implements FileApi {
     }
 
     @Operation(summary = "下载文件")
-    @Override
+    @GetMapping("/download")
     public void download(HttpServletResponse response,
                          @Parameter(description = "文件路径+名称", example = "/app/file/test.xlsx") String filePath,
                          @Parameter(description = "是否删除原文件") Boolean deleteFile) {
