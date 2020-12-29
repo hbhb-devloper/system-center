@@ -46,7 +46,6 @@ feign-url:
 
 # 服务提供方实例名称
 provider:
-  system-center: system-center-@env@
   flow-center: flow-center-@env@
   fund-center: fund-center-@env@
   budget-service: budget-service-@env@

@@ -3,6 +3,7 @@ package com.hbhb.cw.systemcenter.service.impl;
 import com.hbhb.api.core.bean.SelectVO;
 import com.hbhb.core.bean.BeanConverter;
 import com.hbhb.core.utils.AESCryptUtil;
+import com.hbhb.core.utils.RegexUtil;
 import com.hbhb.cw.systemcenter.enums.UserConstant;
 import com.hbhb.cw.systemcenter.enums.code.UserErrorCode;
 import com.hbhb.cw.systemcenter.exception.UserException;
@@ -79,26 +80,35 @@ public class SysUserServiceImpl implements SysUserService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void addUser(SysUser user) {
-        // 默认数据单位必须在单位权限范围内
+        // 校验默认数据单位。默认数据单位必须在单位权限范围内
         if (!checkDefaultUnit(user)) {
             throw new UserException(UserErrorCode.DEFAULT_UNIT_SET_ERROR);
         }
 
+        // 校验登录账号
         long existUserName = sysUserMapper.createLambdaQuery()
                 .andEq(SysUser::getUserName, user.getUserName())
                 .count();
         if (existUserName > 0) {
             throw new UserException(UserErrorCode.REPEAT_OF_USER_NAME);
         }
+
+        // 校验用户姓名
         long existNickName = sysUserMapper.createLambdaQuery()
                 .andEq(SysUser::getNickName, user.getNickName())
                 .count();
         if (existNickName > 0) {
             throw new UserException(UserErrorCode.REPEAT_OF_NICK_NAME);
         }
+
         // 先用AES解密，再用BCrypt加密
         String plaintext = AESCryptUtil.decrypt(user.getPwd());
-        // 添加时，如果密码明文为空，则使用默认密码
+        // 校验密码强度
+        if (!RegexUtil.checkPwd(plaintext)) {
+            throw new UserException(UserErrorCode.INCOMPATIBLE_PASSWORD);
+        }
+
+        // 如果密码明文为空，则使用默认密码
         if (StringUtils.isEmpty(plaintext)) {
             plaintext = UserConstant.DEFAULT_PASSWORD.value();
         }
@@ -120,6 +130,11 @@ public class SysUserServiceImpl implements SysUserService {
 
         // 先用AES解密，再用BCrypt加密
         String plaintext = AESCryptUtil.decrypt(user.getPwd());
+        // 校验密码强度
+        if (!RegexUtil.checkPwd(plaintext)) {
+            throw new UserException(UserErrorCode.INCOMPATIBLE_PASSWORD);
+        }
+
         // 修改时，如果密码明文为空，则不做任何处理
         if (StringUtils.isEmpty(plaintext)) {
             user.setPwd(null);
@@ -152,6 +167,11 @@ public class SysUserServiceImpl implements SysUserService {
         BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
         String oldPlaintext = AESCryptUtil.decrypt(oldPwd);
         String newPlaintext = AESCryptUtil.decrypt(newPwd);
+        // 校验密码强度
+        if (!RegexUtil.checkPwd(newPlaintext)) {
+            throw new UserException(UserErrorCode.INCOMPATIBLE_PASSWORD);
+        }
+        // 校验原密码是否正确
         if (!encoder.matches(oldPlaintext, user.getPwd())) {
             throw new UserException(UserErrorCode.ORIGIN_PASSWORD_WRONG);
         }
