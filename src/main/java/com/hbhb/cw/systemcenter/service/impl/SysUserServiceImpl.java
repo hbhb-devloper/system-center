@@ -103,15 +103,15 @@ public class SysUserServiceImpl implements SysUserService {
 
         // 先用AES解密，再用BCrypt加密
         String plaintext = AESCryptUtil.decrypt(user.getPwd());
+        // 如果密码明文为空，则使用默认密码
+        if (StringUtils.isEmpty(plaintext)) {
+            plaintext = UserConstant.DEFAULT_PASSWORD.value();
+        }
         // 校验密码强度
         if (!RegexUtil.checkPwd(plaintext)) {
             throw new UserException(UserErrorCode.INCOMPATIBLE_PASSWORD);
         }
 
-        // 如果密码明文为空，则使用默认密码
-        if (StringUtils.isEmpty(plaintext)) {
-            plaintext = UserConstant.DEFAULT_PASSWORD.value();
-        }
         // 进行bCrypt加密处理
         user.setPwd(new BCryptPasswordEncoder().encode(plaintext));
         // 先添加主表
@@ -130,15 +130,15 @@ public class SysUserServiceImpl implements SysUserService {
 
         // 先用AES解密，再用BCrypt加密
         String plaintext = AESCryptUtil.decrypt(user.getPwd());
-        // 校验密码强度
-        if (!RegexUtil.checkPwd(plaintext)) {
-            throw new UserException(UserErrorCode.INCOMPATIBLE_PASSWORD);
-        }
 
         // 修改时，如果密码明文为空，则不做任何处理
         if (StringUtils.isEmpty(plaintext)) {
             user.setPwd(null);
         } else {
+            // 校验密码强度
+            if (!RegexUtil.checkPwd(plaintext)) {
+                throw new UserException(UserErrorCode.INCOMPATIBLE_PASSWORD);
+            }
             // 进行bCrypt加密处理
             user.setPwd(new BCryptPasswordEncoder().encode(plaintext));
         }
