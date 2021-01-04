@@ -53,5 +53,10 @@
             <artifactId>budget-service-api</artifactId>
             <version>1.0</version>
         </dependency>
+        <dependency>
+            <groupId>com.hbhb</groupId>
+            <artifactId>publicity-manage-api</artifactId>
+            <version>1.0</version>
+        </dependency>
     </dependencies>
 </project>
