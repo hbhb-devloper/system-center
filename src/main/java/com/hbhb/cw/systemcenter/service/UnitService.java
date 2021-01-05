@@ -15,6 +15,11 @@ public interface UnitService {
     List<TreeSelectVO> getAllUnitTreeList();
 
     /**
+     * 获取杭州直属分公司列表
+     */
+    List<SelectVO> getSubordinateList();
+
+    /**
      * 获取角色所对应的单位id
      */
     List<Integer> getCheckedUnitByRole(Integer roleId);
@@ -68,6 +73,11 @@ public interface UnitService {
      * 获取单位详情
      */
     Unit getUnitInfo(Integer unitId);
+
+    /**
+     * 获取单位名称
+     */
+    String getUnitName(Integer unitId);
 
     /**
      * 递归获取指定单位下的所有下属单位id（包含自己）

@@ -50,6 +50,21 @@ public class UnitServiceImpl implements UnitService {
     }
 
     @Override
+    public List<SelectVO> getSubordinateList() {
+        List<Unit> list = unitMapper.createLambdaQuery()
+                .andEq(Unit::getParentId, UnitEnum.HANGZHOU.value())
+                .select(Unit::getId, Unit::getUnitName);
+        return Optional.ofNullable(list)
+                .orElse(new ArrayList<>())
+                .stream()
+                .map(unit -> SelectVO.builder()
+                        .id(Long.valueOf(unit.getId()))
+                        .label(unit.getUnitName())
+                        .build())
+                .collect(Collectors.toList());
+    }
+
+    @Override
     public List<Integer> getCheckedUnitByRole(Integer roleId) {
         List<SysRoleUnit> list = sysRoleUnitMapper.createLambdaQuery()
                 .andEq(SysRoleUnit::getRoleId, roleId)
@@ -168,6 +183,12 @@ public class UnitServiceImpl implements UnitService {
     @Override
     public Unit getUnitInfo(Integer unitId) {
         return unitMapper.single(unitId);
+    }
+
+    @Override
+    public String getUnitName(Integer unitId) {
+        Unit unit = unitMapper.single(unitId);
+        return unit == null ? "" : unit.getUnitName();
     }
 
     @Override

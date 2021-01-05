@@ -24,13 +24,13 @@
 // */
 //public class Generator {
 //    private static final String DRIVER = "com.mysql.jdbc.Driver";
-//    private static final String URL = "jdbc:mysql://mariadb.yeexun.com.cn/cw_dev";
+//    private static final String URL = "jdbc:mysql://mariadb.yeexun.com.cn/cw_test";
 //    private static final String USERNAME = "zhcw";
 //    private static final String PASSWORD = "zhcw@2020";
 //    /**
 //     * 数据库表名
 //     */
-//    private static final String TABLE_NAME = "fund_customer_file";
+//    private static final String TABLE_NAME = "hall";
 //
 //    public static void main(String[] args) {
 //        // 设置自定义模版路径

@@ -49,6 +49,12 @@ public class UnitController implements UnitApi {
         return unitService.getAllUnitTreeList();
     }
 
+    @Operation(summary = "获取所有的分公司列表", description = "营业厅管理时用")
+    @GetMapping("/sub/list")
+    public List<SelectVO> getSubordinateList() {
+        return unitService.getSubordinateList();
+    }
+
     @Operation(summary = "获取角色的单位列表", description = "获取角色id对应的单位列表")
     @GetMapping("/role/{roleId}")
     public List<Integer> getRoleResourceTreeSelect(
