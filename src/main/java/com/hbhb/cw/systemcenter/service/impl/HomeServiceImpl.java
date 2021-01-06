@@ -97,8 +97,7 @@ public class HomeServiceImpl implements HomeService {
         Long count = pictureApi.countNotice(userId);
         Long count1 = printApi.countNotice(userId);
         Long count2 = materialsApi.countNotice(userId);
-        Long count3 = applicationApi.countNotice(userId);
-        module4.setCount(count + count1 + count2+count3);
+        module4.setCount(count + count1 + count2);
         workList.add(module4);
         return workList;
     }
