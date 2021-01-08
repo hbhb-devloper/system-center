@@ -1,15 +1,16 @@
 package com.hbhb.cw.systemcenter.service.impl;
 
-import com.hbhb.cw.publicity.api.PublicityApplicationApi;
 import com.hbhb.cw.systemcenter.enums.DictCode;
 import com.hbhb.cw.systemcenter.enums.Module;
 import com.hbhb.cw.systemcenter.enums.TypeCode;
 import com.hbhb.cw.systemcenter.rpc.BudgetApiExp;
 import com.hbhb.cw.systemcenter.rpc.FlowApiExp;
 import com.hbhb.cw.systemcenter.rpc.FundApiExp;
+import com.hbhb.cw.systemcenter.rpc.PublicityApplicationApiExp;
 import com.hbhb.cw.systemcenter.rpc.PublicityMaterialsApiExp;
 import com.hbhb.cw.systemcenter.rpc.PublicityPictureApiExp;
 import com.hbhb.cw.systemcenter.rpc.PublicityPrintApiExp;
+import com.hbhb.cw.systemcenter.rpc.PublicityVerifyApiExp;
 import com.hbhb.cw.systemcenter.rpc.WarnApiExp;
 import com.hbhb.cw.systemcenter.service.HomeService;
 import com.hbhb.cw.systemcenter.service.SysDictService;
@@ -56,7 +57,9 @@ public class HomeServiceImpl implements HomeService {
     @Resource
     private PublicityPrintApiExp printApi;
     @Resource
-    private PublicityApplicationApi applicationApi;
+    private PublicityApplicationApiExp applicationApi;
+    @Resource
+    private PublicityVerifyApiExp verifyApi;
 
     @Override
     public List<HomeModuleVO> getModuleList(Integer userId) {
@@ -97,7 +100,9 @@ public class HomeServiceImpl implements HomeService {
         Long count = pictureApi.countNotice(userId);
         Long count1 = printApi.countNotice(userId);
         Long count2 = materialsApi.countNotice(userId);
-        module4.setCount(count + count1 + count2);
+        Long count3 = applicationApi.countNotice(userId);
+        Long count4 = verifyApi.countNotice(userId);
+        module4.setCount(count + count1 + count2 + count3 + count4);
         workList.add(module4);
         return workList;
     }
