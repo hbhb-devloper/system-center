@@ -1,7 +1,7 @@
 package com.hbhb.cw.systemcenter.service;
 
+import com.hbhb.api.core.bean.FileVO;
 import com.hbhb.cw.systemcenter.model.SysFile;
-import com.hbhb.cw.systemcenter.vo.FileVO;
 import com.hbhb.cw.systemcenter.web.vo.FileResVO;
 
 import org.springframework.web.multipart.MultipartFile;
@@ -48,9 +48,19 @@ public interface SysFileService {
     List<SysFile> getFileInfoBatch(List<Integer> list);
 
     /**
+     * 获取文件访问域名
+     */
+    String getFileDomain();
+
+    /**
      * 获取文件存放路径
      */
     String getFilePath();
+
+    /**
+     * 获取文件模板存放路径
+     */
+    String getFileTemplatePath();
 
     /**
      * 删除文件

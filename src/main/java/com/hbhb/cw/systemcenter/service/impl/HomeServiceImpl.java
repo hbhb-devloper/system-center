@@ -6,6 +6,11 @@ import com.hbhb.cw.systemcenter.enums.TypeCode;
 import com.hbhb.cw.systemcenter.rpc.BudgetApiExp;
 import com.hbhb.cw.systemcenter.rpc.FlowApiExp;
 import com.hbhb.cw.systemcenter.rpc.FundApiExp;
+import com.hbhb.cw.systemcenter.rpc.PublicityApplicationApiExp;
+import com.hbhb.cw.systemcenter.rpc.PublicityMaterialsApiExp;
+import com.hbhb.cw.systemcenter.rpc.PublicityPictureApiExp;
+import com.hbhb.cw.systemcenter.rpc.PublicityPrintApiExp;
+import com.hbhb.cw.systemcenter.rpc.PublicityVerifyApiExp;
 import com.hbhb.cw.systemcenter.rpc.WarnApiExp;
 import com.hbhb.cw.systemcenter.service.HomeService;
 import com.hbhb.cw.systemcenter.service.SysDictService;
@@ -45,6 +50,16 @@ public class HomeServiceImpl implements HomeService {
     private WarnApiExp warnApiExp;
     @Resource
     private FlowApiExp flowApi;
+    @Resource
+    private PublicityMaterialsApiExp materialsApi;
+    @Resource
+    private PublicityPictureApiExp pictureApi;
+    @Resource
+    private PublicityPrintApiExp printApi;
+    @Resource
+    private PublicityApplicationApiExp applicationApi;
+    @Resource
+    private PublicityVerifyApiExp verifyApi;
 
     @Override
     public List<HomeModuleVO> getModuleList(Integer userId) {
@@ -77,6 +92,18 @@ public class HomeServiceImpl implements HomeService {
             module3.setCount(warnApiExp.countWarn(userInfo.getUnitId()));
             workList.add(module3);
         }
+
+        // 宣传用品提醒统计
+        HomeModuleVO module4 = new HomeModuleVO();
+        module4.setModule(Module.MODULE_PUBLICITY.getValue());
+        module4.setModuleName(moduleMap.get(Module.MODULE_PUBLICITY.getValue().toString()));
+        Long count = pictureApi.countNotice(userId);
+        Long count1 = printApi.countNotice(userId);
+        Long count2 = materialsApi.countNotice(userId);
+        Long count3 = applicationApi.countNotice(userId);
+        Long count4 = verifyApi.countNotice(userId);
+        module4.setCount(count + count1 + count2 + count3 + count4);
+        workList.add(module4);
         return workList;
     }
 }

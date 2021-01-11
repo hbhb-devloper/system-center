@@ -1,12 +1,12 @@
 package com.hbhb.cw.systemcenter.service.impl;
 
+import com.hbhb.api.core.bean.FileVO;
 import com.hbhb.core.bean.BeanConverter;
 import com.hbhb.cw.systemcenter.mapper.SysFileMapper;
 import com.hbhb.cw.systemcenter.model.SysFile;
 import com.hbhb.cw.systemcenter.service.SysFileService;
-import com.hbhb.cw.systemcenter.util.FileUtil;
-import com.hbhb.cw.systemcenter.vo.FileVO;
 import com.hbhb.cw.systemcenter.web.vo.FileResVO;
+import com.hbhb.web.util.FileUtil;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
@@ -48,7 +48,7 @@ public class SysFileServiceImpl implements SysFileService {
 
     @Override
     public FileVO upload(MultipartFile file, Integer bizType) {
-        FileVO vo = FileUtil.uploadFile(file, filePath);
+        FileVO vo = FileUtil.upload(file, filePath);
         if (vo != null) {
             SysFile insertFile = SysFile.builder()
                     .fileName(vo.getFileName())
@@ -69,7 +69,7 @@ public class SysFileServiceImpl implements SysFileService {
     public List<FileVO> uploadBatch(MultipartFile[] multipartFile, Integer bizType) {
         Date now = new Date();
         List<SysFile> files = new ArrayList<>();
-        List<FileVO> voList = FileUtil.uploadFileList(multipartFile, filePath);
+        List<FileVO> voList = FileUtil.uploadBatch(multipartFile, filePath);
         voList.forEach(vo -> files.add(SysFile.builder()
                 .fileName(vo.getFileName())
                 .filePath(fileDomain + File.separator + vo.getFileName())
@@ -92,7 +92,7 @@ public class SysFileServiceImpl implements SysFileService {
 
     @Override
     public void download(HttpServletResponse response, String filePath, Boolean deleteFile) {
-        FileUtil.downloadFile(response, filePath, deleteFile);
+        FileUtil.download(response, filePath, deleteFile);
     }
 
     @Override
@@ -101,8 +101,7 @@ public class SysFileServiceImpl implements SysFileService {
         try (FileOutputStream fos = new FileOutputStream(file);
              OutputStreamWriter osw = new OutputStreamWriter(fos);
              Writer out = new BufferedWriter(osw)) {
-            configuration.setDirectoryForTemplateLoading(
-                    new File(this.filePath + "template"));
+            configuration.setDirectoryForTemplateLoading(new File(this.getFileTemplatePath()));
             Template t = configuration.getTemplate(templateName);
             t.process(data, out);
         } catch (Exception e) {
@@ -133,8 +132,18 @@ public class SysFileServiceImpl implements SysFileService {
     }
 
     @Override
+    public String getFileDomain() {
+        return this.fileDomain;
+    }
+
+    @Override
     public String getFilePath() {
         return this.filePath;
+    }
+
+    @Override
+    public String getFileTemplatePath() {
+        return this.filePath + "template";
     }
 
     @Override
