@@ -3,18 +3,21 @@ package com.hbhb.cw.systemcenter.service.impl;
 import com.hbhb.api.core.bean.SelectVO;
 import com.hbhb.beetlsql.core.QueryExt;
 import com.hbhb.cw.systemcenter.mapper.HallMapper;
+import com.hbhb.cw.systemcenter.mapper.SysUserUintHallMapper;
 import com.hbhb.cw.systemcenter.model.Hall;
+import com.hbhb.cw.systemcenter.model.SysUserUintHall;
+import com.hbhb.cw.systemcenter.model.Unit;
 import com.hbhb.cw.systemcenter.service.HallService;
 import com.hbhb.cw.systemcenter.service.UnitService;
 import com.hbhb.cw.systemcenter.vo.HallResVO;
 
 import org.beetl.sql.core.page.PageResult;
 import org.beetl.sql.core.query.Query;
+import org.omg.CORBA.Any;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -30,6 +33,9 @@ public class HallServiceImpl implements HallService {
     private HallMapper hallMapper;
     @Resource
     private UnitService unitService;
+    @Resource
+    private SysUserUintHallMapper sysUserUintHallMapper;
+
 
     @Override
     public PageResult<HallResVO> pageHall(Integer pageNum, Integer pageSize,
@@ -44,11 +50,30 @@ public class HallServiceImpl implements HallService {
     }
 
     @Override
-    public List<SelectVO> listHall(Integer unitId) {
-        List<Hall> list = hallMapper.createLambdaQuery()
-                .andEq(Hall::getUnitId, unitId)
-                .andEq(Hall::getEnable, true)
-                .select();
+    public List<SelectVO> listHall(Integer userId,Integer unitId) {
+//        List<Hall> list = hallMapper.createLambdaQuery()
+//                .andEq(Hall::getUnitId, unitId)
+//                .andEq(Hall::getEnable, true)
+//                .select();
+
+        List<Integer> integers = unitService.getSubUnit(unitId);
+        List<Hall> list;
+        if (integers.size() == 1){
+            list = selectHall(unitId);
+        }else {
+            list = new ArrayList<>();
+            integers.forEach(unit -> list.addAll(selectHall(unit)));
+        }
+
+        //拿到单位下面的营业厅
+        List<SelectVO> halls = Optional.ofNullable(list)
+                .orElse(new ArrayList<>())
+                .stream()
+                .map(hall -> SelectVO.builder()
+                        .id(Long.valueOf(hall.getId()))
+                        .label(hall.getHallName())
+                        .build())
+                .collect(Collectors.toList());
         return Optional.ofNullable(list)
                 .orElse(new ArrayList<>())
                 .stream()
@@ -60,7 +85,86 @@ public class HallServiceImpl implements HallService {
     }
 
     @Override
+    public Map<String, Object> listHallNew(Integer userId,Integer unitId) {
+        //查询当前的单位下面有没有子集
+        List<Integer> integers = unitService.getSubUnit(unitId);
+        List<Hall> list;
+        if (integers.size() == 1){
+            list = selectHall(unitId);
+        }else {
+            list = new ArrayList<>();
+            integers.forEach(unit -> list.addAll(selectHall(unit)));
+        }
+
+        //拿到单位下面的营业厅
+        List<SelectVO> halls = Optional.ofNullable(list)
+                .orElse(new ArrayList<>())
+                .stream()
+                .map(hall -> SelectVO.builder()
+                        .id(Long.valueOf(hall.getId()))
+                        .label(hall.getHallName())
+                        .build())
+                .collect(Collectors.toList());
+
+        //查询当前用户勾选营业厅
+        List<Integer> sysUserUintHalls =  sysUserUintHallMapper
+                .createLambdaQuery()
+                .andEq(SysUserUintHall::getUserId,userId)
+                .andEq(SysUserUintHall::getUintId,unitId)
+                .select()
+                .stream()
+                .map(SysUserUintHall::getHallId)
+                .collect(Collectors.toList());
+
+        Map<String,Object> map = new HashMap<>();
+        map.put("halls",halls);
+        map.put("hallSelect",sysUserUintHalls);
+        return map;
+    }
+
+    @Override
     public void upsertHall(Hall hall) {
         hallMapper.upsertByTemplate(hall);
     }
+
+    @Override
+    public void updateHallNew(Integer userId,Integer unitId, List<Integer> hallSelectIds) {
+        //通过userId,unitId,hallSelectIds关联被选择的部分
+        sysUserUintHallMapper.insertBatch(
+                Optional.of(hallSelectIds)
+                        .orElse(new ArrayList<>())
+                        .stream()
+                        .map(id -> SysUserUintHall
+                                .builder()
+                                .userId(userId)
+                                .uintId(unitId)
+                                .hallId(id)
+                                .build())
+                        .collect(Collectors.toList()));
+    }
+
+    /**
+     * 通过当前这个人的userId，查询到当前这个人的单位
+     * @param userId 用户id
+     * @return 营业厅列表
+     */
+    @Override
+    public Map<String,Object> listHallByUserId(Integer userId) {
+        Map<String,Object> halls = new HashMap<>();
+        sysUserUintHallMapper.createLambdaQuery()
+                .andEq(SysUserUintHall::getUserId,userId)
+                .select().forEach(sysUserUintHall ->
+                hallMapper.createLambdaQuery()
+                        .andEq(Hall::getUnitId,sysUserUintHall.getUintId()).select()
+                        .forEach(hall -> halls.put(hall.getId().toString(),hall.getHallName())));
+        return halls;
+    }
+
+    private List<Hall> selectHall(Integer unitId){
+        return hallMapper.createLambdaQuery()
+                .andEq(Hall::getUnitId, unitId)
+                .andEq(Hall::getEnable, true)
+                .select();
+    }
+
 }

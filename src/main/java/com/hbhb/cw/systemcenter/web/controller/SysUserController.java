@@ -6,16 +6,11 @@ import com.hbhb.cw.systemcenter.api.UserApi;
 import com.hbhb.cw.systemcenter.enums.ResourceType;
 import com.hbhb.cw.systemcenter.enums.RoleType;
 import com.hbhb.cw.systemcenter.enums.UnitEnum;
+import com.hbhb.cw.systemcenter.mapper.SysUserUintHallMapper;
 import com.hbhb.cw.systemcenter.model.SysUser;
-import com.hbhb.cw.systemcenter.service.SysResourceService;
-import com.hbhb.cw.systemcenter.service.SysRoleService;
-import com.hbhb.cw.systemcenter.service.SysUserService;
-import com.hbhb.cw.systemcenter.service.UnitService;
-import com.hbhb.cw.systemcenter.vo.RouterVO;
-import com.hbhb.cw.systemcenter.vo.UserInfo;
-import com.hbhb.cw.systemcenter.vo.UserInfoVO;
-import com.hbhb.cw.systemcenter.vo.UserReqVO;
-import com.hbhb.cw.systemcenter.vo.UserResVO;
+import com.hbhb.cw.systemcenter.model.SysUserUintHall;
+import com.hbhb.cw.systemcenter.service.*;
+import com.hbhb.cw.systemcenter.vo.*;
 import com.hbhb.cw.systemcenter.web.vo.UserDetailVO;
 import com.hbhb.cw.systemcenter.web.vo.UserPwdVO;
 import com.hbhb.web.annotation.UserId;
@@ -30,10 +25,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
 
@@ -60,6 +53,8 @@ public class SysUserController implements UserApi {
     private SysRoleService sysRoleService;
     @Resource
     private SysResourceService sysResourceService;
+    @Resource
+    private SysUserUintHallMapper sysUserUintHallMapper;
 
     @Operation(summary = "通过指定条件查询用户列表（分页）")
     @GetMapping("/list")
@@ -98,8 +93,11 @@ public class SysUserController implements UserApi {
         SysUser user = sysUserService.getUserById(userId);
         List<Integer> checkedRsRoleIds = sysRoleService.getCheckedRoleByUser(userId, RoleType.RELATE_RESOURCE.value());
         List<Integer> checkedUnRoleIds = sysRoleService.getCheckedRoleByUser(userId, RoleType.RELATE_UNIT.value());
+        List<Integer> checkedUintIds = sysUserUintHallMapper.createLambdaQuery().andEq(SysUserUintHall::getUserId,userId)
+                .select().stream().map(SysUserUintHall::getUintId).collect(Collectors.toList()).stream().distinct().collect(Collectors.toList());
         user.setCheckedRsRoleIds(checkedRsRoleIds);
         user.setCheckedUnRoleIds(checkedUnRoleIds);
+        user.setCheckedUintIds(checkedUintIds);
         return user;
     }
 

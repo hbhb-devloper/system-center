@@ -30,7 +30,7 @@
 //    /**
 //     * 数据库表名
 //     */
-//    private static final String TABLE_NAME = "hall";
+//    private static final String TABLE_NAME = "sys_user_uint_hall";
 //
 //    public static void main(String[] args) {
 //        // 设置自定义模版路径

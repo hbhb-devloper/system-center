@@ -10,11 +10,14 @@ import com.hbhb.cw.systemcenter.exception.UserException;
 import com.hbhb.cw.systemcenter.mapper.SysRoleUnitMapper;
 import com.hbhb.cw.systemcenter.mapper.SysUserMapper;
 import com.hbhb.cw.systemcenter.mapper.SysUserRoleMapper;
+import com.hbhb.cw.systemcenter.mapper.SysUserUintHallMapper;
 import com.hbhb.cw.systemcenter.model.SysRoleUnit;
 import com.hbhb.cw.systemcenter.model.SysUser;
 import com.hbhb.cw.systemcenter.model.SysUserRole;
+import com.hbhb.cw.systemcenter.model.SysUserUintHall;
 import com.hbhb.cw.systemcenter.service.SysUserService;
 import com.hbhb.cw.systemcenter.service.UnitService;
+import com.hbhb.cw.systemcenter.vo.CheckBoxVO;
 import com.hbhb.cw.systemcenter.vo.UserInfo;
 import com.hbhb.cw.systemcenter.vo.UserReqVO;
 import com.hbhb.cw.systemcenter.vo.UserResVO;
@@ -52,6 +55,9 @@ public class SysUserServiceImpl implements SysUserService {
     private SysRoleUnitMapper sysRoleUnitMapper;
     @Resource
     private UnitService unitService;
+    @Resource
+    private SysUserUintHallMapper userUintHallMapper;
+
 
     @Override
     public PageResult<UserResVO> getUserPageByCond(Integer pageNum, Integer pageSize, UserReqVO cond) {
@@ -239,12 +245,12 @@ public class SysUserServiceImpl implements SysUserService {
         if (defaultUnitId == null || CollectionUtils.isEmpty(roleIds)) {
             return false;
         }
-        List<SysRoleUnit> list = sysRoleUnitMapper.createLambdaQuery()
-                .andIn(SysRoleUnit::getRoleId, roleIds)
-                .select();
-        // 单位权限中包含的单位id
-        List<Integer> unitIds = list.stream().map(SysRoleUnit::getUnitId).collect(Collectors.toList());
-        return unitIds.contains(defaultUnitId);
+//        List<SysRoleUnit> list = sysRoleUnitMapper.createLambdaQuery()
+//                .andIn(SysRoleUnit::getRoleId, roles)
+//                .select();
+//        // 单位权限中包含的单位id
+//        List<Integer> unitIds = list.stream().map(SysRoleUnit::getUnitId).collect(Collectors.toList());
+        return roleIds.contains(defaultUnitId);
     }
 
     /**
@@ -256,9 +262,23 @@ public class SysUserServiceImpl implements SysUserService {
                 .andEq(SysUserRole::getUserId, user.getId())
                 .delete();
 
+        userUintHallMapper.createLambdaQuery()
+                .andEq(SysUserUintHall::getUserId,user.getId())
+                .delete();
+
         // 再添加
         List<Integer> rsRoleIds = user.getCheckedRsRoleIds();
         List<Integer> unRoleIds = user.getCheckedUnRoleIds();
+//        List<Integer> unRoleIds = userUintHallMapper
+//                .createLambdaQuery()
+//                .andEq(SysUserUintHall::getUserId,user.getId())
+//                .select()
+//                .stream()
+//                .map(SysUserUintHall::getUintId)
+//                .collect(Collectors.toList())
+//                .stream().distinct()
+//                .collect(Collectors.toList());
+
         if (rsRoleIds != null && unRoleIds != null) {
             List<Integer> roleIds = new ArrayList<>();
             roleIds.addAll(rsRoleIds);
@@ -266,14 +286,25 @@ public class SysUserServiceImpl implements SysUserService {
             if (StringUtils.isEmpty(roleIds)) {
                 return;
             }
-            List<SysUserRole> list = new ArrayList<>();
-            for (Integer roleId : roleIds) {
-                list.add(SysUserRole.builder()
-                        .userId(user.getId())
-                        .roleId(roleId)
-                        .build());
-            }
-            if (!CollectionUtils.isEmpty(list)) {
+
+             List<SysUserRole> list = roleIds
+                     .stream()
+                     .map(id -> SysUserRole.builder().roleId(id).userId(user.getId()).build())
+                     .collect(Collectors.toList());
+
+            List<SysUserUintHall> userUintHalls = unRoleIds
+                    .stream()
+                    .map(id -> SysUserUintHall.builder().uintId(id).userId(user.getId()).build())
+                    .collect(Collectors.toList());
+//            List<SysUserRole> list = new ArrayList<>();
+//            for (Integer roleId : roleIds) {
+//                list.add(SysUserRole.builder()
+//                        .userId(user.getId())
+//                        .roleId(roleId)
+//                        .build());
+//            }
+            if (!CollectionUtils.isEmpty(userUintHalls)) {
+                userUintHallMapper.insertBatch(userUintHalls);
                 sysUserRoleMapper.insertBatch(list);
             }
         }

@@ -2,10 +2,12 @@ package com.hbhb.cw.systemcenter.web.controller;
 
 import com.hbhb.api.core.bean.SelectVO;
 import com.hbhb.core.bean.BeanConverter;
+import com.hbhb.cw.systemcenter.api.HallApi;
 import com.hbhb.cw.systemcenter.model.Hall;
 import com.hbhb.cw.systemcenter.service.HallService;
 import com.hbhb.cw.systemcenter.vo.HallReqVO;
 import com.hbhb.cw.systemcenter.vo.HallResVO;
+import com.hbhb.cw.systemcenter.vo.HallSelectReqVO;
 import com.hbhb.web.annotation.UserId;
 
 import org.beetl.sql.core.page.PageResult;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import javax.annotation.Resource;
 
@@ -31,7 +34,7 @@ import lombok.extern.slf4j.Slf4j;
 @RestController
 @RequestMapping("/hall")
 @Slf4j
-public class HallController {
+public class HallController  implements HallApi {
 
     @Resource
     private HallService hallService;
@@ -52,8 +55,21 @@ public class HallController {
     @Operation(summary = "获取营业厅列表", description = "下拉框用")
     @GetMapping("/select")
     public List<SelectVO> listHall(
-            @Parameter(description = "分公司id", required = true) @RequestParam Integer unitId) {
-        return hallService.listHall(unitId);
+            @Parameter(description = "分公司id", required = true) @RequestParam Integer unitId,@Parameter(hidden = true) @UserId Integer userId) {
+        return hallService.listHall(userId,unitId);
+    }
+
+    @Operation(summary = "获取营业厅列表-全部列表和当前用户已选择的列表", description = "下拉框用")
+    @GetMapping("/select_new")
+    public Map<String, Object> listHallNew(@Parameter(description = "分公司id", required = true) @RequestParam Integer unitId,
+                                           @Parameter(hidden = true) @UserId Integer userId) {
+        return hallService.listHallNew(userId,unitId);
+    }
+
+    @Operation(summary = "获取营业厅列表-根据用户id", description = "下拉框用")
+    @Override
+    public Map<String,Object> selectHallByUserId(@Parameter(hidden = true) @UserId Integer userId) {
+        return hallService.listHallByUserId(userId);
     }
 
     @Operation(summary = "添加营业厅")
@@ -72,4 +88,13 @@ public class HallController {
     public void updateHall(@Parameter(description = "营业厅信息", required = true) @RequestBody HallReqVO vo) {
         hallService.upsertHall(BeanConverter.convert(vo, Hall.class));
     }
+
+    @Operation(summary = "更新营业厅-选择营业厅")
+    @PutMapping("/updateHallNew")
+    public void updateHallNew(@Parameter(description = "营业厅信息", required = true) @RequestBody HallSelectReqVO vo,
+                              @Parameter(hidden = true) @UserId Integer userId) {
+        hallService.updateHallNew(userId,vo.getUnitId(),vo.getHallSelectIds());
+    }
+
+
 }
