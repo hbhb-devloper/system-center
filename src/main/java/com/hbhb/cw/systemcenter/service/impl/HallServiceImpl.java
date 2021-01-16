@@ -1,5 +1,6 @@
 package com.hbhb.cw.systemcenter.service.impl;
 
+import com.google.common.base.Function;
 import com.hbhb.api.core.bean.SelectVO;
 import com.hbhb.beetlsql.core.QueryExt;
 import com.hbhb.cw.systemcenter.mapper.HallMapper;
@@ -13,12 +14,14 @@ import com.hbhb.cw.systemcenter.vo.HallResVO;
 
 import org.beetl.sql.core.page.PageResult;
 import org.beetl.sql.core.query.Query;
+import org.checkerframework.checker.nullness.qual.Nullable;
 import org.omg.CORBA.Any;
 import org.springframework.stereotype.Service;
 
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import javax.annotation.Resource;
 
@@ -149,15 +152,22 @@ public class HallServiceImpl implements HallService {
      * @return 营业厅列表
      */
     @Override
-    public Map<Long,String> selectHallByUnitId(Integer unitId) {
-        Map<Long,String> halls = new HashMap<>();
-        sysUserUintHallMapper.createLambdaQuery()
-                .andEq(SysUserUintHall::getUintId,unitId)
-                .select().forEach(sysUserUintHall ->
-                hallMapper.createLambdaQuery()
-                        .andEq(Hall::getUnitId,sysUserUintHall.getUintId()).select()
-                        .forEach(hall -> halls.put(hall.getId().longValue(),hall.getHallName())));
-        return halls;
+    public Map<Integer,String> selectHallByUnitId(Integer unitId) {
+
+       List<Integer> unitIds =  sysUserUintHallMapper.createLambdaQuery().andEq(SysUserUintHall::getUintId,unitId)
+                .select().stream().map(SysUserUintHall::getUintId)
+                .collect(Collectors.toList());
+
+//        sysUserUintHallMapper.createLambdaQuery()
+//                .andEq(SysUserUintHall::getUintId,unitId)
+//                .select().forEach(sysUserUintHall ->
+//                hallMapper.createLambdaQuery()
+//                        .andEq(Hall::getUnitId,sysUserUintHall.getUintId()).select()
+//                        .forEach(hall -> halls.put(hall.getId().longValue(),hall.getHallName())));
+        return hallMapper.createLambdaQuery().andIn(Hall::getUnitId,unitIds)
+                .select()
+                .stream()
+                .collect(Collectors.toMap(Hall::getId,Hall::getHallName));
     }
 
     private List<Hall> selectHall(Integer unitId){
