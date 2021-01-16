@@ -149,14 +149,14 @@ public class HallServiceImpl implements HallService {
      * @return 营业厅列表
      */
     @Override
-    public Map<String,Object> selectHallByUnitId(Integer unitId) {
-        Map<String,Object> halls = new HashMap<>();
+    public Map<Long,String> selectHallByUnitId(Integer unitId) {
+        Map<Long,String> halls = new HashMap<>();
         sysUserUintHallMapper.createLambdaQuery()
                 .andEq(SysUserUintHall::getUintId,unitId)
                 .select().forEach(sysUserUintHall ->
                 hallMapper.createLambdaQuery()
                         .andEq(Hall::getUnitId,sysUserUintHall.getUintId()).select()
-                        .forEach(hall -> halls.put(hall.getId().toString(),hall.getHallName())));
+                        .forEach(hall -> halls.put(hall.getId().longValue(),hall.getHallName())));
         return halls;
     }
 

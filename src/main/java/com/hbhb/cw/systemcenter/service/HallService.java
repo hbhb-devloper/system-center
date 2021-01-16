@@ -44,7 +44,7 @@ public interface HallService {
     /**
      * 通过userId去获取到这个人的营业厅列表
      */
-    Map<String,Object> selectHallByUnitId(Integer unitId);
+    Map<Long,String> selectHallByUnitId(Integer unitId);
 
 
 }
