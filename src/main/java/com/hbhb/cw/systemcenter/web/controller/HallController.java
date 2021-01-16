@@ -74,8 +74,7 @@ public class HallController  implements HallApi {
 
     @Operation(summary = "添加营业厅")
     @PostMapping("")
-    public void addHall(
-            @Parameter(description = "营业厅信息", required = true) @RequestBody HallReqVO vo,
+    public void addHall(@Parameter(description = "营业厅信息", required = true) @RequestBody HallReqVO vo,
             @Parameter(hidden = true) @UserId Integer userId) {
         Hall hall = BeanConverter.convert(vo, Hall.class);
         hall.setCreateBy(userId.toString());
