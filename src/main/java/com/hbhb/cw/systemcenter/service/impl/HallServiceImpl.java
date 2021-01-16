@@ -145,14 +145,14 @@ public class HallServiceImpl implements HallService {
 
     /**
      * 通过当前这个人的userId，查询到当前这个人的单位
-     * @param userId 用户id
+     * @param unitId 菜单id
      * @return 营业厅列表
      */
     @Override
-    public Map<String,Object> listHallByUserId(Integer userId) {
+    public Map<String,Object> selectHallByUnitId(Integer unitId) {
         Map<String,Object> halls = new HashMap<>();
         sysUserUintHallMapper.createLambdaQuery()
-                .andEq(SysUserUintHall::getUserId,userId)
+                .andEq(SysUserUintHall::getUintId,unitId)
                 .select().forEach(sysUserUintHall ->
                 hallMapper.createLambdaQuery()
                         .andEq(Hall::getUnitId,sysUserUintHall.getUintId()).select()
