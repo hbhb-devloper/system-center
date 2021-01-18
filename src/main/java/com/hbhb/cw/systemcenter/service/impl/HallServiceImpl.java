@@ -50,10 +50,6 @@ public class HallServiceImpl implements HallService {
 
     @Override
     public List<SelectVO> listHall(Integer userId,Integer unitId) {
-//        List<Hall> list = hallMapper.createLambdaQuery()
-//                .andEq(Hall::getUnitId, unitId)
-//                .andEq(Hall::getEnable, true)
-//                .select();
 
         List<Integer> integers = unitService.getSubUnit(unitId);
         return  hallMapper.createLambdaQuery()
@@ -139,11 +135,7 @@ public class HallServiceImpl implements HallService {
                 .stream().map(Hall::getUnitId)
                 .collect(Collectors.toList());
 
-//       List<Integer> unitIds =  sysUserUintHallMapper.createLambdaQuery()
-//               .andEq(SysUserUintHall::getUintId,unitId)
-//                .select().stream().map(SysUserUintHall::getUintId)
-//                .distinct()
-//                .collect(Collectors.toList());
+        if (unitIds.isEmpty()) return new HashMap<>();
         return hallMapper.createLambdaQuery().andIn(Hall::getUnitId,unitIds)
                 .select()
                 .stream()
