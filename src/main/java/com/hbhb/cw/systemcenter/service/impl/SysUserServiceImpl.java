@@ -138,7 +138,7 @@ public class SysUserServiceImpl implements SysUserService {
         String plaintext = AESCryptUtil.decrypt(user.getPwd());
 
         // 修改时，如果密码明文为空，则不做任何处理
-        if (StringUtils.isEmpty(plaintext)) {
+        if (StringUtils.isEmpty(user.getPwd())) {
             user.setPwd(null);
         } else {
             // 校验密码强度
@@ -290,7 +290,7 @@ public class SysUserServiceImpl implements SysUserService {
              List<SysUserRole> list = roleIds
                      .stream()
                      .map(id -> SysUserRole.builder().roleId(id).userId(user.getId()).build())
-                     .collect(Collectors.toList());
+                     .collect(Collectors.toList()).stream().distinct().collect(Collectors.toList());
 
             List<SysUserUintHall> userUintHalls = unRoleIds
                     .stream()
@@ -303,7 +303,7 @@ public class SysUserServiceImpl implements SysUserService {
 //                        .roleId(roleId)
 //                        .build());
 //            }
-            if (!CollectionUtils.isEmpty(userUintHalls)) {
+            if (!CollectionUtils.isEmpty(userUintHalls) && !CollectionUtils.isEmpty(list)) {
                 userUintHallMapper.insertBatch(userUintHalls);
                 sysUserRoleMapper.insertBatch(list);
             }
