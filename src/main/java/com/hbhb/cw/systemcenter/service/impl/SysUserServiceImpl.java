@@ -262,10 +262,6 @@ public class SysUserServiceImpl implements SysUserService {
                 .andEq(SysUserRole::getUserId, user.getId())
                 .delete();
 
-        userUintHallMapper.createLambdaQuery()
-                .andEq(SysUserUintHall::getUserId,user.getId())
-                .delete();
-
         // 再添加
         List<Integer> rsRoleIds = user.getCheckedRsRoleIds();
         List<Integer> unRoleIds = user.getCheckedUnRoleIds();
@@ -292,10 +288,10 @@ public class SysUserServiceImpl implements SysUserService {
                      .map(id -> SysUserRole.builder().roleId(id).userId(user.getId()).build())
                      .collect(Collectors.toList()).stream().distinct().collect(Collectors.toList());
 
-            List<SysUserUintHall> userUintHalls = unRoleIds
-                    .stream()
-                    .map(id -> SysUserUintHall.builder().uintId(id).userId(user.getId()).build())
-                    .collect(Collectors.toList());
+//            List<SysUserUintHall> userUintHalls = unRoleIds
+//                    .stream()
+//                    .map(id -> SysUserUintHall.builder().uintId(id).userId(user.getId()).build())
+//                    .collect(Collectors.toList());
 //            List<SysUserRole> list = new ArrayList<>();
 //            for (Integer roleId : roleIds) {
 //                list.add(SysUserRole.builder()
@@ -303,8 +299,8 @@ public class SysUserServiceImpl implements SysUserService {
 //                        .roleId(roleId)
 //                        .build());
 //            }
-            if (!CollectionUtils.isEmpty(userUintHalls) && !CollectionUtils.isEmpty(list)) {
-                userUintHallMapper.insertBatch(userUintHalls);
+            if (!CollectionUtils.isEmpty(list)) {
+//                userUintHallMapper.insertBatch(userUintHalls);
                 sysUserRoleMapper.insertBatch(list);
             }
         }

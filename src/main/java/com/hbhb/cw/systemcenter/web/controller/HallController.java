@@ -62,7 +62,8 @@ public class HallController  implements HallApi {
     @Operation(summary = "获取营业厅列表-全部列表和当前用户已选择的列表", description = "下拉框用")
     @GetMapping("/select_new")
     public Map<String, Object> listHallNew(@Parameter(description = "分公司id", required = true) @RequestParam Integer unitId,
-                                           @Parameter(hidden = true) @UserId Integer userId) {
+                                           @Parameter(description = "用户id", required = true) @RequestParam Integer userId) {
+        log.info("用户id{}",userId);
         return hallService.listHallNew(userId,unitId);
     }
 
@@ -91,7 +92,7 @@ public class HallController  implements HallApi {
     @Operation(summary = "更新营业厅-选择营业厅")
     @PutMapping("/updateHallNew")
     public void updateHallNew(@Parameter(description = "营业厅信息", required = true) @RequestBody HallSelectReqVO vo,
-                              @Parameter(hidden = true) @UserId Integer userId) {
+                              @Parameter(description = "用户id", required = true) @RequestParam Integer userId) {
         hallService.updateHallNew(userId,vo.getUnitId(),vo.getHallSelectIds());
     }
 

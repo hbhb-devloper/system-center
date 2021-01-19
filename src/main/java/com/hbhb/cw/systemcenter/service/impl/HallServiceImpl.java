@@ -2,6 +2,7 @@ package com.hbhb.cw.systemcenter.service.impl;
 
 import com.hbhb.api.core.bean.SelectVO;
 import com.hbhb.beetlsql.core.QueryExt;
+import com.hbhb.cw.systemcenter.enums.UnitEnum;
 import com.hbhb.cw.systemcenter.mapper.HallMapper;
 import com.hbhb.cw.systemcenter.mapper.SysUserUintHallMapper;
 import com.hbhb.cw.systemcenter.model.Hall;
@@ -12,6 +13,8 @@ import com.hbhb.cw.systemcenter.vo.HallResVO;
 
 import org.beetl.sql.core.page.PageResult;
 import org.beetl.sql.core.query.Query;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 
@@ -27,6 +30,8 @@ import javax.annotation.Resource;
  */
 @Service
 public class HallServiceImpl implements HallService {
+
+    private final  static Logger logger = LoggerFactory.getLogger(HallServiceImpl.class);
 
     @Resource
     private HallMapper hallMapper;
@@ -81,16 +86,35 @@ public class HallServiceImpl implements HallService {
                 .collect(Collectors.toList());
 
         //查询当前用户勾选营业厅
-        List<Integer> sysUserUintHalls =  sysUserUintHallMapper
-                .createLambdaQuery()
-                .andEq(SysUserUintHall::getUserId,userId)
-                .andEq(SysUserUintHall::getUintId,unitId)
-                .select()
-                .stream()
-                .map(SysUserUintHall::getHallId)
-                .collect(Collectors.toList())
-                .stream().distinct()
-                .collect(Collectors.toList());
+        //如果是本部，就需要通过unitid查询
+        List<Integer> sysUserUintHalls ;
+        if (unitId.equals(UnitEnum.HANGZHOU.value())){
+            sysUserUintHalls =  sysUserUintHallMapper
+                    .createLambdaQuery()
+                    .andEq(SysUserUintHall::getUserId,userId)
+//                    .andEq(SysUserUintHall::getUintId,unitId)
+                    .select()
+                    .stream()
+                    .filter(sysUserUintHall -> sysUserUintHall.getHallId()!=null)
+                    .map(SysUserUintHall::getHallId)
+                    .collect(Collectors.toList())
+                    .stream().distinct()
+                    .collect(Collectors.toList());
+        }else {
+            sysUserUintHalls =  sysUserUintHallMapper
+                    .createLambdaQuery()
+                    .andEq(SysUserUintHall::getUserId,userId)
+                    .andEq(SysUserUintHall::getUintId,unitId)
+                    .select()
+                    .stream()
+                    .filter(sysUserUintHall -> sysUserUintHall.getHallId()!=null)
+                    .map(SysUserUintHall::getHallId)
+                    .collect(Collectors.toList())
+                    .stream().distinct()
+                    .collect(Collectors.toList());
+        }
+
+        logger.info("sysUserUintHalls===============>{}",sysUserUintHalls);
 
         Map<String,Object> map = new HashMap<>();
         map.put("halls", selectVOS);
@@ -105,8 +129,9 @@ public class HallServiceImpl implements HallService {
 
     @Override
     public void updateHallNew(Integer userId,Integer unitId, List<Integer> hallSelectIds) {
-        sysUserUintHallMapper.createLambdaQuery().
-                andEq(SysUserUintHall::getUserId,userId)
+        sysUserUintHallMapper.createLambdaQuery()
+                .andEq(SysUserUintHall::getUserId,userId)
+                .andEq(SysUserUintHall::getUintId,unitId)
                 .delete();
         //通过userId,unitId,hallSelectIds关联被选择的部分
         sysUserUintHallMapper.insertBatch(
