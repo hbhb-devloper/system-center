@@ -62,7 +62,6 @@ public class HallServiceImpl implements HallService {
                         .label(hall.getHallName())
                         .build())
                 .collect(Collectors.toList());
-
     }
 
     @Override
@@ -89,6 +88,8 @@ public class HallServiceImpl implements HallService {
                 .select()
                 .stream()
                 .map(SysUserUintHall::getHallId)
+                .collect(Collectors.toList())
+                .stream().distinct()
                 .collect(Collectors.toList());
 
         Map<String,Object> map = new HashMap<>();
@@ -104,6 +105,9 @@ public class HallServiceImpl implements HallService {
 
     @Override
     public void updateHallNew(Integer userId,Integer unitId, List<Integer> hallSelectIds) {
+        sysUserUintHallMapper.createLambdaQuery().
+                andEq(SysUserUintHall::getUserId,userId)
+                .delete();
         //通过userId,unitId,hallSelectIds关联被选择的部分
         sysUserUintHallMapper.insertBatch(
                 Optional.of(hallSelectIds)
@@ -119,7 +123,7 @@ public class HallServiceImpl implements HallService {
     }
 
     /**
-     * 通过当前这个人的userId，查询到当前这个人的单位
+     * 通过当前这个人的unitId，查询到当前这个人的单位
      * @param unitId 菜单id
      * @return 营业厅列表
      */
