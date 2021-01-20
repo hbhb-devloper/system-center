@@ -63,7 +63,6 @@ public class HallController  implements HallApi {
     @GetMapping("/select_new")
     public Map<String, Object> listHallNew(@Parameter(description = "分公司id", required = true) @RequestParam Integer unitId,
                                            @Parameter(description = "用户id", required = true) @RequestParam Integer userId) {
-        log.info("用户id{}",userId);
         return hallService.listHallNew(userId,unitId);
     }
 
