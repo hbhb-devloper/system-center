@@ -9,8 +9,15 @@ import com.hbhb.cw.systemcenter.enums.UnitEnum;
 import com.hbhb.cw.systemcenter.mapper.SysUserUintHallMapper;
 import com.hbhb.cw.systemcenter.model.SysUser;
 import com.hbhb.cw.systemcenter.model.SysUserUintHall;
-import com.hbhb.cw.systemcenter.service.*;
-import com.hbhb.cw.systemcenter.vo.*;
+import com.hbhb.cw.systemcenter.service.SysResourceService;
+import com.hbhb.cw.systemcenter.service.SysRoleService;
+import com.hbhb.cw.systemcenter.service.SysUserService;
+import com.hbhb.cw.systemcenter.service.UnitService;
+import com.hbhb.cw.systemcenter.vo.RouterVO;
+import com.hbhb.cw.systemcenter.vo.UserInfo;
+import com.hbhb.cw.systemcenter.vo.UserInfoVO;
+import com.hbhb.cw.systemcenter.vo.UserReqVO;
+import com.hbhb.cw.systemcenter.vo.UserResVO;
 import com.hbhb.cw.systemcenter.web.vo.UserDetailVO;
 import com.hbhb.cw.systemcenter.web.vo.UserPwdVO;
 import com.hbhb.web.annotation.UserId;
@@ -25,7 +32,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.annotation.Resource;
@@ -206,5 +216,14 @@ public class SysUserController implements UserApi {
             @Parameter(description = "用户id", required = true) Integer userId,
             @Parameter(description = "资源类型", required = true) List<String> types) {
         return sysResourceService.getUserPermission(userId, types);
+    }
+
+    @Operation(summary = "通过单位查询用户map（userId => userName）")
+    @Override
+    public Map<Integer,String> getUserByUnitIds(
+            @Parameter(description = "单位id") @RequestParam(required = false) Integer unitId) {
+        unitId = unitId == null ? UnitEnum.HANGZHOU.value() : unitId;
+        List<Integer> unitIds = unitService.getSubUnit(unitId);
+        return sysUserService.getUseByUnitId(unitIds);
     }
 }

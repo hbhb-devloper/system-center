@@ -22,6 +22,8 @@ public interface SysUserService {
      */
     PageResult<UserResVO> getUserPageByCond(Integer pageNum, Integer pageSize, UserReqVO cond);
 
+    Map<Integer,String> getUseByUnitId(List<Integer> unitIdList);
+
     /**
      * 查询所有用户map
      */

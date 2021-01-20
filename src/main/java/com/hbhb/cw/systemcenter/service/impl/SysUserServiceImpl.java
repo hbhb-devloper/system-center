@@ -11,13 +11,11 @@ import com.hbhb.cw.systemcenter.mapper.SysRoleUnitMapper;
 import com.hbhb.cw.systemcenter.mapper.SysUserMapper;
 import com.hbhb.cw.systemcenter.mapper.SysUserRoleMapper;
 import com.hbhb.cw.systemcenter.mapper.SysUserUintHallMapper;
-import com.hbhb.cw.systemcenter.model.SysRoleUnit;
 import com.hbhb.cw.systemcenter.model.SysUser;
 import com.hbhb.cw.systemcenter.model.SysUserRole;
 import com.hbhb.cw.systemcenter.model.SysUserUintHall;
 import com.hbhb.cw.systemcenter.service.SysUserService;
 import com.hbhb.cw.systemcenter.service.UnitService;
-import com.hbhb.cw.systemcenter.vo.CheckBoxVO;
 import com.hbhb.cw.systemcenter.vo.UserInfo;
 import com.hbhb.cw.systemcenter.vo.UserReqVO;
 import com.hbhb.cw.systemcenter.vo.UserResVO;
@@ -63,6 +61,13 @@ public class SysUserServiceImpl implements SysUserService {
     public PageResult<UserResVO> getUserPageByCond(Integer pageNum, Integer pageSize, UserReqVO cond) {
         PageRequest request = DefaultPageRequest.of(pageNum, pageSize);
         return sysUserMapper.selectPageByCond(cond, request);
+    }
+
+    @Override
+    public Map<Integer, String> getUseByUnitId(List<Integer> unitIdList) {
+        List<SysUser> sysUserList = sysUserMapper.createLambdaQuery()
+                .andIn(SysUser::getUnitId, unitIdList).select();
+        return sysUserList.stream().collect(Collectors.toMap(SysUser::getId, SysUser::getNickName));
     }
 
     @Override
