@@ -10,32 +10,33 @@ import com.hbhb.cw.systemcenter.exception.UserException;
 import com.hbhb.cw.systemcenter.mapper.SysRoleUnitMapper;
 import com.hbhb.cw.systemcenter.mapper.SysUserMapper;
 import com.hbhb.cw.systemcenter.mapper.SysUserRoleMapper;
+import com.hbhb.cw.systemcenter.mapper.SysUserSignatureMapper;
 import com.hbhb.cw.systemcenter.mapper.SysUserUintHallMapper;
 import com.hbhb.cw.systemcenter.model.SysUser;
 import com.hbhb.cw.systemcenter.model.SysUserRole;
+import com.hbhb.cw.systemcenter.model.SysUserSignature;
 import com.hbhb.cw.systemcenter.model.SysUserUintHall;
 import com.hbhb.cw.systemcenter.service.SysUserService;
 import com.hbhb.cw.systemcenter.service.UnitService;
 import com.hbhb.cw.systemcenter.vo.UserInfo;
 import com.hbhb.cw.systemcenter.vo.UserReqVO;
 import com.hbhb.cw.systemcenter.vo.UserResVO;
-
 import org.beetl.sql.core.page.DefaultPageRequest;
 import org.beetl.sql.core.page.PageRequest;
 import org.beetl.sql.core.page.PageResult;
+import org.beetl.sql.core.query.Query;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import javax.annotation.Resource;
 
 /**
  * @author xiaokang
@@ -55,6 +56,8 @@ public class SysUserServiceImpl implements SysUserService {
     private UnitService unitService;
     @Resource
     private SysUserUintHallMapper userUintHallMapper;
+    @Resource
+    private SysUserSignatureMapper signatureMapper;
 
 
     @Override
@@ -239,6 +242,17 @@ public class SysUserServiceImpl implements SysUserService {
                 .collect(Collectors.toMap(SysUser::getId, SysUser::getNickName));
     }
 
+    @Override
+    public Map<Integer, String> getUserSignature(List<Integer> userIds) {
+        List<SysUserSignature> signature = signatureMapper
+                .createLambdaQuery()
+                .andIn(SysUserSignature::getUserId, Query.filterNull(userIds))
+                .select();
+        return signature.stream()
+                .collect(Collectors
+                        .toMap(SysUserSignature::getUserId, SysUserSignature::getImagePath));
+    }
+
     /**
      * 校验默认数据单位是否在设定的单位权限范围内
      */
@@ -283,10 +297,10 @@ public class SysUserServiceImpl implements SysUserService {
                 return;
             }
 
-             List<SysUserRole> list = roleIds
-                     .stream()
-                     .map(id -> SysUserRole.builder().roleId(id).userId(user.getId()).build())
-                     .collect(Collectors.toList()).stream().distinct().collect(Collectors.toList());
+            List<SysUserRole> list = roleIds
+                    .stream()
+                    .map(id -> SysUserRole.builder().roleId(id).userId(user.getId()).build())
+                    .collect(Collectors.toList()).stream().distinct().collect(Collectors.toList());
 
             List<SysUserUintHall> userUintHalls = unRoleIds
                     .stream()

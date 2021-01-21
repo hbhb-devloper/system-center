@@ -21,7 +21,10 @@ import com.hbhb.cw.systemcenter.vo.UserResVO;
 import com.hbhb.cw.systemcenter.web.vo.UserDetailVO;
 import com.hbhb.cw.systemcenter.web.vo.UserPwdVO;
 import com.hbhb.web.annotation.UserId;
-
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 import org.beetl.sql.core.page.PageResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -32,18 +35,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import javax.annotation.Resource;
-
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author xiaokang
@@ -220,10 +217,17 @@ public class SysUserController implements UserApi {
 
     @Operation(summary = "通过单位查询用户map（userId => userName）")
     @Override
-    public Map<Integer,String> getUserByUnitIds(
+    public Map<Integer, String> getUserByUnitIds(
             @Parameter(description = "单位id") @RequestParam(required = false) Integer unitId) {
         unitId = unitId == null ? UnitEnum.HANGZHOU.value() : unitId;
         List<Integer> unitIds = unitService.getSubUnit(unitId);
         return sysUserService.getUseByUnitId(unitIds);
+    }
+
+    @Operation(summary = "获取用户签名图片")
+    @Override
+    public Map<Integer, String> getUserSignature(
+            @Parameter(description = "用户id列表（为空时查询全部）") List<Integer> userIds) {
+        return sysUserService.getUserSignature(userIds);
     }
 }
