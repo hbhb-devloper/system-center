@@ -9,11 +9,13 @@ import com.hbhb.cw.systemcenter.enums.UnitEnum;
 import com.hbhb.cw.systemcenter.mapper.SysUserUintHallMapper;
 import com.hbhb.cw.systemcenter.model.SysUser;
 import com.hbhb.cw.systemcenter.model.SysUserUintHall;
+import com.hbhb.cw.systemcenter.model.Unit;
 import com.hbhb.cw.systemcenter.service.SysResourceService;
 import com.hbhb.cw.systemcenter.service.SysRoleService;
 import com.hbhb.cw.systemcenter.service.SysUserService;
 import com.hbhb.cw.systemcenter.service.UnitService;
 import com.hbhb.cw.systemcenter.vo.RouterVO;
+import com.hbhb.cw.systemcenter.vo.UserBasicsVO;
 import com.hbhb.cw.systemcenter.vo.UserInfo;
 import com.hbhb.cw.systemcenter.vo.UserInfoVO;
 import com.hbhb.cw.systemcenter.vo.UserReqVO;
@@ -100,7 +102,7 @@ public class SysUserController implements UserApi {
         SysUser user = sysUserService.getUserById(userId);
         List<Integer> checkedRsRoleIds = sysRoleService.getCheckedRoleByUser(userId, RoleType.RELATE_RESOURCE.value());
         List<Integer> checkedUnRoleIds = sysRoleService.getCheckedRoleByUser(userId, RoleType.RELATE_UNIT.value());
-        List<Integer> checkedUintIds = sysUserUintHallMapper.createLambdaQuery().andEq(SysUserUintHall::getUserId,userId)
+        List<Integer> checkedUintIds = sysUserUintHallMapper.createLambdaQuery().andEq(SysUserUintHall::getUserId, userId)
                 .select().stream().map(SysUserUintHall::getUintId).collect(Collectors.toList()).stream().distinct().collect(Collectors.toList());
         user.setCheckedRsRoleIds(checkedRsRoleIds);
         user.setCheckedUnRoleIds(checkedUnRoleIds);
@@ -154,7 +156,15 @@ public class SysUserController implements UserApi {
     @Operation(summary = "获取当前登录用户的信息（包括基本信息、资源权限等）")
     @GetMapping("/current")
     public UserInfoVO getCurrentUser(@Parameter(hidden = true) @UserId Integer userId) {
-        UserInfo user = sysUserService.getUserInfoById(userId);
+        UserInfo userInfo = sysUserService.getUserInfoById(userId);
+        Unit unit = unitService.getUnitInfo(userInfo.getUnitId());
+        UserBasicsVO user = UserBasicsVO.builder()
+                .defaultUnitId(userInfo.getDefaultUnitId())
+                .id(userInfo.getId())
+                .nickName(userInfo.getNickName())
+                .userName(userInfo.getUserName())
+                .unitName(unit.getUnitName())
+                .build();
         // 获取登录用户的按钮权限
         Set<String> permissions = sysResourceService.getUserPermission(
                 userId, Collections.singletonList(ResourceType.BUTTON.value()));
