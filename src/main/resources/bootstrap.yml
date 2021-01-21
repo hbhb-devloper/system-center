@@ -51,6 +51,7 @@ provider:
   budget-service: budget-service-@env@
   relocation-manage: relocation-manage-@env@
   publicity-manage: publicity-manage-@env@
+  report-manage: report-manage-@env@
 
 ################### 本地环境配置 ###################
 ---
