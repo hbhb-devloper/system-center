@@ -42,9 +42,15 @@ public interface HallService {
     void updateHallNew(Integer userId,Integer unitId,List<Integer> hallSelectIds);
 
     /**
-     * 通过userId去获取到这个人的营业厅列表
+     * 通过UnitId去获取到这个人的营业厅列表
      */
     Map<Integer,String> selectHallByUnitId(Integer unitId);
+
+
+    /**
+     * 通过userId去获取到这个人的营业厅列表
+     */
+    List<SelectVO> selectHallByUserId(Integer userId);
 
 
 }

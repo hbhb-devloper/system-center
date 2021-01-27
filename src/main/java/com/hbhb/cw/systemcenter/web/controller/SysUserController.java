@@ -102,8 +102,13 @@ public class SysUserController implements UserApi {
         SysUser user = sysUserService.getUserById(userId);
         List<Integer> checkedRsRoleIds = sysRoleService.getCheckedRoleByUser(userId, RoleType.RELATE_RESOURCE.value());
         List<Integer> checkedUnRoleIds = sysRoleService.getCheckedRoleByUser(userId, RoleType.RELATE_UNIT.value());
-        List<Integer> checkedUintIds = sysUserUintHallMapper.createLambdaQuery().andEq(SysUserUintHall::getUserId, userId)
-                .select().stream().map(SysUserUintHall::getUintId).collect(Collectors.toList()).stream().distinct().collect(Collectors.toList());
+        List<Integer> checkedUintIds = sysUserUintHallMapper.
+                createLambdaQuery().andEq(SysUserUintHall::getUserId, userId)
+                .select()
+                .stream()
+                .map(SysUserUintHall::getUintId).distinct()
+                .collect(Collectors.toList());
+        log.info("用户的菜单id{}", checkedUintIds);
         user.setCheckedRsRoleIds(checkedRsRoleIds);
         user.setCheckedUnRoleIds(checkedUnRoleIds);
         user.setCheckedUintIds(checkedUintIds);

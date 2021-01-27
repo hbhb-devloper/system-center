@@ -72,6 +72,11 @@ public class HallController  implements HallApi {
         return hallService.selectHallByUnitId(unitId);
     }
 
+    @Override
+    public List<SelectVO> selectHallByUserId(@Parameter(description = "用户id") @RequestParam Integer userId) {
+        return hallService.selectHallByUserId(userId);
+    }
+
     @Operation(summary = "添加营业厅")
     @PostMapping("")
     public void addHall(@Parameter(description = "营业厅信息", required = true) @RequestBody HallReqVO vo,

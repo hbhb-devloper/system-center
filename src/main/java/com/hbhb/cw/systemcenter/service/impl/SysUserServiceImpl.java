@@ -276,14 +276,48 @@ public class SysUserServiceImpl implements SysUserService {
      * 添加用户角色关联表
      */
     private void insertUserRole(SysUser user) {
+
+
+
         // 先删除
         sysUserRoleMapper.createLambdaQuery()
                 .andEq(SysUserRole::getUserId, user.getId())
                 .delete();
 
-//        userUintHallMapper.createLambdaQuery()
-//                .andEq(SysUserUintHall::getUserId, user.getId())
-//                .delete();
+
+        //获取当前已经有营业厅选择的菜单
+        List<SysUserUintHall> hallIds = userUintHallMapper.createLambdaQuery()
+                .andEq(SysUserUintHall::getUserId,user.getId())
+                .select()
+                .stream()
+                .filter(sysUserUintHall -> sysUserUintHall.getHallId() != null  && sysUserUintHall.getHallId() != 0)
+                .distinct()
+                .collect(Collectors.toList());
+
+
+        List<SysUserUintHall> userUintHalls = new ArrayList<>();
+        if (!hallIds.isEmpty() ){
+            if(user.getCheckedUnRoleIds().isEmpty()) return;
+            user.getCheckedUnRoleIds().forEach(unitId -> hallIds.forEach(sysUserUintHall -> {
+                if (unitId.equals(sysUserUintHall.getUintId())){
+                    userUintHalls.add(sysUserUintHall);
+                }else {
+                    //如果没有营业厅，那么就创建一个没有营业厅的
+                    userUintHalls.add(SysUserUintHall.builder().uintId(unitId).userId(user.getId()).build());
+                }
+            }));
+
+        }else {
+            if(user.getCheckedUnRoleIds().isEmpty()) return;
+            //如果当前没有选择营业厅，那么直接添加
+            user.getCheckedUnRoleIds().forEach(unitId -> userUintHalls.add(SysUserUintHall.builder().uintId(unitId).userId(user.getId()).build()));
+
+        }
+
+        //删除之前的菜单id和营业厅数据
+        userUintHallMapper.createLambdaQuery()
+                .andEq(SysUserUintHall::getUserId,user.getId())
+                .delete();
 
         // 再添加
         List<Integer> rsRoleIds = user.getCheckedRsRoleIds();
@@ -302,10 +336,10 @@ public class SysUserServiceImpl implements SysUserService {
                     .map(id -> SysUserRole.builder().roleId(id).userId(user.getId()).build())
                     .collect(Collectors.toList()).stream().distinct().collect(Collectors.toList());
 
-            List<SysUserUintHall> userUintHalls = unRoleIds
-                    .stream()
-                    .map(id -> SysUserUintHall.builder().uintId(id).userId(user.getId()).build())
-                    .collect(Collectors.toList());
+//            List<SysUserUintHall> userUintHalls = unRoleIds
+//                    .stream()
+//                    .map(id -> SysUserUintHall.builder().uintId(id).userId(user.getId()).build())
+//                    .collect(Collectors.toList());
 //            List<SysUserRole> list = new ArrayList<>();
 //            for (Integer roleId : roleIds) {
 //                list.add(SysUserRole.builder()

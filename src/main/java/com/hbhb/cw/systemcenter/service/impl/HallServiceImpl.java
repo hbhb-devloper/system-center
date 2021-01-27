@@ -171,5 +171,24 @@ public class HallServiceImpl implements HallService {
                 .collect(Collectors.toMap(Hall::getId,Hall::getHallName));
     }
 
+    @Override
+    public List<SelectVO> selectHallByUserId(Integer userId) {
+
+        //拿到用户下的单位
+        List<Integer> integers = sysUserUintHallMapper.createLambdaQuery()
+                .andEq(SysUserUintHall::getUserId,userId)
+                .select()
+                .stream().map(SysUserUintHall::getUintId)
+                .distinct()
+                .collect(Collectors.toList());
+
+        if (integers.isEmpty()) return new ArrayList<>();
+        return hallMapper.createLambdaQuery().andIn(Hall::getUnitId,integers)
+                .select()
+                .stream()
+                .map(hall ->  SelectVO.builder().id(Long.valueOf(hall.getId())).label(hall.getHallName()).build())
+                .collect(Collectors.toList());
+    }
+
 
 }
