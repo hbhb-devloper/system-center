@@ -88,7 +88,7 @@ public class HallServiceImpl implements HallService {
         //查询当前用户勾选营业厅
         //如果是本部，就需要通过unitid查询
         List<Integer> sysUserUintHalls ;
-        if (unitId.equals(UnitEnum.HANGZHOU.value())){
+        if (unitId.equals(UnitEnum.HANGZHOU.value()) || unitId.equals(UnitEnum.BENBU.value())){
             sysUserUintHalls =  sysUserUintHallMapper
                     .createLambdaQuery()
                     .andEq(SysUserUintHall::getUserId,userId)
@@ -178,12 +178,13 @@ public class HallServiceImpl implements HallService {
         List<Integer> integers = sysUserUintHallMapper.createLambdaQuery()
                 .andEq(SysUserUintHall::getUserId,userId)
                 .select()
-                .stream().map(SysUserUintHall::getUintId)
+                .stream()
+                .map(SysUserUintHall::getHallId)
                 .distinct()
                 .collect(Collectors.toList());
 
         if (integers.isEmpty()) return new ArrayList<>();
-        return hallMapper.createLambdaQuery().andIn(Hall::getUnitId,integers)
+        return hallMapper.createLambdaQuery().andIn(Hall::getId,integers)
                 .select()
                 .stream()
                 .map(hall ->  SelectVO.builder().id(Long.valueOf(hall.getId())).label(hall.getHallName()).build())

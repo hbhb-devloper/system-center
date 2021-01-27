@@ -66,12 +66,13 @@ public class HallController  implements HallApi {
         return hallService.listHallNew(userId,unitId);
     }
 
-    @Operation(summary = "获取营业厅列表-根据用户id", description = "下拉框用")
+    @Operation(summary = "获取营业厅列表-根据菜单id", description = "下拉框用")
     @Override
     public Map<Integer,String> selectHallByUnitId(@Parameter(description = "单位id") @RequestParam Integer unitId) {
         return hallService.selectHallByUnitId(unitId);
     }
 
+    @Operation(summary = "获取营业厅列表-根据用户id", description = "下拉框用")
     @Override
     public List<SelectVO> selectHallByUserId(@Parameter(description = "用户id") @RequestParam Integer userId) {
         return hallService.selectHallByUserId(userId);
