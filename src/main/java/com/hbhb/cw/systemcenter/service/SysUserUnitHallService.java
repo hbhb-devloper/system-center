@@ -1,7 +1,6 @@
 package com.hbhb.cw.systemcenter.service;
 
-public interface SysUserUintHallService {
-
+public interface SysUserUnitHallService {
 
 
 }

@@ -4,24 +4,25 @@ import com.hbhb.api.core.bean.SelectVO;
 import com.hbhb.beetlsql.core.QueryExt;
 import com.hbhb.cw.systemcenter.enums.UnitEnum;
 import com.hbhb.cw.systemcenter.mapper.HallMapper;
-import com.hbhb.cw.systemcenter.mapper.SysUserUintHallMapper;
+import com.hbhb.cw.systemcenter.mapper.SysUserUnitHallMapper;
 import com.hbhb.cw.systemcenter.model.Hall;
-import com.hbhb.cw.systemcenter.model.SysUserUintHall;
+import com.hbhb.cw.systemcenter.model.SysUserUnitHall;
 import com.hbhb.cw.systemcenter.service.HallService;
 import com.hbhb.cw.systemcenter.service.UnitService;
 import com.hbhb.cw.systemcenter.vo.HallResVO;
-
 import org.beetl.sql.core.page.PageResult;
 import org.beetl.sql.core.query.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-
-import java.util.*;
-import java.util.stream.Collectors;
-
 import javax.annotation.Resource;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 /**
  * @author xiaokang
@@ -38,7 +39,7 @@ public class HallServiceImpl implements HallService {
     @Resource
     private UnitService unitService;
     @Resource
-    private SysUserUintHallMapper sysUserUintHallMapper;
+    private SysUserUnitHallMapper sysUserUnitHallMapper;
 
 
     @Override
@@ -86,29 +87,29 @@ public class HallServiceImpl implements HallService {
                 .collect(Collectors.toList());
 
         //查询当前用户勾选营业厅
-        //如果是本部，就需要通过unitid查询
+        //如果是本部，就需要通过unitUId查询
         List<Integer> sysUserUintHalls ;
         if (unitId.equals(UnitEnum.HANGZHOU.value()) || unitId.equals(UnitEnum.BENBU.value())){
-            sysUserUintHalls =  sysUserUintHallMapper
+            sysUserUintHalls = sysUserUnitHallMapper
                     .createLambdaQuery()
-                    .andEq(SysUserUintHall::getUserId,userId)
-//                    .andEq(SysUserUintHall::getUintId,unitId)
+                    .andEq(SysUserUnitHall::getUserId, userId)
+//                    .andEq(SysUserUnitHall::getUintId,unitId)
                     .select()
                     .stream()
-                    .filter(sysUserUintHall -> sysUserUintHall.getHallId()!=null)
-                    .map(SysUserUintHall::getHallId)
+                    .filter(sysUserUintHall -> sysUserUintHall.getHallId() != null)
+                    .map(SysUserUnitHall::getHallId)
                     .collect(Collectors.toList())
                     .stream().distinct()
                     .collect(Collectors.toList());
         }else {
-            sysUserUintHalls =  sysUserUintHallMapper
+            sysUserUintHalls = sysUserUnitHallMapper
                     .createLambdaQuery()
-                    .andEq(SysUserUintHall::getUserId,userId)
-                    .andEq(SysUserUintHall::getUintId,unitId)
+                    .andEq(SysUserUnitHall::getUserId, userId)
+                    .andEq(SysUserUnitHall::getUnitId, unitId)
                     .select()
                     .stream()
-                    .filter(sysUserUintHall -> sysUserUintHall.getHallId()!=null)
-                    .map(SysUserUintHall::getHallId)
+                    .filter(sysUserUintHall -> sysUserUintHall.getHallId() != null)
+                    .map(SysUserUnitHall::getHallId)
                     .collect(Collectors.toList())
                     .stream().distinct()
                     .collect(Collectors.toList());
@@ -129,19 +130,19 @@ public class HallServiceImpl implements HallService {
 
     @Override
     public void updateHallNew(Integer userId,Integer unitId, List<Integer> hallSelectIds) {
-        sysUserUintHallMapper.createLambdaQuery()
-                .andEq(SysUserUintHall::getUserId,userId)
-                .andEq(SysUserUintHall::getUintId,unitId)
+        sysUserUnitHallMapper.createLambdaQuery()
+                .andEq(SysUserUnitHall::getUserId, userId)
+                .andEq(SysUserUnitHall::getUnitId, unitId)
                 .delete();
         //通过userId,unitId,hallSelectIds关联被选择的部分
-        sysUserUintHallMapper.insertBatch(
+        sysUserUnitHallMapper.insertBatch(
                 Optional.of(hallSelectIds)
                         .orElse(new ArrayList<>())
                         .stream()
-                        .map(id -> SysUserUintHall
+                        .map(id -> SysUserUnitHall
                                 .builder()
                                 .userId(userId)
-                                .uintId(unitId)
+                                .unitId(unitId)
                                 .hallId(id)
                                 .build())
                         .collect(Collectors.toList()));
@@ -164,7 +165,9 @@ public class HallServiceImpl implements HallService {
                 .stream().map(Hall::getUnitId)
                 .collect(Collectors.toList());
 
-        if (unitIds.isEmpty()) return new HashMap<>();
+        if (unitIds.isEmpty()) {
+            return new HashMap<>();
+        }
         return hallMapper.createLambdaQuery().andIn(Hall::getUnitId,unitIds)
                 .select()
                 .stream()
@@ -175,16 +178,18 @@ public class HallServiceImpl implements HallService {
     public List<SelectVO> selectHallByUserId(Integer userId) {
 
         //拿到用户下的单位
-        List<Integer> integers = sysUserUintHallMapper.createLambdaQuery()
-                .andEq(SysUserUintHall::getUserId,userId)
+        List<Integer> integers = sysUserUnitHallMapper.createLambdaQuery()
+                .andEq(SysUserUnitHall::getUserId, userId)
                 .select()
                 .stream()
-                .map(SysUserUintHall::getHallId)
+                .map(SysUserUnitHall::getHallId)
                 .distinct()
                 .collect(Collectors.toList());
 
-        if (integers.isEmpty()) return new ArrayList<>();
-        return hallMapper.createLambdaQuery().andIn(Hall::getId,integers)
+        if (integers.isEmpty()) {
+            return new ArrayList<>();
+        }
+        return hallMapper.createLambdaQuery().andIn(Hall::getId, integers)
                 .select()
                 .stream()
                 .map(hall ->  SelectVO.builder().id(Long.valueOf(hall.getId())).label(hall.getHallName()).build())

@@ -6,9 +6,9 @@ import com.hbhb.cw.systemcenter.api.UserApi;
 import com.hbhb.cw.systemcenter.enums.ResourceType;
 import com.hbhb.cw.systemcenter.enums.RoleType;
 import com.hbhb.cw.systemcenter.enums.UnitEnum;
-import com.hbhb.cw.systemcenter.mapper.SysUserUintHallMapper;
+import com.hbhb.cw.systemcenter.mapper.SysUserUnitHallMapper;
 import com.hbhb.cw.systemcenter.model.SysUser;
-import com.hbhb.cw.systemcenter.model.SysUserUintHall;
+import com.hbhb.cw.systemcenter.model.SysUserUnitHall;
 import com.hbhb.cw.systemcenter.model.Unit;
 import com.hbhb.cw.systemcenter.service.SysResourceService;
 import com.hbhb.cw.systemcenter.service.SysRoleService;
@@ -63,7 +63,7 @@ public class SysUserController implements UserApi {
     @Resource
     private SysResourceService sysResourceService;
     @Resource
-    private SysUserUintHallMapper sysUserUintHallMapper;
+    private SysUserUnitHallMapper sysUserUnitHallMapper;
 
     @Operation(summary = "通过指定条件查询用户列表（分页）")
     @GetMapping("/list")
@@ -102,11 +102,11 @@ public class SysUserController implements UserApi {
         SysUser user = sysUserService.getUserById(userId);
         List<Integer> checkedRsRoleIds = sysRoleService.getCheckedRoleByUser(userId, RoleType.RELATE_RESOURCE.value());
         List<Integer> checkedUnRoleIds = sysRoleService.getCheckedRoleByUser(userId, RoleType.RELATE_UNIT.value());
-        List<Integer> checkedUintIds = sysUserUintHallMapper.
-                createLambdaQuery().andEq(SysUserUintHall::getUserId, userId)
+        List<Integer> checkedUintIds = sysUserUnitHallMapper.
+                createLambdaQuery().andEq(SysUserUnitHall::getUserId, userId)
                 .select()
                 .stream()
-                .map(SysUserUintHall::getUintId).distinct()
+                .map(SysUserUnitHall::getUnitId).distinct()
                 .collect(Collectors.toList());
         log.info("用户的菜单id{}", checkedUintIds);
         user.setCheckedRsRoleIds(checkedRsRoleIds);

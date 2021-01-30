@@ -4,24 +4,24 @@ import com.hbhb.api.core.bean.SelectVO;
 import com.hbhb.core.utils.TreeUtil;
 import com.hbhb.cw.systemcenter.enums.UnitEnum;
 import com.hbhb.cw.systemcenter.mapper.SysRoleUnitMapper;
-import com.hbhb.cw.systemcenter.mapper.SysUserUintHallMapper;
+import com.hbhb.cw.systemcenter.mapper.SysUserUnitHallMapper;
 import com.hbhb.cw.systemcenter.mapper.UnitMapper;
 import com.hbhb.cw.systemcenter.model.SysRoleUnit;
-import com.hbhb.cw.systemcenter.model.SysUserUintHall;
+import com.hbhb.cw.systemcenter.model.SysUserUnitHall;
 import com.hbhb.cw.systemcenter.model.Unit;
 import com.hbhb.cw.systemcenter.service.UnitService;
 import com.hbhb.cw.systemcenter.vo.TreeSelectVO;
-
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
-import java.util.*;
-import java.util.stream.Collectors;
-
 import javax.annotation.Resource;
-
-import lombok.extern.slf4j.Slf4j;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -33,7 +33,7 @@ public class UnitServiceImpl implements UnitService {
     @Resource
     private SysRoleUnitMapper sysRoleUnitMapper;
     @Resource
-    private SysUserUintHallMapper sysUserUintHallMapper;
+    private SysUserUnitHallMapper sysUserUnitHallMapper;
 
     @Override
     public List<TreeSelectVO> getAllUnitTreeList() {
@@ -76,9 +76,9 @@ public class UnitServiceImpl implements UnitService {
     @Override
     public List<TreeSelectVO> getUnitTreeSelectByUser(Integer userId) {
         // 查询用户的单位列表（按parentId、显示顺序升序，并且已去掉半选节点）current
-        List<Integer> unitIds =  sysUserUintHallMapper.createLambdaQuery().andEq(SysUserUintHall::getUserId,userId)
-                .select().stream().map(SysUserUintHall::getUintId).collect(Collectors.toList()).stream().distinct().collect(Collectors.toList());
-        List<Unit> units =  unitMapper.createLambdaQuery().andIn(Unit::getId,unitIds).asc(Unit::getParentId).asc(Unit::getSortNum).select();
+        List<Integer> unitIds = sysUserUnitHallMapper.createLambdaQuery().andEq(SysUserUnitHall::getUserId, userId)
+                .select().stream().map(SysUserUnitHall::getUnitId).collect(Collectors.toList()).stream().distinct().collect(Collectors.toList());
+        List<Unit> units = unitMapper.createLambdaQuery().andIn(Unit::getId, unitIds).asc(Unit::getParentId).asc(Unit::getSortNum).select();
 
         if (CollectionUtils.isEmpty(units)) {
             return new ArrayList<>();

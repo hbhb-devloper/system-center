@@ -7,15 +7,14 @@ import com.hbhb.core.utils.RegexUtil;
 import com.hbhb.cw.systemcenter.enums.UserConstant;
 import com.hbhb.cw.systemcenter.enums.code.UserErrorCode;
 import com.hbhb.cw.systemcenter.exception.UserException;
-import com.hbhb.cw.systemcenter.mapper.SysRoleUnitMapper;
 import com.hbhb.cw.systemcenter.mapper.SysUserMapper;
 import com.hbhb.cw.systemcenter.mapper.SysUserRoleMapper;
 import com.hbhb.cw.systemcenter.mapper.SysUserSignatureMapper;
-import com.hbhb.cw.systemcenter.mapper.SysUserUintHallMapper;
+import com.hbhb.cw.systemcenter.mapper.SysUserUnitHallMapper;
 import com.hbhb.cw.systemcenter.model.SysUser;
 import com.hbhb.cw.systemcenter.model.SysUserRole;
 import com.hbhb.cw.systemcenter.model.SysUserSignature;
-import com.hbhb.cw.systemcenter.model.SysUserUintHall;
+import com.hbhb.cw.systemcenter.model.SysUserUnitHall;
 import com.hbhb.cw.systemcenter.service.SysUserService;
 import com.hbhb.cw.systemcenter.service.UnitService;
 import com.hbhb.cw.systemcenter.vo.UserInfo;
@@ -51,11 +50,9 @@ public class SysUserServiceImpl implements SysUserService {
     @Resource
     private SysUserRoleMapper sysUserRoleMapper;
     @Resource
-    private SysRoleUnitMapper sysRoleUnitMapper;
-    @Resource
     private UnitService unitService;
     @Resource
-    private SysUserUintHallMapper userUintHallMapper;
+    private SysUserUnitHallMapper userUnitHallMapper;
     @Resource
     private SysUserSignatureMapper signatureMapper;
 
@@ -278,45 +275,51 @@ public class SysUserServiceImpl implements SysUserService {
     private void insertUserRole(SysUser user) {
 
 
-
         // 先删除
         sysUserRoleMapper.createLambdaQuery()
                 .andEq(SysUserRole::getUserId, user.getId())
                 .delete();
 
+//        userUnitHallMapper.createLambdaQuery()
+//                .andEq(SysUserUnitHall::getUserId, user.getId())
+//                .delete();
 
         //获取当前已经有营业厅选择的菜单
-        List<SysUserUintHall> hallIds = userUintHallMapper.createLambdaQuery()
-                .andEq(SysUserUintHall::getUserId,user.getId())
+        List<SysUserUnitHall> hallIds = userUnitHallMapper.createLambdaQuery()
+                .andEq(SysUserUnitHall::getUserId, user.getId())
                 .select()
                 .stream()
-                .filter(sysUserUintHall -> sysUserUintHall.getHallId() != null  && sysUserUintHall.getHallId() != 0)
+                .filter(sysUserUintHall -> sysUserUintHall.getHallId() != null && sysUserUintHall.getHallId() != 0)
                 .distinct()
                 .collect(Collectors.toList());
 
 
-        List<SysUserUintHall> userUintHalls = new ArrayList<>();
-        if (!hallIds.isEmpty() ){
-            if(user.getCheckedUnRoleIds().isEmpty()) return;
+        List<SysUserUnitHall> userUintHalls = new ArrayList<>();
+        if (!hallIds.isEmpty()) {
+            if (user.getCheckedUnRoleIds().isEmpty()) {
+                return;
+            }
             user.getCheckedUnRoleIds().forEach(unitId -> hallIds.forEach(sysUserUintHall -> {
-                if (unitId.equals(sysUserUintHall.getUintId())){
+                if (unitId.equals(sysUserUintHall.getUnitId())) {
                     userUintHalls.add(sysUserUintHall);
-                }else {
+                } else {
                     //如果没有营业厅，那么就创建一个没有营业厅的
-                    userUintHalls.add(SysUserUintHall.builder().uintId(unitId).userId(user.getId()).build());
+                    userUintHalls.add(SysUserUnitHall.builder().unitId(unitId).userId(user.getId()).build());
                 }
             }));
 
-        }else {
-            if(user.getCheckedUnRoleIds().isEmpty()) return;
+        } else {
+            if (user.getCheckedUnRoleIds().isEmpty()) {
+                return;
+            }
             //如果当前没有选择营业厅，那么直接添加
-            user.getCheckedUnRoleIds().forEach(unitId -> userUintHalls.add(SysUserUintHall.builder().uintId(unitId).userId(user.getId()).build()));
+            user.getCheckedUnRoleIds().forEach(unitId -> userUintHalls.add(SysUserUnitHall.builder().unitId(unitId).userId(user.getId()).build()));
 
         }
 
         //删除之前的菜单id和营业厅数据
-        userUintHallMapper.createLambdaQuery()
-                .andEq(SysUserUintHall::getUserId,user.getId())
+        userUnitHallMapper.createLambdaQuery()
+                .andEq(SysUserUnitHall::getUserId, user.getId())
                 .delete();
 
         // 再添加
@@ -336,9 +339,9 @@ public class SysUserServiceImpl implements SysUserService {
                     .map(id -> SysUserRole.builder().roleId(id).userId(user.getId()).build())
                     .collect(Collectors.toList()).stream().distinct().collect(Collectors.toList());
 
-//            List<SysUserUintHall> userUintHalls = unRoleIds
+//            List<SysUserUnitHall> userUintHalls = unRoleIds
 //                    .stream()
-//                    .map(id -> SysUserUintHall.builder().uintId(id).userId(user.getId()).build())
+//                    .map(id -> SysUserUnitHall.builder().unitId(id).userId(user.getId()).build())
 //                    .collect(Collectors.toList());
 //            List<SysUserRole> list = new ArrayList<>();
 //            for (Integer roleId : roleIds) {
@@ -348,7 +351,7 @@ public class SysUserServiceImpl implements SysUserService {
 //                        .build());
 //            }
             if (!CollectionUtils.isEmpty(list)) {
-                userUintHallMapper.insertBatch(userUintHalls);
+                userUnitHallMapper.insertBatch(userUintHalls);
                 sysUserRoleMapper.insertBatch(list);
             }
         }
