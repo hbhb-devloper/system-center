@@ -5,7 +5,6 @@ import com.hbhb.cw.systemcenter.model.SysUser;
 import com.hbhb.cw.systemcenter.vo.UserInfo;
 import com.hbhb.cw.systemcenter.vo.UserReqVO;
 import com.hbhb.cw.systemcenter.vo.UserResVO;
-
 import org.beetl.sql.core.page.PageResult;
 
 import java.util.List;
@@ -21,6 +20,8 @@ public interface SysUserService {
      * 按条件查询用户列表（分页）
      */
     PageResult<UserResVO> getUserPageByCond(Integer pageNum, Integer pageSize, UserReqVO cond);
+
+    Map<Integer,String> getUseByUnitId(List<Integer> unitIdList);
 
     /**
      * 查询所有用户map
@@ -76,4 +77,12 @@ public interface SysUserService {
      * 查询用户map(id-用户姓名)
      */
     Map<Integer, String> getUserMapById(List<Integer> userIds);
+
+    /**
+     * 跟据用户id获取获取用户签名图片
+     *
+     * @param userIds id
+     * @return 签名图片map
+     */
+    Map<Integer, String> getUserSignature(List<Integer> userIds);
 }

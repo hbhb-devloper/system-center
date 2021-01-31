@@ -7,34 +7,35 @@ import com.hbhb.core.utils.RegexUtil;
 import com.hbhb.cw.systemcenter.enums.UserConstant;
 import com.hbhb.cw.systemcenter.enums.code.UserErrorCode;
 import com.hbhb.cw.systemcenter.exception.UserException;
-import com.hbhb.cw.systemcenter.mapper.SysRoleUnitMapper;
 import com.hbhb.cw.systemcenter.mapper.SysUserMapper;
 import com.hbhb.cw.systemcenter.mapper.SysUserRoleMapper;
-import com.hbhb.cw.systemcenter.model.SysRoleUnit;
+import com.hbhb.cw.systemcenter.mapper.SysUserSignatureMapper;
+import com.hbhb.cw.systemcenter.mapper.SysUserUnitHallMapper;
 import com.hbhb.cw.systemcenter.model.SysUser;
 import com.hbhb.cw.systemcenter.model.SysUserRole;
+import com.hbhb.cw.systemcenter.model.SysUserSignature;
+import com.hbhb.cw.systemcenter.model.SysUserUnitHall;
 import com.hbhb.cw.systemcenter.service.SysUserService;
 import com.hbhb.cw.systemcenter.service.UnitService;
 import com.hbhb.cw.systemcenter.vo.UserInfo;
 import com.hbhb.cw.systemcenter.vo.UserReqVO;
 import com.hbhb.cw.systemcenter.vo.UserResVO;
-
 import org.beetl.sql.core.page.DefaultPageRequest;
 import org.beetl.sql.core.page.PageRequest;
 import org.beetl.sql.core.page.PageResult;
+import org.beetl.sql.core.query.Query;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import org.springframework.util.StringUtils;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
-import javax.annotation.Resource;
 
 /**
  * @author xiaokang
@@ -49,14 +50,24 @@ public class SysUserServiceImpl implements SysUserService {
     @Resource
     private SysUserRoleMapper sysUserRoleMapper;
     @Resource
-    private SysRoleUnitMapper sysRoleUnitMapper;
-    @Resource
     private UnitService unitService;
+    @Resource
+    private SysUserUnitHallMapper userUnitHallMapper;
+    @Resource
+    private SysUserSignatureMapper signatureMapper;
+
 
     @Override
     public PageResult<UserResVO> getUserPageByCond(Integer pageNum, Integer pageSize, UserReqVO cond) {
         PageRequest request = DefaultPageRequest.of(pageNum, pageSize);
         return sysUserMapper.selectPageByCond(cond, request);
+    }
+
+    @Override
+    public Map<Integer, String> getUseByUnitId(List<Integer> unitIdList) {
+        List<SysUser> sysUserList = sysUserMapper.createLambdaQuery()
+                .andIn(SysUser::getUnitId, unitIdList).select();
+        return sysUserList.stream().collect(Collectors.toMap(SysUser::getId, SysUser::getNickName));
     }
 
     @Override
@@ -132,7 +143,7 @@ public class SysUserServiceImpl implements SysUserService {
         String plaintext = AESCryptUtil.decrypt(user.getPwd());
 
         // 修改时，如果密码明文为空，则不做任何处理
-        if (StringUtils.isEmpty(plaintext)) {
+        if (StringUtils.isEmpty(user.getPwd())) {
             user.setPwd(null);
         } else {
             // 校验密码强度
@@ -228,6 +239,17 @@ public class SysUserServiceImpl implements SysUserService {
                 .collect(Collectors.toMap(SysUser::getId, SysUser::getNickName));
     }
 
+    @Override
+    public Map<Integer, String> getUserSignature(List<Integer> userIds) {
+        List<SysUserSignature> signature = signatureMapper
+                .createLambdaQuery()
+                .andIn(SysUserSignature::getUserId, Query.filterNull(userIds))
+                .select();
+        return signature.stream()
+                .collect(Collectors
+                        .toMap(SysUserSignature::getUserId, SysUserSignature::getImagePath));
+    }
+
     /**
      * 校验默认数据单位是否在设定的单位权限范围内
      */
@@ -239,26 +261,71 @@ public class SysUserServiceImpl implements SysUserService {
         if (defaultUnitId == null || CollectionUtils.isEmpty(roleIds)) {
             return false;
         }
-        List<SysRoleUnit> list = sysRoleUnitMapper.createLambdaQuery()
-                .andIn(SysRoleUnit::getRoleId, roleIds)
-                .select();
-        // 单位权限中包含的单位id
-        List<Integer> unitIds = list.stream().map(SysRoleUnit::getUnitId).collect(Collectors.toList());
-        return unitIds.contains(defaultUnitId);
+//        List<SysRoleUnit> list = sysRoleUnitMapper.createLambdaQuery()
+//                .andIn(SysRoleUnit::getRoleId, roles)
+//                .select();
+//        // 单位权限中包含的单位id
+//        List<Integer> unitIds = list.stream().map(SysRoleUnit::getUnitId).collect(Collectors.toList());
+        return roleIds.contains(defaultUnitId);
     }
 
     /**
      * 添加用户角色关联表
      */
     private void insertUserRole(SysUser user) {
+
+
         // 先删除
         sysUserRoleMapper.createLambdaQuery()
                 .andEq(SysUserRole::getUserId, user.getId())
                 .delete();
 
+//        userUnitHallMapper.createLambdaQuery()
+//                .andEq(SysUserUnitHall::getUserId, user.getId())
+//                .delete();
+
+        //获取当前已经有营业厅选择的菜单
+        List<SysUserUnitHall> hallIds = userUnitHallMapper.createLambdaQuery()
+                .andEq(SysUserUnitHall::getUserId, user.getId())
+                .select()
+                .stream()
+                .filter(sysUserUintHall -> sysUserUintHall.getHallId() != null && sysUserUintHall.getHallId() != 0)
+                .distinct()
+                .collect(Collectors.toList());
+
+
+        List<SysUserUnitHall> userUintHalls = new ArrayList<>();
+        if (!hallIds.isEmpty()) {
+            if (user.getCheckedUnRoleIds().isEmpty()) {
+                return;
+            }
+            user.getCheckedUnRoleIds().forEach(unitId -> hallIds.forEach(sysUserUintHall -> {
+                if (unitId.equals(sysUserUintHall.getUnitId())) {
+                    userUintHalls.add(sysUserUintHall);
+                } else {
+                    //如果没有营业厅，那么就创建一个没有营业厅的
+                    userUintHalls.add(SysUserUnitHall.builder().unitId(unitId).userId(user.getId()).build());
+                }
+            }));
+
+        } else {
+            if (user.getCheckedUnRoleIds().isEmpty()) {
+                return;
+            }
+            //如果当前没有选择营业厅，那么直接添加
+            user.getCheckedUnRoleIds().forEach(unitId -> userUintHalls.add(SysUserUnitHall.builder().unitId(unitId).userId(user.getId()).build()));
+
+        }
+
+        //删除之前的菜单id和营业厅数据
+        userUnitHallMapper.createLambdaQuery()
+                .andEq(SysUserUnitHall::getUserId, user.getId())
+                .delete();
+
         // 再添加
         List<Integer> rsRoleIds = user.getCheckedRsRoleIds();
         List<Integer> unRoleIds = user.getCheckedUnRoleIds();
+
         if (rsRoleIds != null && unRoleIds != null) {
             List<Integer> roleIds = new ArrayList<>();
             roleIds.addAll(rsRoleIds);
@@ -266,14 +333,25 @@ public class SysUserServiceImpl implements SysUserService {
             if (StringUtils.isEmpty(roleIds)) {
                 return;
             }
-            List<SysUserRole> list = new ArrayList<>();
-            for (Integer roleId : roleIds) {
-                list.add(SysUserRole.builder()
-                        .userId(user.getId())
-                        .roleId(roleId)
-                        .build());
-            }
+
+            List<SysUserRole> list = roleIds
+                    .stream()
+                    .map(id -> SysUserRole.builder().roleId(id).userId(user.getId()).build())
+                    .collect(Collectors.toList()).stream().distinct().collect(Collectors.toList());
+
+//            List<SysUserUnitHall> userUintHalls = unRoleIds
+//                    .stream()
+//                    .map(id -> SysUserUnitHall.builder().unitId(id).userId(user.getId()).build())
+//                    .collect(Collectors.toList());
+//            List<SysUserRole> list = new ArrayList<>();
+//            for (Integer roleId : roleIds) {
+//                list.add(SysUserRole.builder()
+//                        .userId(user.getId())
+//                        .roleId(roleId)
+//                        .build());
+//            }
             if (!CollectionUtils.isEmpty(list)) {
+                userUnitHallMapper.insertBatch(userUintHalls);
                 sysUserRoleMapper.insertBatch(list);
             }
         }

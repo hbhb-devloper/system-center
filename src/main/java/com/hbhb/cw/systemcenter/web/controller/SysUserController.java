@@ -6,12 +6,16 @@ import com.hbhb.cw.systemcenter.api.UserApi;
 import com.hbhb.cw.systemcenter.enums.ResourceType;
 import com.hbhb.cw.systemcenter.enums.RoleType;
 import com.hbhb.cw.systemcenter.enums.UnitEnum;
+import com.hbhb.cw.systemcenter.mapper.SysUserUnitHallMapper;
 import com.hbhb.cw.systemcenter.model.SysUser;
+import com.hbhb.cw.systemcenter.model.SysUserUnitHall;
+import com.hbhb.cw.systemcenter.model.Unit;
 import com.hbhb.cw.systemcenter.service.SysResourceService;
 import com.hbhb.cw.systemcenter.service.SysRoleService;
 import com.hbhb.cw.systemcenter.service.SysUserService;
 import com.hbhb.cw.systemcenter.service.UnitService;
 import com.hbhb.cw.systemcenter.vo.RouterVO;
+import com.hbhb.cw.systemcenter.vo.UserBasicsVO;
 import com.hbhb.cw.systemcenter.vo.UserInfo;
 import com.hbhb.cw.systemcenter.vo.UserInfoVO;
 import com.hbhb.cw.systemcenter.vo.UserReqVO;
@@ -19,7 +23,10 @@ import com.hbhb.cw.systemcenter.vo.UserResVO;
 import com.hbhb.cw.systemcenter.web.vo.UserDetailVO;
 import com.hbhb.cw.systemcenter.web.vo.UserPwdVO;
 import com.hbhb.web.annotation.UserId;
-
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import lombok.extern.slf4j.Slf4j;
 import org.beetl.sql.core.page.PageResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,17 +37,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.annotation.Resource;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import javax.annotation.Resource;
-
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
-import io.swagger.v3.oas.annotations.tags.Tag;
-import lombok.extern.slf4j.Slf4j;
+import java.util.stream.Collectors;
 
 /**
  * @author xiaokang
@@ -60,6 +62,8 @@ public class SysUserController implements UserApi {
     private SysRoleService sysRoleService;
     @Resource
     private SysResourceService sysResourceService;
+    @Resource
+    private SysUserUnitHallMapper sysUserUnitHallMapper;
 
     @Operation(summary = "通过指定条件查询用户列表（分页）")
     @GetMapping("/list")
@@ -98,8 +102,16 @@ public class SysUserController implements UserApi {
         SysUser user = sysUserService.getUserById(userId);
         List<Integer> checkedRsRoleIds = sysRoleService.getCheckedRoleByUser(userId, RoleType.RELATE_RESOURCE.value());
         List<Integer> checkedUnRoleIds = sysRoleService.getCheckedRoleByUser(userId, RoleType.RELATE_UNIT.value());
+        List<Integer> checkedUintIds = sysUserUnitHallMapper.
+                createLambdaQuery().andEq(SysUserUnitHall::getUserId, userId)
+                .select()
+                .stream()
+                .map(SysUserUnitHall::getUnitId).distinct()
+                .collect(Collectors.toList());
+        log.info("用户的菜单id{}", checkedUintIds);
         user.setCheckedRsRoleIds(checkedRsRoleIds);
         user.setCheckedUnRoleIds(checkedUnRoleIds);
+        user.setCheckedUintIds(checkedUintIds);
         return user;
     }
 
@@ -149,7 +161,15 @@ public class SysUserController implements UserApi {
     @Operation(summary = "获取当前登录用户的信息（包括基本信息、资源权限等）")
     @GetMapping("/current")
     public UserInfoVO getCurrentUser(@Parameter(hidden = true) @UserId Integer userId) {
-        UserInfo user = sysUserService.getUserInfoById(userId);
+        UserInfo userInfo = sysUserService.getUserInfoById(userId);
+        Unit unit = unitService.getUnitInfo(userInfo.getUnitId());
+        UserBasicsVO user = UserBasicsVO.builder()
+                .defaultUnitId(userInfo.getDefaultUnitId())
+                .id(userInfo.getId())
+                .nickName(userInfo.getNickName())
+                .userName(userInfo.getUserName())
+                .unitName(unit.getUnitName())
+                .build();
         // 获取登录用户的按钮权限
         Set<String> permissions = sysResourceService.getUserPermission(
                 userId, Collections.singletonList(ResourceType.BUTTON.value()));
@@ -208,5 +228,21 @@ public class SysUserController implements UserApi {
             @Parameter(description = "用户id", required = true) Integer userId,
             @Parameter(description = "资源类型", required = true) List<String> types) {
         return sysResourceService.getUserPermission(userId, types);
+    }
+
+    @Operation(summary = "通过单位查询用户map（userId => userName）")
+    @Override
+    public Map<Integer, String> getUserByUnitIds(
+            @Parameter(description = "单位id") @RequestParam(required = false) Integer unitId) {
+        unitId = unitId == null ? UnitEnum.HANGZHOU.value() : unitId;
+        List<Integer> unitIds = unitService.getSubUnit(unitId);
+        return sysUserService.getUseByUnitId(unitIds);
+    }
+
+    @Operation(summary = "获取用户签名图片")
+    @Override
+    public Map<Integer, String> getUserSignature(
+            @Parameter(description = "用户id列表（为空时查询全部）") List<Integer> userIds) {
+        return sysUserService.getUserSignature(userIds);
     }
 }

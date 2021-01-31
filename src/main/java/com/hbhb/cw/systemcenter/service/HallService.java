@@ -7,6 +7,7 @@ import com.hbhb.cw.systemcenter.vo.HallResVO;
 import org.beetl.sql.core.page.PageResult;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author xiaokang
@@ -23,10 +24,33 @@ public interface HallService {
     /**
      * 查询营业厅列表
      */
-    List<SelectVO> listHall(Integer unitId);
+    List<SelectVO> listHall(Integer userId,Integer unitId);
+
+    /**
+     * 查询营业厅列表
+     */
+    Map<String, Object> listHallNew(Integer userId,Integer unitId);
 
     /**
      * 新增/修改营业厅
      */
     void upsertHall(Hall hall);
+
+    /**
+     * 更新营业厅
+     */
+    void updateHallNew(Integer userId,Integer unitId,List<Integer> hallSelectIds);
+
+    /**
+     * 通过UnitId去获取到这个人的营业厅列表
+     */
+    Map<Integer,String> selectHallByUnitId(Integer unitId);
+
+
+    /**
+     * 通过userId去获取到这个人的营业厅列表
+     */
+    List<SelectVO> selectHallByUserId(Integer userId);
+
+
 }
