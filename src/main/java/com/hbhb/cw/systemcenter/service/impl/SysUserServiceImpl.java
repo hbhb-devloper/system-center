@@ -4,6 +4,7 @@ import com.hbhb.api.core.bean.SelectVO;
 import com.hbhb.core.bean.BeanConverter;
 import com.hbhb.core.utils.AESCryptUtil;
 import com.hbhb.core.utils.RegexUtil;
+import com.hbhb.cw.systemcenter.enums.UnitEnum;
 import com.hbhb.cw.systemcenter.enums.UserConstant;
 import com.hbhb.cw.systemcenter.enums.code.UserErrorCode;
 import com.hbhb.cw.systemcenter.exception.UserException;
@@ -71,9 +72,13 @@ public class SysUserServiceImpl implements SysUserService {
     }
 
     @Override
-    public List<SelectVO> getAllUserMap() {
+    public List<SelectVO> getAllUserMap(Integer unitId) {
+        if (UnitEnum.BENBU.value().equals(unitId) || UnitEnum.HANGZHOU.value().equals(unitId)) {
+            unitId = null;
+        }
         Map<Integer, String> unitMap = unitService.getUnitMapById();
         List<SysUser> userList = sysUserMapper.createLambdaQuery()
+                .andEq(SysUser::getUnitId, Query.filterEmpty(unitId))
                 .select(SysUser::getId, SysUser::getNickName, SysUser::getUnitId);
         return userList.stream().map(user ->
                 SelectVO.builder()
