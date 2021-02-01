@@ -91,8 +91,8 @@ public class SysUserController implements UserApi {
 
     @Operation(summary = "获取所有用户map", description = "用户id : 用户昵称-单位名称")
     @GetMapping("/select")
-    public List<SelectVO> getAllUserMap() {
-        return sysUserService.getAllUserMap();
+    public List<SelectVO> getAllUserMap(@Parameter(description = "单位id") @RequestParam(required = false) Integer unitId) {
+        return sysUserService.getAllUserMap(unitId);
     }
 
     @Operation(summary = "按用户id获取详细信息", description = "管理员查看用户详情页面")
