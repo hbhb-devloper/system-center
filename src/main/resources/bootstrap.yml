@@ -1,5 +1,5 @@
 server:
-  port: 8887
+  port: 8884
 
 spring:
   profiles:
@@ -33,7 +33,7 @@ host:
   proxy: 47.96.83.55
 
 port:
-  default: 10071
+  default: 10069
   dev: 10023
   dev-proxy: 10003
   test: 10024
