@@ -14,6 +14,7 @@ import com.hbhb.cw.systemcenter.service.SysResourceService;
 import com.hbhb.cw.systemcenter.service.SysRoleService;
 import com.hbhb.cw.systemcenter.service.SysUserService;
 import com.hbhb.cw.systemcenter.service.UnitService;
+import com.hbhb.cw.systemcenter.service.impl.MailService;
 import com.hbhb.cw.systemcenter.vo.RouterVO;
 import com.hbhb.cw.systemcenter.vo.UserBasicsVO;
 import com.hbhb.cw.systemcenter.vo.UserInfo;
@@ -21,8 +22,10 @@ import com.hbhb.cw.systemcenter.vo.UserInfoVO;
 import com.hbhb.cw.systemcenter.vo.UserReqVO;
 import com.hbhb.cw.systemcenter.vo.UserResVO;
 import com.hbhb.cw.systemcenter.web.vo.UserDetailVO;
+import com.hbhb.cw.systemcenter.web.vo.UserPasswordVO;
 import com.hbhb.cw.systemcenter.web.vo.UserPwdVO;
 import com.hbhb.web.annotation.UserId;
+import com.sun.jndi.toolkit.url.UrlUtil;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -38,6 +41,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
+import java.io.UnsupportedEncodingException;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -64,6 +68,8 @@ public class SysUserController implements UserApi {
     private SysResourceService sysResourceService;
     @Resource
     private SysUserUnitHallMapper sysUserUnitHallMapper;
+    @Resource
+    private MailService mailService;
 
     @Operation(summary = "通过指定条件查询用户列表（分页）")
     @GetMapping("/list")
@@ -244,5 +250,42 @@ public class SysUserController implements UserApi {
     public Map<Integer, String> getUserSignature(
             @Parameter(description = "用户id列表（为空时查询全部）") List<Integer> userIds) {
         return sysUserService.getUserSignature(userIds);
+    }
+
+
+    @Operation(summary = "通过邮箱重置密码")
+    @PutMapping("/pw")
+    public void updatePwd(@Parameter(required = true) @RequestBody UserPasswordVO vo) {
+        sysUserService.updatePwd(vo.getEmail(), vo.getNewPwd());
+    }
+
+    @Operation(summary = "通过邮箱重置密码")
+    @GetMapping("/verify-email")
+    public UserInfo verifyEmail(@Parameter(required = true) String email) {
+        return sysUserService.getEmail(email);
+
+    }
+
+
+    @Operation(summary = "重置密码", description = "用于验证用户输入邮箱准确性及推送修改密码连接至邮件")
+    @GetMapping("/email")
+    public void pushEmail(@Parameter(description = "邮箱地址") String email) {
+        UserInfo userInfo = verifyEmail(email);
+        long endTimes = System.currentTimeMillis() + 1 * 24 * 3600 * 1000;
+        String path = "https://zhcw-test.yeexun.com.cn/email/";
+        String para = path + ";" + email + ";" + endTimes;
+        //先加密，再url转码,顺序不能修改 modify by lifq 20150317
+
+        String encode = null;
+        try {
+            encode = UrlUtil.encode(para, "UTF-8");
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        mailService.postMail(userInfo.getEmail(), userInfo.getNickName(), "重设您的财务管理系统密码",
+                "尊敬的:" + userInfo.getNickName() +
+                        "\n" + "您正在重置您的财务管理系统密码,重置密码地址为：" + encode);
+
+
     }
 }
