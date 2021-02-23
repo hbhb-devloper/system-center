@@ -259,6 +259,7 @@ public class SysUserServiceImpl implements SysUserService {
     }
 
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void updatePwd(String email, String newPwd) {
         // 校验邮箱是否存在
         SysUser user = sysUserMapper.createLambdaQuery().andEq(SysUser::getEmail, email).single();
