@@ -27,10 +27,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-import javax.annotation.Resource;
-
-import lombok.extern.slf4j.Slf4j;
-
 /**
  * @author wxg
  * @since 2020-09-30
@@ -117,14 +113,14 @@ public class HomeServiceImpl implements HomeService {
             workList.add(module4);
         }
         // 报表管理提醒统计
-        HomeModuleVO module5 = new HomeModuleVO();
-        module5.setModule(Module.MODULE_REPORT.getValue());
-        module5.setModuleName(moduleMap.get(Module.MODULE_REPORT.getValue().toString()));
-        Long count5 = reportApiExp.countNotice(userId);
-        if (count5 != 0) {
-            module5.setCount(count5);
-            workList.add(module5);
-        }
+//        HomeModuleVO module5 = new HomeModuleVO();
+//        module5.setModule(Module.MODULE_REPORT.getValue());
+//        module5.setModuleName(moduleMap.get(Module.MODULE_REPORT.getValue().toString()));
+//        Long count5 = reportApiExp.countNotice(userId);
+//        if (count5 != 0) {
+//            module5.setCount(count5);
+//            workList.add(module5);
+//        }
 
         return workList;
     }
