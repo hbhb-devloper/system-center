@@ -25,6 +25,7 @@ import org.beetl.sql.core.page.DefaultPageRequest;
 import org.beetl.sql.core.page.PageRequest;
 import org.beetl.sql.core.page.PageResult;
 import org.beetl.sql.core.query.Query;
+import org.springframework.beans.BeanUtils;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +38,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static org.apache.commons.lang3.ObjectUtils.isEmpty;
 
 /**
  * @author xiaokang
@@ -253,6 +256,38 @@ public class SysUserServiceImpl implements SysUserService {
         return signature.stream()
                 .collect(Collectors
                         .toMap(SysUserSignature::getUserId, SysUserSignature::getImagePath));
+    }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void updatePwd(String email, String newPwd) {
+        // 校验邮箱是否存在
+        SysUser user = sysUserMapper.createLambdaQuery().andEq(SysUser::getEmail, email).single();
+        if (isEmpty(user)) {
+            throw new UserException(UserErrorCode.EMAIL_INPUT_ERROR);
+        }
+        BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+        String newPlaintext = AESCryptUtil.decrypt(newPwd);
+        // 校验密码强度
+        if (!RegexUtil.checkPwd(newPlaintext)) {
+            throw new UserException(UserErrorCode.INCOMPATIBLE_PASSWORD);
+        }
+        sysUserMapper.updateTemplateById(SysUser.builder()
+                .email(email)
+                .pwd(encoder.encode(newPlaintext))
+                .build());
+    }
+
+    @Override
+    public UserInfo getEmail(String email) {
+        // 校验邮箱是否存在
+        SysUser user = sysUserMapper.createLambdaQuery().andEq(SysUser::getEmail, email).single();
+        if (isEmpty(user)) {
+            throw new UserException(UserErrorCode.EMAIL_INPUT_ERROR);
+        }
+        UserInfo u = new UserInfo();
+        BeanUtils.copyProperties(user, u);
+        return u;
     }
 
     /**

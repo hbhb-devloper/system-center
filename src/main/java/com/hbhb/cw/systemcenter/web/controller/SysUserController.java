@@ -18,6 +18,7 @@ import com.hbhb.cw.systemcenter.vo.RouterVO;
 import com.hbhb.cw.systemcenter.vo.UserBasicsVO;
 import com.hbhb.cw.systemcenter.vo.UserInfo;
 import com.hbhb.cw.systemcenter.vo.UserInfoVO;
+import com.hbhb.cw.systemcenter.vo.UserPasswordVO;
 import com.hbhb.cw.systemcenter.vo.UserReqVO;
 import com.hbhb.cw.systemcenter.vo.UserResVO;
 import com.hbhb.cw.systemcenter.web.vo.UserDetailVO;
@@ -245,4 +246,19 @@ public class SysUserController implements UserApi {
             @Parameter(description = "用户id列表（为空时查询全部）") List<Integer> userIds) {
         return sysUserService.getUserSignature(userIds);
     }
+
+
+    @Operation(summary = "通过邮箱重置密码")
+    @Override
+    public void updatePwd(@Parameter(required = true) @RequestBody UserPasswordVO vo) {
+        sysUserService.updatePwd(vo.getEmail(), vo.getNewPwd());
+    }
+
+    @Operation(summary = "通过邮箱获取用户信息")
+    @Override
+    public UserInfo getUserInfoByEmail(@Parameter(required = true) String email) {
+        return sysUserService.getEmail(email);
+
+    }
+
 }

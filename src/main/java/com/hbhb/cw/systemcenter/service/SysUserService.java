@@ -85,4 +85,19 @@ public interface SysUserService {
      * @return 签名图片map
      */
     Map<Integer, String> getUserSignature(List<Integer> userIds);
+
+    /**
+     * 通过邮箱重置密码
+     *
+     * @param email  邮箱
+     * @param newPwd 密码
+     */
+    void updatePwd(String email, String newPwd);
+
+    /**
+     * 获取邮箱
+     *
+     * @param email 邮箱
+     */
+    UserInfo getEmail(String email);
 }

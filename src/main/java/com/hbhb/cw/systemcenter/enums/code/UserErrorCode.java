@@ -16,6 +16,7 @@ public enum UserErrorCode {
     REPEAT_OF_NICK_NAME("S0104", "repeat.of.nick.name"),
     DEFAULT_UNIT_SET_ERROR("S0105", "default.unit.set.error"),
     INCOMPATIBLE_PASSWORD("S0106", "incompatible.password"),
+    EMAIL_INPUT_ERROR("S0107", "email.input.error"),
     ;
 
     private final String code;

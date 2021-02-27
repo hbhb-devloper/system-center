@@ -27,6 +27,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+import javax.annotation.Resource;
+
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * @author wxg
  * @since 2020-09-30
@@ -73,16 +77,21 @@ public class HomeServiceImpl implements HomeService {
         HomeModuleVO module1 = new HomeModuleVO();
         module1.setModule(Module.MODULE_BUDGET.getValue());
         module1.setModuleName(moduleMap.get(Module.MODULE_BUDGET.getValue().toString()));
-        module1.setCount(budgetApi.countNotice(userId));
-        workList.add(module1);
+        Long aLong = budgetApi.countNotice(userId);
+        if (aLong != 0) {
+            module1.setCount(aLong);
+            workList.add(module1);
+        }
 
         // 客户资金提醒统计
         HomeModuleVO module2 = new HomeModuleVO();
         module2.setModule(Module.MODULE_INVOICE.getValue());
         module2.setModuleName(moduleMap.get(Module.MODULE_INVOICE.getValue().toString()));
-        module2.setCount(fundApi.countNotice(userId));
-        workList.add(module2);
-
+        Long aLong1 = fundApi.countNotice(userId);
+        if (aLong1 != 0) {
+            module2.setCount(aLong1);
+            workList.add(module2);
+        }
         // 迁改预警提醒统计
         List<String> roleName = flowApi.getRoleNameByUserId(userId);
         if (roleName.contains("迁改预警负责人")) {
@@ -102,17 +111,20 @@ public class HomeServiceImpl implements HomeService {
         Long count2 = materialsApi.countNotice(userId);
         Long count3 = applicationApi.countNotice(userId);
         Long count4 = verifyApi.countNotice(userId);
-        ;
-        module4.setCount(count + count1 + count2 + count3 + count4);
-        workList.add(module4);
-
-//        // 报表管理提醒统计
-//        HomeModuleVO module5 = new HomeModuleVO();
-//        module5.setModule(Module.MODULE_REPORT.getValue());
-//        module5.setModuleName(moduleMap.get(Module.MODULE_REPORT.getValue().toString()));
-//        Long count5 = reportApiExp.countNotice(userId);
-//        module5.setCount(count5);
-//        workList.add(module5);
+        Long total = count + count1 + count2 + count3 + count4;
+        if (total != 0) {
+            module4.setCount(total);
+            workList.add(module4);
+        }
+        // 报表管理提醒统计
+        HomeModuleVO module5 = new HomeModuleVO();
+        module5.setModule(Module.MODULE_REPORT.getValue());
+        module5.setModuleName(moduleMap.get(Module.MODULE_REPORT.getValue().toString()));
+        Long count5 = reportApiExp.countNotice(userId);
+        if (count5 != 0) {
+            module5.setCount(count5);
+            workList.add(module5);
+        }
 
         return workList;
     }
