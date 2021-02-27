@@ -273,7 +273,7 @@ public class SysUserServiceImpl implements SysUserService {
             throw new UserException(UserErrorCode.INCOMPATIBLE_PASSWORD);
         }
         sysUserMapper.updateTemplateById(SysUser.builder()
-                .email(email)
+                .id(user.getId())
                 .pwd(encoder.encode(newPlaintext))
                 .build());
     }
