@@ -192,8 +192,21 @@ public class HallServiceImpl implements HallService {
         return hallMapper.createLambdaQuery().andIn(Hall::getId, integers)
                 .select()
                 .stream()
-                .map(hall ->  SelectVO.builder().id(Long.valueOf(hall.getId())).label(hall.getHallName()).build())
+                .map(hall -> SelectVO.builder().id(Long.valueOf(hall.getId())).label(hall.getHallName()).build())
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Integer> getSubHall(List<Integer> unitId) {
+        List<Integer> hallIds = new ArrayList<>();
+        List<Hall> select = hallMapper.createLambdaQuery().andIn(Hall::getUnitId, unitId).select();
+        select.forEach(item -> hallIds.add(item.getId()));
+        return hallIds;
+    }
+
+    @Override
+    public Hall getHallInfo(Integer unitId) {
+        return hallMapper.single(unitId);
     }
 
 

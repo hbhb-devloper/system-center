@@ -7,9 +7,11 @@ import com.hbhb.cw.systemcenter.enums.ResourceType;
 import com.hbhb.cw.systemcenter.enums.RoleType;
 import com.hbhb.cw.systemcenter.enums.UnitEnum;
 import com.hbhb.cw.systemcenter.mapper.SysUserUnitHallMapper;
+import com.hbhb.cw.systemcenter.model.Hall;
 import com.hbhb.cw.systemcenter.model.SysUser;
 import com.hbhb.cw.systemcenter.model.SysUserUnitHall;
 import com.hbhb.cw.systemcenter.model.Unit;
+import com.hbhb.cw.systemcenter.service.HallService;
 import com.hbhb.cw.systemcenter.service.SysResourceService;
 import com.hbhb.cw.systemcenter.service.SysRoleService;
 import com.hbhb.cw.systemcenter.service.SysUserService;
@@ -45,6 +47,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.springframework.util.ObjectUtils.isEmpty;
+
 /**
  * @author xiaokang
  * @since 2020-10-06
@@ -65,6 +69,8 @@ public class SysUserController implements UserApi {
     private SysResourceService sysResourceService;
     @Resource
     private SysUserUnitHallMapper sysUserUnitHallMapper;
+    @Resource
+    private HallService hallService;
 
     @Operation(summary = "通过指定条件查询用户列表（分页）")
     @GetMapping("/list")
@@ -80,6 +86,8 @@ public class SysUserController implements UserApi {
         pageSize = pageSize == null ? 10 : pageSize;
         unitId = unitId == null ? UnitEnum.HANGZHOU.value() : unitId;
         List<Integer> unitIds = unitService.getSubUnit(unitId);
+        List<Integer> hallIds = hallService.getSubHall(unitIds);
+        unitIds.addAll(hallIds);
         return sysUserService.getUserPageByCond(
                 pageNum, pageSize, UserReqVO.builder()
                         .unitIds(unitIds)
@@ -164,12 +172,13 @@ public class SysUserController implements UserApi {
     public UserInfoVO getCurrentUser(@Parameter(hidden = true) @UserId Integer userId) {
         UserInfo userInfo = sysUserService.getUserInfoById(userId);
         Unit unit = unitService.getUnitInfo(userInfo.getUnitId());
+        Hall hallInfo = hallService.getHallInfo(userInfo.getUnitId());
         UserBasicsVO user = UserBasicsVO.builder()
                 .defaultUnitId(userInfo.getDefaultUnitId())
                 .id(userInfo.getId())
                 .nickName(userInfo.getNickName())
                 .userName(userInfo.getUserName())
-                .unitName(unit.getUnitName())
+                .unitName(!isEmpty(unit) ? unit.getUnitName() : hallInfo.getHallName())
                 .build();
         // 获取登录用户的按钮权限
         Set<String> permissions = sysResourceService.getUserPermission(
