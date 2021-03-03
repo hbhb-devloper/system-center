@@ -66,4 +66,11 @@ public interface HallService {
      * @return 详情
      */
     Hall getHallInfo(Integer unitId);
+
+    /**
+     * 获取营业厅对应id-营业厅名称
+     *
+     * @return 名称
+     */
+    Map<Integer, String> getUnitMapById();
 }

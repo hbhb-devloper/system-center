@@ -4,7 +4,7 @@ selectPageByCond
     select 
     -- @pageTag(){
         su.id          as id,
-        u.unit_name    as unitName,
+        su.unit_id     as unitId,
         su.user_name   as userName,
         su.nick_name   as nickName,
         su.phone       as phone,
@@ -12,7 +12,6 @@ selectPageByCond
         su.create_time as createTime
     -- @}
     from sys_user su
-    left join unit u on su.unit_id = u.id
     -- @where(){
         -- @if(isNotEmpty(cond.userName)){
             and su.user_name like concat('%', #{cond.userName}, '%')
@@ -27,7 +26,7 @@ selectPageByCond
             and su.state = #{cond.state}
         -- @}
         -- @if(isNotEmpty(cond.unitIds)){
-            and u.id in (#{join(cond.unitIds)})
+            and su.unit_id in (#{join(cond.unitIds)})
         -- @}
     -- @}
 ```

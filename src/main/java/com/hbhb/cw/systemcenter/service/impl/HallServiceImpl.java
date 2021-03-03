@@ -209,5 +209,11 @@ public class HallServiceImpl implements HallService {
         return hallMapper.single(unitId);
     }
 
+    @Override
+    public Map<Integer, String> getUnitMapById() {
+        List<Hall> all = hallMapper.all();
+        return all.stream().collect(Collectors.toMap(Hall::getId, Hall::getHallName));
+    }
+
 
 }

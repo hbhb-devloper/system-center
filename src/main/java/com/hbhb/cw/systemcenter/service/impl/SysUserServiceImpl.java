@@ -16,6 +16,7 @@ import com.hbhb.cw.systemcenter.model.SysUser;
 import com.hbhb.cw.systemcenter.model.SysUserRole;
 import com.hbhb.cw.systemcenter.model.SysUserSignature;
 import com.hbhb.cw.systemcenter.model.SysUserUnitHall;
+import com.hbhb.cw.systemcenter.service.HallService;
 import com.hbhb.cw.systemcenter.service.SysUserService;
 import com.hbhb.cw.systemcenter.service.UnitService;
 import com.hbhb.cw.systemcenter.vo.UserInfo;
@@ -59,12 +60,22 @@ public class SysUserServiceImpl implements SysUserService {
     private SysUserUnitHallMapper userUnitHallMapper;
     @Resource
     private SysUserSignatureMapper signatureMapper;
+    @Resource
+    private HallService hallService;
 
 
     @Override
     public PageResult<UserResVO> getUserPageByCond(Integer pageNum, Integer pageSize, UserReqVO cond) {
         PageRequest request = DefaultPageRequest.of(pageNum, pageSize);
-        return sysUserMapper.selectPageByCond(cond, request);
+        PageResult<UserResVO> user = sysUserMapper.selectPageByCond(cond, request);
+        Map<Integer, String> unitMap = unitService.getUnitMapById();
+        Map<Integer, String> hallMap = hallService.getUnitMapById();
+        user.getList().forEach(item -> {
+            item.setUnitName(isEmpty(unitMap.get(item.getUnitId())) ?
+                    hallMap.get(item.getUnitId()) :
+                    unitMap.get(item.getUnitId()));
+        });
+        return user;
     }
 
     @Override
