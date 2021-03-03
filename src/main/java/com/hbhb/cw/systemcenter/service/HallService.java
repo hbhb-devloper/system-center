@@ -3,7 +3,6 @@ package com.hbhb.cw.systemcenter.service;
 import com.hbhb.api.core.bean.SelectVO;
 import com.hbhb.cw.systemcenter.model.Hall;
 import com.hbhb.cw.systemcenter.vo.HallResVO;
-
 import org.beetl.sql.core.page.PageResult;
 
 import java.util.List;
@@ -44,7 +43,7 @@ public interface HallService {
     /**
      * 通过UnitId去获取到这个人的营业厅列表
      */
-    Map<Integer,String> selectHallByUnitId(Integer unitId);
+    Map<Integer, String> selectHallByUnitId(Integer unitId);
 
 
     /**
@@ -52,5 +51,26 @@ public interface HallService {
      */
     List<SelectVO> selectHallByUserId(Integer userId);
 
+    /**
+     * 获取单位下所有营业厅id
+     *
+     * @param unitId 单位id
+     * @return 营业厅id
+     */
+    List<Integer> getSubHall(List<Integer> unitId);
 
+    /**
+     * 获取营业厅详情
+     *
+     * @param unitId id
+     * @return 详情
+     */
+    Hall getHallInfo(Integer unitId);
+
+    /**
+     * 获取营业厅对应id-营业厅名称
+     *
+     * @return 名称
+     */
+    Map<Integer, String> getUnitMapById();
 }
