@@ -14,12 +14,12 @@ import com.hbhb.cw.systemcenter.vo.MetaVO;
 import com.hbhb.cw.systemcenter.vo.ResourceResVO;
 import com.hbhb.cw.systemcenter.vo.RouterVO;
 import com.hbhb.cw.systemcenter.vo.TreeSelectVO;
-
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import javax.annotation.Resource;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -27,8 +27,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import javax.annotation.Resource;
 
 /**
  * @author xiaokang
@@ -75,6 +73,7 @@ public class SysResourceServiceImpl implements SysResourceService {
     public List<Integer> getCheckedResourceByRole(Integer roleId) {
         List<SysRoleResource> roleResources = sysRoleResourceMapper.createLambdaQuery()
                 .andEq(SysRoleResource::getRoleId, roleId)
+                .andNotEq(SysRoleResource::getIsHalf, 1)
                 .select();
         return Optional.ofNullable(roleResources)
                 .orElse(new ArrayList<>())
