@@ -107,6 +107,6 @@ spring:
       discovery:
         instance-id: ${spring.application.name}-${port.prd}-${spring.cloud.client.ip-address}
         service-name: ${spring.application.name}
-        health-check-url: http://${host.docker0}:${port.prd}/actuator/health
-        hostname: ${host.docker0}
+        health-check-url: http://192.168.0.39:${port.prd}/actuator/health
+        hostname: 192.168.0.39
         port: ${port.prd}
