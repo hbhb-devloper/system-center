@@ -1,5 +1,5 @@
 server:
-  port: 8884
+  port: 8889
 
 spring:
   profiles:
@@ -33,7 +33,7 @@ host:
   proxy: 47.96.83.55
 
 port:
-  default: 10069
+  default: 10090
   dev: 10023
   dev-proxy: 10003
   test: 10024
@@ -103,7 +103,7 @@ spring:
   profiles: prd
   cloud:
     consul:
-      host: ${host.docker0}
+      host: 192.168.0.39:8500
       discovery:
         instance-id: ${spring.application.name}-${port.prd}-${spring.cloud.client.ip-address}
         service-name: ${spring.application.name}
