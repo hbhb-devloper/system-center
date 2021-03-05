@@ -1,5 +1,5 @@
 server:
-  port: 8889
+  port: 8884
 
 spring:
   profiles:
@@ -36,7 +36,7 @@ port:
   default: 10090
   dev: 10023
   dev-proxy: 10003
-  test: 10024
+  test: 10041
   test-proxy: 10004
   prd: 10004
 
