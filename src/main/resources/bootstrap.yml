@@ -36,7 +36,7 @@ port:
   default: 10090
   dev: 10023
   dev-proxy: 10003
-  test: 10041
+  test: 10024
   test-proxy: 10004
   prd: 10004
 
