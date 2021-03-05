@@ -1,5 +1,5 @@
 server:
-  port: 8884
+  port: 8889
 
 spring:
   profiles:
@@ -33,7 +33,7 @@ host:
   proxy: 47.96.83.55
 
 port:
-  default: 10071
+  default: 10069
   dev: 10023
   dev-proxy: 10003
   test: 10024
@@ -61,7 +61,7 @@ spring:
     consul:
       host: consul.yeexun.com.cn
       discovery:
-        #      prefer-ip-address: true
+#        prefer-ip-address: true
         instance-id: ${spring.application.name}-${server.port}-${spring.cloud.client.ip-address}
         service-name: ${spring.application.name}
         # 本地调试使用frp代理ip
