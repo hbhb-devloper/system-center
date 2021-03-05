@@ -268,5 +268,4 @@ public class SysUserController implements UserApi {
     public UserInfo getUserInfoByEmail(@Parameter(required = true) String email) {
         return sysUserService.getEmail(email);
     }
-
 }
