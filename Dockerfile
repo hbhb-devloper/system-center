@@ -11,3 +11,4 @@ COPY --from=builder application/snapshot-dependencies/ ./
 COPY --from=builder application/application/ ./
 ENTRYPOINT exec java $JAVA_OPTS $JAVA_DEBUG_OPTS org.springframework.boot.loader.JarLauncher
 EXPOSE 8884
+
