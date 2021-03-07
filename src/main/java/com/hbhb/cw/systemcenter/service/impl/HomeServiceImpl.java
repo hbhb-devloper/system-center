@@ -3,15 +3,7 @@ package com.hbhb.cw.systemcenter.service.impl;
 import com.hbhb.cw.systemcenter.enums.DictCode;
 import com.hbhb.cw.systemcenter.enums.Module;
 import com.hbhb.cw.systemcenter.enums.TypeCode;
-import com.hbhb.cw.systemcenter.rpc.BudgetApiExp;
-import com.hbhb.cw.systemcenter.rpc.FlowApiExp;
-import com.hbhb.cw.systemcenter.rpc.FundApiExp;
-import com.hbhb.cw.systemcenter.rpc.PublicityApplicationApiExp;
-import com.hbhb.cw.systemcenter.rpc.PublicityMaterialsApiExp;
-import com.hbhb.cw.systemcenter.rpc.PublicityPictureApiExp;
-import com.hbhb.cw.systemcenter.rpc.PublicityPrintApiExp;
-import com.hbhb.cw.systemcenter.rpc.PublicityVerifyApiExp;
-import com.hbhb.cw.systemcenter.rpc.WarnApiExp;
+import com.hbhb.cw.systemcenter.rpc.*;
 import com.hbhb.cw.systemcenter.service.HomeService;
 import com.hbhb.cw.systemcenter.service.SysDictService;
 import com.hbhb.cw.systemcenter.service.SysUserService;
@@ -57,8 +49,8 @@ public class HomeServiceImpl implements HomeService {
     private PublicityApplicationApiExp applicationApi;
     @Resource
     private PublicityVerifyApiExp verifyApi;
-//    @Resource
-//    private ReportApiExp reportApiExp;
+    @Resource
+    private ReportApiExp reportApiExp;
 
 
     @Override
@@ -113,14 +105,14 @@ public class HomeServiceImpl implements HomeService {
             workList.add(module4);
         }
         // 报表管理提醒统计
-//        HomeModuleVO module5 = new HomeModuleVO();
-//        module5.setModule(Module.MODULE_REPORT.getValue());
-//        module5.setModuleName(moduleMap.get(Module.MODULE_REPORT.getValue().toString()));
-//        Long count5 = reportApiExp.countNotice(userId);
-//        if (count5 != 0) {
-//            module5.setCount(count5);
-//            workList.add(module5);
-//        }
+        HomeModuleVO module5 = new HomeModuleVO();
+        module5.setModule(Module.MODULE_REPORT.getValue());
+        module5.setModuleName(moduleMap.get(Module.MODULE_REPORT.getValue().toString()));
+        Long count5 = reportApiExp.countNotice(userId);
+        if (count5 != 0) {
+            module5.setCount(count5);
+            workList.add(module5);
+        }
 
         return workList;
     }
