@@ -67,7 +67,6 @@ spring:
         health-check-url: http://${host.docker0}:${port.default}/actuator/health
         hostname: ${host.docker0}
         port: ${port.default}
-
 ################### 开发环境配置 ###################
 ---
 spring:
