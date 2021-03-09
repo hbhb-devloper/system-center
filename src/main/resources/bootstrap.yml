@@ -18,8 +18,6 @@ feign:
   okhttp:
     enabled: true
 
-
-
 # 开启健康检查
 management:
   endpoints:
