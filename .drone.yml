@@ -18,6 +18,9 @@ steps:
       script:
         - find /data/maven/repository/com/hbhb -type d -name "*-api" | xargs rm -rf
 
+
+
+
   # maven打包
   - name: build
     image: maven:3-jdk-8
