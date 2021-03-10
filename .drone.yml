@@ -2,7 +2,6 @@ kind: pipeline
 type: docker
 name: default
 
-
 steps:
   # ssh远程执行清理脚本
   - name: clean-dependency
@@ -19,7 +18,7 @@ steps:
       script:
         - find /data/maven/repository/com/hbhb -type d -name "*-api" | xargs rm -rf
 
-  #  # maven打包
+  # maven打包
   - name: build
     image: maven:3-jdk-8
     volumes:
