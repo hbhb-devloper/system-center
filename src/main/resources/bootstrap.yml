@@ -45,7 +45,6 @@ port:
 # 指定服务提供方实例地址（为空则不指定）
 feign-url:
 #feign-url: 192.168.28.58:8887
-
 # 服务提供方实例名称
 provider:
   flow-center: flow-center-@env@
