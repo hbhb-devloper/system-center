@@ -4,29 +4,29 @@ name: default
 
 steps:
   # ssh远程执行清理脚本
-  #  - name: clean-dependency
-  #    image: appleboy/drone-ssh
-  #    settings:
-  #      host:
-  #        from_secret: ssh_host_proxy
-  #      port: 22
-  #      username: root
-  #      key:
-  #        from_secret: ssh_key
-  #      command_timeout: 3m
-  #      script_stop: false
-  #      script:
-  #        - find /data/maven/repository/com/hbhb -type d -name "*-api" | xargs rm -rf
+  - name: clean-dependency
+    image: appleboy/drone-ssh
+    settings:
+      host:
+        from_secret: ssh_host_proxy
+      port: 22
+      username: root
+      key:
+        from_secret: ssh_key
+      command_timeout: 3m
+      script_stop: false
+      script:
+        - find /data/maven/repository/com/hbhb -type d -name "*-api" | xargs rm -rf
 
   #  # maven打包
-  #  - name: build
-  #    image: maven:3-jdk-8
-  #    volumes:
-  #      - name: maven_local_repo
-  #        path: /root/.m2
-  #    commands:
-  #      - mvn -v
-  #      - mvn clean -P${DRONE_BRANCH} package -DskipTests=true -Dmaven.javadoc.skip=true
+  - name: build
+    image: maven:3-jdk-8
+    volumes:
+      - name: maven_local_repo
+        path: /root/.m2
+    commands:
+      - mvn -v
+      - mvn clean -P${DRONE_BRANCH} package -DskipTests=true -Dmaven.javadoc.skip=true
 
   # docker镜像推送
   - name: docker
