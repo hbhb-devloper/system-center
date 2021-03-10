@@ -2,6 +2,7 @@ kind: pipeline
 type: docker
 name: default
 
+
 steps:
   # ssh远程执行清理脚本
   - name: clean-dependency
