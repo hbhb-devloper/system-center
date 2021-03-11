@@ -90,7 +90,7 @@ spring:
     consul:
       host: consul.iishoni.com
       discovery:
-        instance-id: ${spring.application.name}-${port.test}-${spring.cloud.client.ip-address}
+        instance-id: ${spring.application.name}-${port.test-proxy}-${spring.cloud.client.ip-address}
         service-name: ${spring.application.name}
         health-check-url: http://${host.docker1}:${port.test-proxy}/actuator/health
         # 测试环境使用代理ip
