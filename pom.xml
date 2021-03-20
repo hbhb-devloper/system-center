@@ -15,13 +15,53 @@
 
     <dependencies>
         <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-amqp</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.freemarker</groupId>
+            <artifactId>freemarker</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>com.hbhb</groupId>
+            <artifactId>hbhb-beetlsql</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
             <groupId>com.hbhb</groupId>
             <artifactId>system-center-api</artifactId>
             <version>1.0</version>
         </dependency>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-mail</artifactId>
+            <groupId>com.hbhb</groupId>
+            <artifactId>flow-center-api</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.hbhb</groupId>
+            <artifactId>fund-center-api</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.hbhb</groupId>
+            <artifactId>relocation-manage-api</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.hbhb</groupId>
+            <artifactId>budget-service-api</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.hbhb</groupId>
+            <artifactId>publicity-manage-api</artifactId>
+            <version>1.0</version>
+        </dependency>
+        <dependency>
+            <groupId>com.hbhb</groupId>
+            <artifactId>report-manage-api</artifactId>
+            <version>1.0</version>
         </dependency>
     </dependencies>
 </project>

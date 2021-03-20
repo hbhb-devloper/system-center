@@ -3,52 +3,55 @@ selectPageByCond
 ```sql
     select 
     -- @pageTag(){
-    sd.id         as id,
-    sdt.dict_name as dictTypeName,
-    sd.dict_label as dictLabel,
-    sd.dict_value as dictValue,
-    sd.dict_code  as dictCode,
-    sd.remark     as remark,
-    sd.sort_num   as sortNum,
-    sd.state      as state
+        d.id         as id,
+        dt.type_name as dictTypeName,
+        d.dict_label as dictLabel,
+        d.dict_value as dictValue,
+        d.dict_code  as dictCode,
+        d.remark     as remark,
+        d.sort_num   as sortNum,
+        d.state      as state
     -- @}
-    from sys_dict sd
-        left join sys_dict_type sdt on sd.dict_type_id = sdt.id
+    from sys_dict d
+        left join sys_dict_type dt on d.dict_type_id = dt.id
     -- @where(){
-        -- @if(!isEmpty(dictTypeName)){
-            and sdt.dict_name like concat('%', #{dictTypeName}, '%')
+        -- @if(isNotEmpty(dictTypeId)){
+            and dt.id = #{dictTypeId}
         -- @}
-        -- @if(!isEmpty(dictLabel)){
-            and sd.dict_label like concat('%', #{dictLabel}, '%')
+        -- @if(isNotEmpty(dictTypeName)){
+            and dt.type_name like concat('%', #{dictTypeName}, '%')
+        -- @}
+        -- @if(isNotEmpty(dictLabel)){
+            and d.dict_label like concat('%', #{dictLabel}, '%')
         -- @}
     -- @}
     -- @pageIgnoreTag(){
-        order by sd.create_time desc
+        order by d.dict_code
     -- @}
 ```
 
 selectListByCond
 ===
 ```sql
-    select sd.id,
-           sd.sort_num,
-           sd.dict_label,
-           sd.dict_value,
-           sd.dict_type_id,
-           sd.dict_code,
-           sd.state,
-           sd.remark,
-           sd.create_time,
-           sd.create_by
-    from sys_dict sd
-        left join sys_dict_type sdt on sd.dict_type_id = sdt.id
+    select d.id,
+           d.sort_num,
+           d.dict_label,
+           d.dict_value,
+           d.dict_type_id,
+           d.dict_code,
+           d.state,
+           d.remark,
+           d.create_time,
+           d.create_by
+    from sys_dict d
+        left join sys_dict_type dt on d.dict_type_id = dt.id
     -- @where(){
-        -- @if(!isEmpty(dictType)){
-            and sdt.dict_type = #{dictType}
+        -- @if(isNotEmpty(dictType)){
+            and dt.type_code = #{dictType}
         -- @}
-        -- @if(!isEmpty(dictCode)){
-            and sd.dict_code = #{dictCode}
+        -- @if(isNotEmpty(dictCode)){
+            and d.dict_code = #{dictCode}
         -- @}
     -- @}
-    order by sd.sort_num
+    order by d.sort_num
 ```
